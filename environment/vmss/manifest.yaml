@@ -4,29 +4,29 @@ description: Creates a VMSS with Windows virtual machines using Terraform
 runner: Terraform
 templatePath: vmss.tf
 parameters:
-  - id: "resource_group_name"
-    name: "Resource Group Name"
-    required: true
-    type: "string"
-  - id: "location"
-    name: "Location"
-    required: true
-    type: "string"
-  - id: "vmss_name"
-    name: "VMSS Name"
-    required: true
-    type: "string"
-  - id: "admin_username"
-    name: "Admin Username"
-    required: true
-    type: "string"
-  - id: "admin_password"
-    name: "Admin Password"
-    required: true
-    type: "string"
-    secret: true  # Indicates that this parameter is sensitive and should be kept secret
-  - id: "instance_count"
-    name: "Instance Count"
-    default: 1
-    type: "number"
+- id: "resource_group_name"
+  name: "Resource Group Name"
+  required: true
+  type: "string"
+- id: "location"
+  name: "Location"
+  required: true
+  type: "string"
+- id: "vmss_name"
+  name: "VMSS Name"
+  required: true
+  type: "string"
+- id: "admin_username"
+  name: "Admin Username"
+  required: true
+  type: "string"
+- id: "admin_password"
+  name: "Admin Password"
+  required: true
+  type: "string"
+  secret: true  # Indicates that this parameter is sensitive and should be kept secret
+- id: "instance_count"
+  name: "Instance Count"
+  default: 1
+  type: "number"
 
