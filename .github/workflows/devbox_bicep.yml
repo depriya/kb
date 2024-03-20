@@ -1,0 +1,83 @@
+name: Deploy.infrastructure.devbox_bicep
+on:
+  workflow_dispatch:
+    inputs:
+      customerOEMsuffix:
+        description: "suffix required for customer OEM in lowercase"
+        required: true
+      environment:
+        type: choice
+        description: "Choose the environment: d for dev, p for Prod"
+        options:
+          - d
+          - p
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: sub-AVL_DevopsPilot
+
+    steps:
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: CheckoutRepo
+        uses: actions/checkout@v2
+      
+      - name: Set Names
+        id: set-names
+        run: |
+          echo "rgName=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-rg-001" >> $GITHUB_ENV
+          echo "devcenter=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-dc" >> $GITHUB_ENV
+          echo "projectteamname=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-project-001" >> $GITHUB_ENV
+
+
+      - name: Create Resource Group
+        run: az group create --name ${{ env.rgName }} --location westeurope
+
+      - name: Debug Resource Group Name
+        run: |
+          echo "Resource Group Name ${{ env.rgName }}"
+          echo "Dev Center Name ${{ env.devcenter }}"
+          echo " project name ${{ env.projectteamname}}"
+      
+      - name: Update parameters.json
+        run: |
+          rgName="${{ env.rgName }}"
+          devcenter="${{ env.devcenter }}"
+          projectteamname="${{ env.projectteamname }}"
+          #sed -i "s|\"value\": \"\$(rgName)\"|\"value\": \"$rgName\"|" 'infra/devbox_bicep/parameters-db.json'
+          sed -i "s|\"value\": \"\$(devcenter)\"|\"value\": \"$devcenter\"|" 'infra/devbox_bicep/parameters-db.json'
+          sed -i "s|\"value\": \"\$(projectteamname)\"|\"value\": \"$projectteamname\"|" 'infra/devbox_bicep/parameters-db.json'
+          cat 'infra/devbox_bicep/parameters.json'      
+
+    #   - name: Deploy common bicep
+    #     uses: Azure/arm-deploy@v1
+    #     id: rgDeploy
+    #     with:
+    #       scope: 'resourcegroup'
+    #       subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    #       resourceGroupName: ${{ env.rgName }}
+    #       region: 'westeurope'
+    #       template: 'infra/devbox_bicep/common.bicep'
+    #       parameters: 'infra/devbox_bicep/parameters.json'
+
+      - name: Deploy devbox
+        uses: Azure/arm-deploy@v1
+        id: rgDeploy2
+        with:
+          scope: 'resourcegroup'
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ env.rgName }}
+          region: 'westeurope'
+          template: 'infra/devbox_bicep/devbox.bicep'
+          parameters: 'infra/devbox_bicep/parameters-db.json'

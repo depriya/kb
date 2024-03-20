@@ -1,24 +1,14 @@
-name: Deploy.infrastructure.dbox
+name: Deploy.environment.devbox
+
 on:
   workflow_dispatch:
-    inputs:
-      customerOEMsuffix:
-        description: "suffix required for customer OEM in lowercase"
-        required: true
-      environment:
-        type: choice
-        description: "Choose the environment: d for dev, p for Prod"
-        options:
-          - d
-          - p
-        required: true
-
+      
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     environment: sub-AVL_DevopsPilot
 
@@ -30,54 +20,20 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: CheckoutRepo
+      - name: Checkout code
         uses: actions/checkout@v2
-      
-      - name: Set Names
-        id: set-names
+
+      - name: Initialize Terraform
         run: |
-          echo "rgName=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-rg-001" >> $GITHUB_ENV
-          echo "devcenter=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-dc" >> $GITHUB_ENV
-          echo "projectteamname=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-project-001" >> $GITHUB_ENV
+          cd environment/devbox
+          terraform init
 
-
-      - name: Create Resource Group
-        run: az group create --name ${{ env.rgName }} --location westeurope
-
-      - name: Debug Resource Group Name
+      - name: Plan Terraform changes
         run: |
-          echo "Resource Group Name ${{ env.rgName }}"
-          echo "Dev Center Name ${{ env.devcenter }}"
-          echo " project name ${{ env.projectteamname}}"
-      
-      - name: Update parameters.json
+          cd environment/devbox
+          terraform plan -out=tfplan 
+
+      - name: Apply Terraform changes
         run: |
-          rgName="${{ env.rgName }}"
-          devcenter="${{ env.devcenter }}"
-          projectteamname="${{ env.projectteamname }}"
-          #sed -i "s|\"value\": \"\$(rgName)\"|\"value\": \"$rgName\"|" 'infra/dev-box/parameters-db.json'
-          sed -i "s|\"value\": \"\$(devcenter)\"|\"value\": \"$devcenter\"|" 'infra/dev-box/parameters-db.json'
-          sed -i "s|\"value\": \"\$(projectteamname)\"|\"value\": \"$projectteamname\"|" 'infra/dev-box/parameters-db.json'
-          cat 'infra/dev-box/parameters.json'      
-
-    #   - name: Deploy common bicep
-    #     uses: Azure/arm-deploy@v1
-    #     id: rgDeploy
-    #     with:
-    #       scope: 'resourcegroup'
-    #       subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    #       resourceGroupName: ${{ env.rgName }}
-    #       region: 'westeurope'
-    #       template: 'infra/dev-box/common.bicep'
-    #       parameters: 'infra/dev-box/parameters.json'
-
-      - name: Deploy devbox
-        uses: Azure/arm-deploy@v1
-        id: rgDeploy2
-        with:
-          scope: 'resourcegroup'
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resourceGroupName: ${{ env.rgName }}
-          region: 'westeurope'
-          template: 'infra/dev-box/devbox.bicep'
-          parameters: 'infra/dev-box/parameters-db.json'
+          cd environment/devbox
+          terraform apply -auto-approve tfplan

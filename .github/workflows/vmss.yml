@@ -1,4 +1,4 @@
-name: Run Terraform
+name: Deploy.environment.vmss
 
 on:
   workflow_dispatch:
