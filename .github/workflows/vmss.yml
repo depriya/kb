@@ -5,17 +5,12 @@ on:
     branches:
       - main
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
     environment: sub-AVL_DevopsPilot
     
     steps:
-
     - name: 'Az CLI login'
       uses: azure/login@v1
       with:
@@ -26,11 +21,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Grant execute permission to manifest.yaml
+      run: chmod +x environment/vmss/manifest.yaml
+
     - name: Run manifest.yaml
       run: |
         cd environment/vmss
-        # Assuming manifest.yaml needs some specific command to execute
-        # Replace the placeholder with the actual command needed to run your manifest.yaml script
-        # Example: python manifest.yaml
-        # Make sure to provide the correct path if manifest.yaml is in a different directory
         ./manifest.yaml
