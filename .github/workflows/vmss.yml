@@ -1,8 +1,8 @@
 name: Deploy.vmss
 
 on:
-    workflow_dispatch:
-      
+  workflow_dispatch:
+
 permissions:
   id-token: write
   contents: read
@@ -13,7 +13,6 @@ jobs:
     environment: sub-AVL_DevopsPilot
 
     steps:
-
       - name: 'Az CLI login'
         uses: azure/login@v1
         with:
@@ -29,15 +28,19 @@ jobs:
         with:
           terraform_version: latest
 
-      - name: Terraform Init
-        run: terraform init
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
-      - name: Terraform Plan
+      - name: Read manifest.yaml and set Terraform variables
         run: |
-         cd environment/vmss
-         terraform plan -var-file=manifest.yaml
+          # Parse manifest.yaml using Python script
+          python parse_manifest.py
+          # Run Terraform commands
+          cd environment/vmss
+          terraform plan -var-file=manifest.tfvars
+          terraform apply -auto-approve -var-file=manifest.tfvars
 
-      - name: Terraform Apply
-        run: |
-         cd environment/vmss
-         terraform apply -auto-approve -var-file=manifest.yaml
+        env:
+          ADMIN_PASSWORD: "Azure@123456"
