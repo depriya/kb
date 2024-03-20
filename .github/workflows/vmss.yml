@@ -1,46 +1,36 @@
-name: Deploy.vmss
+name: Run manifest.yaml
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     environment: sub-AVL_DevopsPilot
-
+    
     steps:
-      - name: 'Az CLI login'
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: 'Az CLI login'
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: latest
-
-      - name: Install Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-
-      - name: Read manifest.yaml and set Terraform variables
-        run: |
-          # Parse manifest.yaml using Python script
-          python parse_manifest.py
-          # Run Terraform commands
-          cd environment/vmss
-          terraform plan -var-file=manifest.tfvars
-          terraform apply -auto-approve -var-file=manifest.tfvars
-
-        env:
-          ADMIN_PASSWORD: "Azure@123456"
+    - name: Run manifest.yaml
+      run: |
+        cd environment/vmss
+        # Assuming manifest.yaml needs some specific command to execute
+        # Replace the placeholder with the actual command needed to run your manifest.yaml script
+        # Example: python manifest.yaml
+        # Make sure to provide the correct path if manifest.yaml is in a different directory
+        ./manifest.yaml
