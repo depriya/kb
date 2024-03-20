@@ -1,32 +1,14 @@
-name: "VMSSDeployment"
-summary: "Deploys a Virtual Machine Scale Set (VMSS) in Azure"
-description: "Creates a VMSS with Windows virtual machines using Terraform"
-runner: "Terraform"
-templatePath: "main.tf"
+name: vmss
+summary: Creates a vmss
+description: Deploys an environment using Terraform containing a vmss
+runner: Terraform
+templatePath: main.tf
 parameters:
-  - id: "resource_group_name"
-    name: "Resource Group Name"
+  - id: "resource_name"
+    name: "Resource Name"
     required: true
     type: "string"
   - id: "location"
     name: "Location"
     required: true
     type: "string"
-  - id: "vmss_name"
-    name: "VMSS Name"
-    required: true
-    type: "string"
-  - id: "admin_username"
-    name: "Admin Username"
-    required: true
-    type: "string"
-  - id: "admin_password"
-    name: "Admin Password"
-    required: true
-    type: "string"
-    secret: true  # Indicates that this parameter is sensitive and should be kept secret
-  - id: "instance_count"
-    name: "Instance Count"
-    default: 1
-    type: "number"
-  # Add more parameters as needed...

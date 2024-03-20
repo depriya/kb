@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 2.75"
+      version = ">= 3.0.0"
     }
   }
 
@@ -15,9 +15,14 @@ provider "azurerm" {
   skip_provider_registration = true
 }
 
-resource "azurerm_resource_group" "example" {
-  name     = "example-resources"
-  location = "West Europe"
+variable "resource_group_name" {}
+
+variable "resource_name" {}
+
+variable "location" {}
+
+data "azurerm_resource_group" "example" {
+  name = var.resource_group_name
 }
 
 resource "azurerm_virtual_network" "example" {

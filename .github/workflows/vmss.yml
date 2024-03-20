@@ -23,10 +23,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Grant execute permission to manifest.yaml
-      run: chmod +x environment/vmss/manifest.yaml
-
-    - name: Run manifest.yaml
+    - name: Initialize Terraform
       run: |
         cd environment/vmss
-        ./manifest.yaml
+        terraform init
+
+    - name: Plan Terraform changes
+      run: |
+        cd environment/vmss
+        terraform plan -out=tfplan
+
+    - name: Apply Terraform changes
+      run: |
+        cd environment/vmss
+        terraform apply -auto-approve tfplan
