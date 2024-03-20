@@ -9,6 +9,10 @@ on:
       location:
         description: 'The Azure region where resources will be deployed'
         required: true
+      
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build:
