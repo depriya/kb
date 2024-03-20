@@ -2,7 +2,7 @@ name: "VMSSDeployment"
 summary: "Deploys a Virtual Machine Scale Set (VMSS) in Azure"
 description: "Creates a VMSS with Windows virtual machines using Terraform"
 runner: "Terraform"
-templatePath: "vmss.tf"
+templatePath: "main.tf"
 parameters:
   - id: "resource_group_name"
     name: "Resource Group Name"
