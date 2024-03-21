@@ -35,14 +35,14 @@ data "azurerm_virtual_network" "example" {
 }
 
 resource "azurerm_subnet" "internal" {
-  name                 = "Vmsssubnet1"
+  name                 = "Vmsssubnet2"
   resource_group_name  = data.azurerm_resource_group.example.name
   virtual_network_name = data.azurerm_virtual_network.example.name
-  address_prefixes     = ["10.6.4.0/24"]
+  address_prefixes     = ["10.6.5.0/24"]
 }
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                 = "xmew1-dop-c-tstoem-d-vmss-002"
+  name                 = "xmew1-dop-c-tstoem-d-vmss-003"
   resource_group_name  = data.azurerm_resource_group.example.name
   location             = data.azurerm_resource_group.example.location
   sku                  = "Standard_F2"
