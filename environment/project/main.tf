@@ -26,13 +26,12 @@ resource "azurerm_user_assigned_identity" "test" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-resource "azurerm_shared_image_gallery" "example" {
+data "azurerm_shared_image_gallery" "example" {
   name                = "xmew1dopsstampdcomputegallery001"
-  location            =  "West Europe "
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 resource "azurerm_dev_center_gallery" "example" {
   dev_center_id     = azurerm_dev_center.dc.id
-  shared_gallery_id = azurerm_shared_image_gallery.example.id
+  shared_gallery_id = data.azurerm_shared_image_gallery.example.id
   name              = "example"
 }

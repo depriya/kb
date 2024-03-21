@@ -73,6 +73,7 @@ jobs:
           cd environment/project  # Navigate to the Terraform project directory
           terraform import -var="rgName=${{ env.rgName }}" -var="devcenter=${{ env.devcenter }}" -var="projectname=${{ env.projectname }}" azurerm_resource_group.rg "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.rgName }}"
           terraform import -var="rgName=${{ env.rgName }}" -var="devcenter=${{ env.devcenter }}" -var="projectname=${{ env.projectname }}" azurerm_dev_center.dc "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.rgName }}/providers/Microsoft.DevCenter/devCenters/${{ env.devcenter }}"
+          terraform import -var="rgName=${{ env.rgName }}" -var="devcenter=${{ env.devcenter }}" -var="projectname=${{ env.projectname }}" azurerm_shared_image_gallery.example "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/xmew1-dop-s-stamp-d-rg-001/providers/Microsoft.Compute/galleries/xmew1dopsstampdcomputegallery001"
 
           
       - name: Terraform Plan
