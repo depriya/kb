@@ -41,8 +41,8 @@ resource "null_resource" "install_devcenter_extension" {
 
 resource "null_resource" "link_gallery_to_devcenter" {
   provisioner "local-exec" {
-    
-    command = "az devcenter gallery update --name ${azurerm_dev_center.dc.name} --gallery-name ${azurerm_shared_image_gallery.example.name} --resource-group ${azurerm_dev_center.dc.resource_group_name} --subscription db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+    command = "az devcenter admin gallery create --gallery-resource-id \"/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-s-stamp-d-rg-001/providers/Microsoft.Compute/galleries/xmew1dopsstampdcomputegallery001\" --dev-center-name \"${azurerm_dev_center.dc.name}\" --name \"${azurerm_shared_image_gallery.example.name}\" --resource-group \"${azurerm_dev_center.dc.resource_group_name}\""
+    //command = "az devcenter gallery update --name ${azurerm_dev_center.dc.name} --gallery-name ${azurerm_shared_image_gallery.example.name} --resource-group ${azurerm_dev_center.dc.resource_group_name} --subscription db401b47-f622-4eb4-a99b-e0cebc0ebad4"
   }
   depends_on = [azurerm_dev_center.dc, azurerm_shared_image_gallery.example]
 }
