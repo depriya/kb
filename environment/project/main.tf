@@ -6,7 +6,7 @@ resource "azurerm_dev_center" "dc" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   identity {
-    type = "SystemAssigned"
+    type = "UserAssigned"
   }
 }
 resource "azurerm_resource_group" "rg" {
@@ -31,7 +31,7 @@ resource "azurerm_shared_image_gallery" "example" {
   location = azurerm_resource_group.rg.location
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
-resource "azurerm_dev_center_gallery" "example" {
+resource "azurerm_dev_center_gallery" "gallery" {
   dev_center_id     = azurerm_dev_center.dc.id
   shared_gallery_id = azurerm_shared_image_gallery.example.id
   name              = "example"
