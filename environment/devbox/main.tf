@@ -38,6 +38,7 @@ variable "devbox_properties" {
   }
 }
 
+
 resource "azapi_resource" "devbox" {
   type       = "Microsoft.DevCenter/devcenters/devboxdefinitions@2023-04-01"
   name       = var.devbox_name
