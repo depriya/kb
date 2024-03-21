@@ -35,10 +35,10 @@ data "azurerm_virtual_network" "example" {
 }
 
 resource "azurerm_subnet" "internal" {
-  name                 = "Vmsssubnet"
+  name                 = "Vmsssubnet1"
   resource_group_name  = data.azurerm_resource_group.example.name
   virtual_network_name = data.azurerm_virtual_network.example.name
-  address_prefixes     = ["10.6.3.0/24"]
+  address_prefixes     = ["10.6.4.0/24"]
 }
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
