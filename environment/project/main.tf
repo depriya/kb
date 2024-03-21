@@ -33,6 +33,6 @@ resource "azurerm_shared_image_gallery" "example" {
 }
 resource "azurerm_dev_center_gallery" "example" {
   dev_center_id     = azurerm_dev_center.dc.id
-  shared_gallery_id = data.azurerm_shared_image_gallery.example.id
+  shared_gallery_id = azurerm_shared_image_gallery.example.id
   name              = "example"
 }
