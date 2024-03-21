@@ -28,7 +28,7 @@ resource "azurerm_user_assigned_identity" "test" {
 }
 
 resource "azurerm_shared_image_gallery" "example" {
-  name                = "example-image-gallery"
+  name                = "exampleimagegallery"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
