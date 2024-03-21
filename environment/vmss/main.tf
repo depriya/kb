@@ -42,7 +42,7 @@ resource "azurerm_subnet" "internal" {
 }
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                 = "xmew1-dop-c-tstoem-d-vmss-001"
+  name                 = "xmew1-dop-c-tstoem-d-vmss-002"
   resource_group_name  = data.azurerm_resource_group.example.name
   location             = data.azurerm_resource_group.example.location
   sku                  = "Standard_F2"
