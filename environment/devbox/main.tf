@@ -48,7 +48,7 @@ resource "azapi_resource" "symbolicname" {
         family = "standard"
         name = "DS1_v2"
         size = "Standard_DS1_v2"
-        tier = "standard"
+        tier = "Standard"
       }
     }
   })
