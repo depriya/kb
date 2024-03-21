@@ -32,8 +32,10 @@ resource "azurerm_shared_image_gallery" "example" {
   location = azurerm_resource_group.rg.location
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
-resource "azurerm_dev_center_gallery" "gallery" {
-  dev_center_id     = azurerm_dev_center.dc.id
-  shared_gallery_id = azurerm_shared_image_gallery.example.id
-  name              = "xmew1dopsstampdcomputegallery001"
+
+resource "null_resource" "link_gallery_to_devcenter" {
+  provisioner "local-exec" {
+    command = "az devcenter gallery update --name ${azurerm_dev_center.dc.name} --gallery-name ${azurerm_shared_image_gallery.example.name} --resource-group ${azurerm_dev_center.dc.resource_group_name} --subscription db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+  }
+  depends_on = [azurerm_dev_center.dc, azurerm_shared_image_gallery.example]
 }
