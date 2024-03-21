@@ -26,8 +26,9 @@ resource "azurerm_user_assigned_identity" "test" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-data "azurerm_shared_image_gallery" "example" {
+resource "azurerm_shared_image_gallery" "example" {
   name                = "xmew1dopsstampdcomputegallery001"
+  location = "azurerm_resource_group.rg.location"
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 resource "azurerm_dev_center_gallery" "example" {
