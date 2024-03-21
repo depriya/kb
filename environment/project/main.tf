@@ -7,6 +7,7 @@ resource "azurerm_dev_center" "dc" {
   location            = azurerm_resource_group.rg.location
   identity {
     type = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.test.id]
   }
 }
 resource "azurerm_resource_group" "rg" {
