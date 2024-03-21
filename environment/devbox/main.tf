@@ -1,3 +1,14 @@
+terraform {
+  required_providers {
+    azapi = {
+      source = "Azure/azapi"
+    }
+  }
+}
+
+provider "azapi" {
+}
+
 variable "devbox_name" {
   description = "The name of the DevBox definition"
   type        = string
@@ -33,8 +44,6 @@ variable "devbox_properties" {
     sku_tier     = "Standard"
   }
 }
-
-
 
 resource "azapi_resource" "devbox" {
   type      = "Microsoft.DevCenter/devcenters/devboxdefinitions@2023-04-01"
