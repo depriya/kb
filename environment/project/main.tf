@@ -33,8 +33,15 @@ resource "azurerm_shared_image_gallery" "example" {
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 
+resource "null_resource" "install_devcenter_extension" {
+  provisioner "local-exec" {
+    command = "az extension add --name devcenter"
+  }
+}
+
 resource "null_resource" "link_gallery_to_devcenter" {
   provisioner "local-exec" {
+    
     command = "az devcenter gallery update --name ${azurerm_dev_center.dc.name} --gallery-name ${azurerm_shared_image_gallery.example.name} --resource-group ${azurerm_dev_center.dc.resource_group_name} --subscription db401b47-f622-4eb4-a99b-e0cebc0ebad4"
   }
   depends_on = [azurerm_dev_center.dc, azurerm_shared_image_gallery.example]
