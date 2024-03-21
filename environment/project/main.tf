@@ -33,16 +33,14 @@ resource "azurerm_shared_image_gallery" "example" {
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 
-resource "null_resource" "install_devcenter_extension" {
-  provisioner "local-exec" {
-    command = "az extension add --name devcenter"
-  }
+resource "azurerm_shared_image_gallery" "example" {
+  name                = "example-image-gallery"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 }
 
-resource "null_resource" "link_gallery_to_devcenter" {
-  provisioner "local-exec" {
-    command = "az devcenter admin gallery create --gallery-resource-id \"/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-s-stamp-d-rg-001/providers/Microsoft.Compute/galleries/xmew1dopsstampdcomputegallery001\" --dev-center-name \"${azurerm_dev_center.dc.name}\" --name \"${azurerm_shared_image_gallery.example.name}\" --resource-group \"${azurerm_dev_center.dc.resource_group_name}\""
-    //command = "az devcenter gallery update --name ${azurerm_dev_center.dc.name} --gallery-name ${azurerm_shared_image_gallery.example.name} --resource-group ${azurerm_dev_center.dc.resource_group_name} --subscription db401b47-f622-4eb4-a99b-e0cebc0ebad4"
-  }
-  depends_on = [azurerm_dev_center.dc, azurerm_shared_image_gallery.example]
+resource "azurerm_dev_center_gallery" "example" {
+  dev_center_id     = azurerm_dev_center.dc.id
+  shared_gallery_id = azurerm_shared_image_gallery.example.id
+  name              = "example"
 }
