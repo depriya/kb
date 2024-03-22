@@ -1,3 +1,11 @@
+{# Jinja2 Template for Terraform #}
+
+{% set resource_group_name = "<RESOURCE_GROUP_NAME>" %}
+{% set resource_name = "<RESOURCE_NAME>" %}
+{% set admin_username = "<admin_username>" %}
+{% set admin_password = "<admin_password>" %}
+{% set location = "<LOCATION>" %}
+
 terraform {
   required_providers {
     azurerm = {
@@ -15,21 +23,25 @@ provider "azurerm" {
   skip_provider_registration = true
 }
 
-variable "resource_group_name" {}
+variable "resource_group_name" {
+  default = "{{ resource_group_name }}"
+}
 
-variable "resource_name" {}
-variable "admin_username" {}
-variable "admin_password" {}
+variable "resource_name" {
+  default = "{{ resource_name }}"
+}
 
-# #variable "vnet" {
-#   default = "xmew1-dop-c-oem-vnet-001"
-# }
+variable "admin_username" {
+  default = "{{ admin_username }}"
+}
 
-variable "location" {}
+variable "admin_password" {
+  default = "{{ admin_password }}"
+}
 
-# #variable "subnet" {
-#   default = "OEMSubnet"
-# }
+variable "location" {
+  default = "{{ location }}"
+}
 
 data "azurerm_resource_group" "example" {
   name = var.resource_group_name

@@ -7,8 +7,27 @@ parameters:
   - id: "resource_name"
     name: "Resource Name"
     required: true
+  - id: "resource_group_name"
+    name: "Resource group name"
+    required: true
     type: "string"
   - id: "location"
     name: "Location"
     required: true
     type: "string"
+  - id: "admin_username"
+    name: "username"
+    required: true
+    type: "string"
+  - id: "admin_password"
+    name: "password"
+    required: true
+    type: "string"
+  # - id: "vnet"
+  #   name: "vnet"
+  #   required: true
+  #   type: "string"
+  # - id: "subnet"
+  #   name: "subnet"
+  #   required: true
+  #   type: "string"
