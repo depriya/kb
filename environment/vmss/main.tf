@@ -83,5 +83,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
       primary   = true
       subnet_id = data.azurerm_subnet.internal.id
     }
+# Attach the NSG to the VMSS
+    network_security_group_id = azurerm_network_security_group.example.id    
   }
 }
