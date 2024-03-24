@@ -58,7 +58,7 @@ resource "azapi_resource" "devbox_definition" {
       sku = {
         capacity = 1
         family = "Standard"
-        name = "DS1_v2"
+        name = "general_i_8c32gb256ssd_v2"
         size = "Standard_DS1_v2"
         tier = "Standard"
       }
