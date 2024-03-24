@@ -39,7 +39,7 @@ resource "azapi_resource" "devbox_definition" {
     properties = {
       hibernateSupport = "Enabled"
       imageReference = {
-        id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-s-stamp-d-rg-001/providers/Microsoft.Compute/galleries/xmew1dopsstampdcomputegallery001/images/imagedef/versions/0.0.1"
+        id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.DevCenter/devcenters/galleries/xmew1dopsstampdcomputegallery001/images/imagedef/versions/0.0.1"
       }
       osStorageType = "managed"
       sku = {
