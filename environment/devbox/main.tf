@@ -33,7 +33,7 @@ data "azapi_resource" "existing_project" {
 resource "azapi_resource" "devbox_definition" {
   type = "Microsoft.DevCenter/devcenters/devboxdefinitions@2023-04-01"
   name = "my-devbox-definition"
-  parent_id = data.azapi_resource.existing_project.id
+  parent_id = data.azapi_resource.existing_devcenter
   body = jsonencode({
     properties = {
       hibernateSupport = "Enabled"
@@ -58,6 +58,7 @@ resource "azapi_resource" "pool" {
   name = "my-pool"
   parent_id = data.azapi_resource.existing_project.id
   body = jsonencode({
+    location = "West Europe"
     properties = {
       devBoxDefinitionName = "my-devbox-definition"
       licenseType = "Windows_Client"
