@@ -15,7 +15,7 @@ provider "azapi" {
 data "azapi_resource" "existing_devcenter" {
   type = "Microsoft.DevCenter/devcenters@2023-04-01"
   name = "xmew1-dop-c-abc-d-dc"
-  parent_id = "xmew1-dop-c-abc-d-rg-001"
+  parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001"
 }
 
 data "azapi_resource" "existing_gallery" {
