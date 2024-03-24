@@ -94,7 +94,7 @@ resource "azapi_resource" "networkConnection" {
     properties = {
       domainJoinType = "AzureADJoin"
       subnetId = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.Network/virtualNetworks/xmew1-dop-c-oem-vnet-001/subnets/OEMSubnet"
-      networkingResourceGroupName = "xmew1-dop-c-abc-d-rg-001"
+      networkingResourceGroupName = "xmew1-dop-c-abc-d-rg-networkconnection-001"
     }
   })
 }
