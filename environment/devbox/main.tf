@@ -35,8 +35,8 @@ resource "azapi_resource" "devbox_definition" {
   name = "my-devbox-definition"
   parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-abc-d-dc"
   body = jsonencode({
+    location = "West Europe"
     properties = {
-      location = "West Europe"
       hibernateSupport = "Enabled"
       imageReference = {
         id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-s-stamp-d-rg-001/providers/Microsoft.Compute/galleries/xmew1dopsstampdcomputegallery001/images/testimage"
