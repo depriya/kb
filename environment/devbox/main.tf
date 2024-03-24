@@ -38,9 +38,10 @@ resource "azapi_resource" "devbox_definition" {
     location = "West Europe"
     properties = {
       hibernateSupport = "Enabled"
-      imageReference = {
-        id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.DevCenter/devcenters/galleries/xmew1dopsstampdcomputegallery001/images/imagedef/versions/0.0.1"
-      }
+      "imageReference": {
+    "id": "[concat(resourceId('Microsoft.DevCenter/devcenters/galleries', data.azapi_resource.existing_devcenter.id, 'xmew1dopsstampdcomputegallery001'), '/images/imagedef/versions/0.0.1')]"
+}
+
       osStorageType = "managed"
       sku = {
         capacity = 1
