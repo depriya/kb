@@ -88,7 +88,7 @@ resource "azapi_resource" "pool" {
 resource "azapi_resource" "networkConnection" {
   type = "Microsoft.DevCenter/networkConnections@2023-01-01-preview"
   name = "my-network-connection"
-  parent_id = data.azapi_resource.existing_devcenter.id
+  parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001"
   body = jsonencode({
     location = "West Europe"
     properties = {
