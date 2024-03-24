@@ -51,7 +51,7 @@ resource "azapi_resource" "devbox_definition" {
     properties = {
       hibernateSupport = "Enabled"
       "imageReference": {
-    id = "${data.azapi_resource.existing_devcenter.id}/galleries/default/images/${var.image}"
+    id = "${data.azapi_resource.existing_devcenter.id}/galleries/default/images/${var.image["win11-ent-base"]}"
 }
 
       osStorageType = "managed"
