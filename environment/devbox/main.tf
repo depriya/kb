@@ -40,7 +40,7 @@ resource "azapi_resource" "symbolicname" {
     properties = {
       hibernateSupport = "Enabled"
       imageReference = {
-        id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-s-stamp-d-rg-001/providers/Microsoft.Compute/galleries/xmew1dopsstampdcomputegallery001/images/DevopsPilot_TestImage"
+        id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-s-stamp-d-rg-001/providers/Microsoft.Compute/galleries/xmew1dopsstampdcomputegallery001/images/testimage"
       }
       osStorageType = "standard"
       sku = {
