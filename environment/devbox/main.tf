@@ -54,7 +54,7 @@ resource "azapi_resource" "devbox_definition" {
     id = "${data.azapi_resource.existing_devcenter.id}/galleries/default/images/${var.image["win11-ent-base"]}"
 }
 
-      osStorageType = "managed"
+      osStorageType = "ssd_256gb"
       sku = {
         capacity = 1
         family = "Standard"
