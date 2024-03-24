@@ -11,6 +11,18 @@ provider "azapi" {
     skip_provider_registration = true
 }
 
+# Define image and compute variables
+variable "image" {
+  type = map(string)
+  default = {
+    win11-ent-base   = "microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os"
+    win11-ent-m365   = "microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-m365"
+    win11-ent-vs2022 = "microsoftvisualstudio_visualstudioplustools_vs-2022-ent-general-win11-m365-gen2"
+  }
+}
+
+
+
 # Data sources to fetch IDs of existing resources
 data "azapi_resource" "existing_devcenter" {
   type = "Microsoft.DevCenter/devcenters@2023-04-01"
@@ -39,7 +51,7 @@ resource "azapi_resource" "devbox_definition" {
     properties = {
       hibernateSupport = "Enabled"
       "imageReference": {
-    "id": "[concat(resourceId('Microsoft.DevCenter/devcenters/galleries', data.azapi_resource.existing_devcenter.id, 'xmew1dopsstampdcomputegallery001'), '/images/imagedef/versions/0.0.1')]"
+    id = "${data.azapi_resource.existing_devcenter.id}/galleries/default/images/${var.image[definition.image]}"
 }
 
       osStorageType = "managed"
