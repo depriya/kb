@@ -78,10 +78,7 @@ resource "azapi_resource" "pool" {
       licenseType = "Windows_Client"
       localAdministrator = "Enabled"
       networkConnectionName = "my-attached-network"
-      stopOnDisconnect = {
-        gracePeriodMinutes = 60
-        status = "Enabled"
-      }
+      
     }
   })
 }
