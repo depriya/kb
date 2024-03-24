@@ -15,6 +15,7 @@ provider "azapi" {
 data "azapi_resource" "existing_devcenter" {
   type = "Microsoft.DevCenter/devcenters@2023-04-01"
   name = "xmew1-dop-c-abc-d-dc"
+  parent_id = "xmew1-dop-c-abc-d-rg-001"
 }
 
 data "azapi_resource" "existing_gallery" {
