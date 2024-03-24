@@ -84,12 +84,11 @@ resource "azapi_resource" "pool" {
 }
 
 # Define attached network
-resource "azapi_resource" "attached_network" {
-  type = "Microsoft.DevCenter/devcenters/attachednetworks@2023-04-01"
-  name = "my-attached-network"
+resource "azapi_resource" "networkConnection" {
+  type = "Microsoft.DevCenter/networkConnections@2023-01-01-preview"
+  name = "my-network-connection"
   parent_id = data.azapi_resource.existing_devcenter.id
   body = jsonencode({
-    location = "westeurope"
     properties = {
       domainJoinType = "AzureADJoin"
       subnetId = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.Network/virtualNetworks/xmew1-dop-c-oem-vnet-001/subnets/OEMSubnet"
@@ -97,6 +96,19 @@ resource "azapi_resource" "attached_network" {
     }
   })
 }
+
+resource "azapi_resource" "attachedNetworks" {
+  type = "Microsoft.DevCenter/devcenters/attachednetworks@2023-01-01-preview"
+  name = "my-attached-network"
+  parent_id = data.azapi_resource.existing_devcenter.id
+  body = jsonencode({
+    properties = {
+      networkConnectionId = "${azapi_resource.networkConnection.id}"
+    }
+  })
+}
+
+
 
 # Define environment types
 resource "azapi_resource" "environment_type" {
