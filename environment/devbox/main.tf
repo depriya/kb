@@ -89,8 +89,11 @@ resource "azapi_resource" "attached_network" {
   name = "my-attached-network"
   parent_id = data.azapi_resource.existing_devcenter.id
   body = jsonencode({
+    location = "westeurope"
     properties = {
-      networkConnectionId = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.Network/networkInterfaces/xmew1-dop-c-abc-d-pe-001.nic.dcd39cd4-3c18-4993-94a4-47a47cecb69d"
+      domainJoinType = "AzureADJoin"
+      subnetId = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.Network/virtualNetworks/xmew1-dop-c-oem-vnet-001/subnets/OEMSubnet"
+      networkingResourceGroupName = "xmew1-dop-c-abc-d-rg-001"
     }
   })
 }
