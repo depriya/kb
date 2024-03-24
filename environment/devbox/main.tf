@@ -33,7 +33,7 @@ data "azapi_resource" "existing_project" {
 resource "azapi_resource" "devbox_definition" {
   type = "Microsoft.DevCenter/devcenters/devboxdefinitions@2023-04-01"
   name = "my-devbox-definition"
-  parent_id = data.azapi_resource.existing_devcenter
+  parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-abc-d-dc"
   body = jsonencode({
     properties = {
       hibernateSupport = "Enabled"
