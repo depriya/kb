@@ -16,8 +16,6 @@ variable "image" {
   type = map(string)
   default = {
     win11-ent-base   = "microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os"
-    #win11-ent-m365   = "microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-m365"
-    #win11-ent-vs2022 = "microsoftvisualstudio_visualstudioplustools_vs-2022-ent-general-win11-m365-gen2"
   }
 }
 
@@ -44,7 +42,7 @@ data "azapi_resource" "existing_project" {
 # Define devbox definitions
 resource "azapi_resource" "devbox_definition" {
   type = "Microsoft.DevCenter/devcenters/devboxdefinitions@2023-04-01"
-  name = "my-devbox-definition"
+  name = "xmew1-dop-c-abc-devboxdef"
   parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-abc-d-dc"
   body = jsonencode({
     location = "westeurope"
@@ -69,10 +67,10 @@ resource "azapi_resource" "devbox_definition" {
 # Define pools
 resource "azapi_resource" "pool" {
   type = "Microsoft.DevCenter/projects/pools@2023-04-01"
-  name = "my-pool"
+  name = "xmew1-dop-c-abc-pools-001"
   parent_id = data.azapi_resource.existing_project.id
   body = jsonencode({
-    location = "West Europe"
+    location = "westeurope"
     properties = {
       devBoxDefinitionName = "my-devbox-definition"
       licenseType = "Windows_Client"
@@ -87,10 +85,10 @@ resource "azapi_resource" "pool" {
 # Define attached network
 resource "azapi_resource" "networkConnection" {
   type = "Microsoft.DevCenter/networkConnections@2023-01-01-preview"
-  name = "my-network-connection"
+  name = "xmew1-dop-c-abc-ntwkcon-001"
   parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001"
   body = jsonencode({
-    location = "West Europe"
+    location = "westeurope"
     properties = {
       domainJoinType = "AzureADJoin"
       subnetId = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.Network/virtualNetworks/xmew1-dop-c-oem-vnet-001/subnets/OEMSubnet"
@@ -101,7 +99,7 @@ resource "azapi_resource" "networkConnection" {
 
 resource "azapi_resource" "attachedNetworks" {
   type = "Microsoft.DevCenter/devcenters/attachednetworks@2023-01-01-preview"
-  name = "my-attached-network"
+  name = "xmew1-dop-c-abc-ntwk-001"
   parent_id = data.azapi_resource.existing_devcenter.id
   body = jsonencode({
     properties = {
@@ -116,7 +114,7 @@ resource "azapi_resource" "attachedNetworks" {
 # Define environment types
 resource "azapi_resource" "environment_type" {
   type = "Microsoft.DevCenter/devcenters/environmentTypes@2023-04-01"
-  name = "my-environment-type"
+  name = "sandbox"
   parent_id = data.azapi_resource.existing_devcenter.id
   body = jsonencode({
     properties = {}
