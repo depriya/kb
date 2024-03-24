@@ -80,7 +80,7 @@ resource "azapi_resource" "pool" {
       networkConnectionName = "my-attached-network"
       stopOnDisconnect = {
         gracePeriodMinutes = 30
-        status = "enabled"
+        status = "Enabled"
       }
     }
   })
