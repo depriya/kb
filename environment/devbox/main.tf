@@ -1,55 +1,98 @@
 terraform {
   required_providers {
-    azapi = {
-      source = "Azure/azapi"
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 3.0.0"
     }
   }
+
+  required_version = ">= 1.0.0"
 }
 
-provider "azapi" {
+provider "azurerm" {
+  features {}
+
+  skip_provider_registration = true
 }
 
-variable "devbox_name" {
-  description = "The name of the DevBox definition"
-  type        = string
-  default     = "my-devbox"
+# Data sources to fetch IDs of existing resources
+data "azapi_resource" "existing_devcenter" {
+  type = "Microsoft.DevCenter/devcenters@2023-04-01"
+  name = "xmew1-dop-c-abc-d-dc"
 }
 
-variable "devbox_location" {
-  description = "The location where the DevBox definition will be created"
-  type        = string
-  default     = "West Europe"
+data "azapi_resource" "existing_gallery" {
+  type = "Microsoft.DevCenter/devcenters/galleries@2023-04-01"
+  name = "xmew1dopsstampdcomputegallery001"
+  parent_id = data.azapi_resource.existing_devcenter.id
 }
 
-variable "devbox_tags" {
-  description = "Tags to associate with the DevBox definition"
-  type        = map(string)
-  default = {
-    tagName1 = "tagValue1"
-    tagName2 = "tagValue2"
-  }
+data "azapi_resource" "existing_project" {
+  type = "Microsoft.DevCenter/projects@2023-04-01"
+  name = "xmew1-dop-c-abc-d-project-001"
+  parent_id = data.azapi_resource.existing_devcenter.id
 }
 
-resource "azapi_resource" "symbolicname" {
+# Define devbox definitions
+resource "azapi_resource" "devbox_definition" {
   type = "Microsoft.DevCenter/devcenters/devboxdefinitions@2023-04-01"
-  name = var.devbox_name
-  location = var.devbox_location
-  parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-tstoem-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-tstoem-d-dc"
-  tags = var.devbox_tags
+  name = "my-devbox-definition"
+  parent_id = data.azapi_resource.existing_project.id
   body = jsonencode({
     properties = {
       hibernateSupport = "Enabled"
       imageReference = {
         id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-s-stamp-d-rg-001/providers/Microsoft.Compute/galleries/xmew1dopsstampdcomputegallery001/images/testimage"
       }
-      osStorageType = "standard"
+      osStorageType = "managed"
       sku = {
         capacity = 1
-        family = "standard"
+        family = "Standard"
         name = "DS1_v2"
         size = "Standard_DS1_v2"
-        tier = "Standard"
+        tier = "dev"
       }
     }
+  })
+}
+
+# Define pools
+resource "azapi_resource" "pool" {
+  type = "Microsoft.DevCenter/projects/pools@2023-04-01"
+  name = "my-pool"
+  parent_id = data.azapi_resource.existing_project.id
+  body = jsonencode({
+    properties = {
+      devBoxDefinitionName = "my-devbox-definition"
+      licenseType = "Windows_Client"
+      localAdministrator = "admin"
+      networkConnectionName = "my-attached-network"
+      stopOnDisconnect = {
+        gracePeriodMinutes = 30
+        status = "enabled"
+      }
+    }
+  })
+}
+
+# Define attached network
+resource "azapi_resource" "attached_network" {
+  type = "Microsoft.DevCenter/devcenters/attachednetworks@2023-04-01"
+  name = "my-attached-network"
+  parent_id = data.azapi_resource.existing_devcenter.id
+  body = jsonencode({
+    properties = {
+      networkConnectionId = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.Network/networkInterfaces/xmew1-dop-c-abc-d-pe-001.nic.dcd39cd4-3c18-4993-94a4-47a47cecb69d"
+    }
+  })
+}
+
+# Define environment types
+resource "azapi_resource" "environment_type" {
+  type = "Microsoft.DevCenter/devcenters/environmentTypes@2023-04-01"
+  name = "my-environment-type"
+  parent_id = data.azapi_resource.existing_devcenter.id
+  body = jsonencode({
+    properties = {}
   })
 }
