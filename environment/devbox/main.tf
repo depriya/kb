@@ -16,8 +16,8 @@ variable "image" {
   type = map(string)
   default = {
     win11-ent-base   = "microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os"
-    win11-ent-m365   = "microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-m365"
-    win11-ent-vs2022 = "microsoftvisualstudio_visualstudioplustools_vs-2022-ent-general-win11-m365-gen2"
+    #win11-ent-m365   = "microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-m365"
+    #win11-ent-vs2022 = "microsoftvisualstudio_visualstudioplustools_vs-2022-ent-general-win11-m365-gen2"
   }
 }
 
@@ -51,7 +51,7 @@ resource "azapi_resource" "devbox_definition" {
     properties = {
       hibernateSupport = "Enabled"
       "imageReference": {
-    id = "${data.azapi_resource.existing_devcenter.id}/galleries/default/images/${var.image[definition.image]}"
+    id = "${data.azapi_resource.existing_devcenter.id}/galleries/default/images/${var.image}"
 }
 
       osStorageType = "managed"
