@@ -72,10 +72,10 @@ resource "azapi_resource" "pool" {
   body = jsonencode({
     location = "westeurope"
     properties = {
-      devBoxDefinitionName = "my-devbox-definition"
+      devBoxDefinitionName =  "xmew1-dop-c-abc-devboxdef"
       licenseType = "Windows_Client"
       localAdministrator = "Enabled"
-      networkConnectionName = "my-network-connection"
+      networkConnectionName = "xmew1-dop-c-abc-ntwkcon-001"
       
     }
   })
