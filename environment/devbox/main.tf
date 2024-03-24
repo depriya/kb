@@ -36,6 +36,7 @@ resource "azapi_resource" "devbox_definition" {
   parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-abc-d-dc"
   body = jsonencode({
     properties = {
+      location = "West Europe"
       hibernateSupport = "Enabled"
       imageReference = {
         id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-s-stamp-d-rg-001/providers/Microsoft.Compute/galleries/xmew1dopsstampdcomputegallery001/images/testimage"
@@ -46,7 +47,7 @@ resource "azapi_resource" "devbox_definition" {
         family = "Standard"
         name = "DS1_v2"
         size = "Standard_DS1_v2"
-        tier = "dev"
+        tier = "Standard"
       }
     }
   })
