@@ -76,10 +76,10 @@ resource "azapi_resource" "pool" {
     properties = {
       devBoxDefinitionName = "my-devbox-definition"
       licenseType = "Windows_Client"
-      localAdministrator = "admin"
+      localAdministrator = "Enabled"
       networkConnectionName = "my-attached-network"
       stopOnDisconnect = {
-        gracePeriodMinutes = 30
+        gracePeriodMinutes = 60
         status = "Enabled"
       }
     }
