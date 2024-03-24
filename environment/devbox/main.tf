@@ -77,10 +77,11 @@ resource "azapi_resource" "pool" {
       devBoxDefinitionName = "my-devbox-definition"
       licenseType = "Windows_Client"
       localAdministrator = "Enabled"
-      networkConnectionName = "my-attached-network"
+      networkConnectionName = "my-network-connection"
       
     }
   })
+   depends_on = [azapi_resource.networkConnection]
 }
 
 # Define attached network
@@ -107,6 +108,7 @@ resource "azapi_resource" "attachedNetworks" {
       networkConnectionId = "${azapi_resource.networkConnection.id}"
     }
   })
+   depends_on = [azapi_resource.networkConnection]
 }
 
 
