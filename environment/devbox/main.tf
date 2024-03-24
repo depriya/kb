@@ -75,7 +75,7 @@ resource "azapi_resource" "pool" {
       devBoxDefinitionName =  "xmew1-dop-c-abc-devboxdef"
       licenseType = "Windows_Client"
       localAdministrator = "Enabled"
-      networkConnectionName = "xmew1-dop-c-abc-ntwkcon-001"
+      networkConnectionName = "xmew1-dop-c-abc-ntwk-001"
       
     }
   })
