@@ -36,20 +36,21 @@ data "azapi_resource" "existing_gallery" {
 
 data "azapi_resource" "existing_project" {
   type = "Microsoft.DevCenter/projects@2023-04-01"
-  name = "xmew1-dop-c-abc-d-project-001"
+  name = "xmew1-dop-c-abc-d-project-002"
   parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001"
 }
 # Define devbox definitions
 resource "azapi_resource" "devbox_definition" {
   type = "Microsoft.DevCenter/devcenters/devboxdefinitions@2023-04-01"
-  name = "xmew1-dop-c-abc-devboxdef"
+  name = "xmew1-dop-c-abc-devboxdef1"
   parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-abc-d-dc"
   body = jsonencode({
     location = "westeurope"
     properties = {
       hibernateSupport = "Enabled"
       "imageReference": {
-    id = "${data.azapi_resource.existing_devcenter.id}/galleries/default/images/${var.image["win11-ent-base"]}"
+      id = "${data.azapi_resource.existing_devcenter.id}/galleries/xmew1dopsstampdcomputegallery001/images/imagedef"
+    //id = "${data.azapi_resource.existing_devcenter.id}/galleries/default/images/${var.image["win11-ent-base"]}"
 }
 
       osStorageType = "ssd_256gb"
