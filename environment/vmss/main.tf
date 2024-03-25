@@ -16,10 +16,12 @@ provider "azurerm" {
 }
 
 variable "resource_group_name" {}
-
+variable "oem" {}
 variable "resource_name" {}
 variable "admin_username" {}
-variable "admin_password" {}
+variable "admin_password" {
+  sensitive = true
+}
 
 # #variable "vnet" {
 #   default = "xmew1-dop-c-oem-vnet-001"
@@ -47,7 +49,7 @@ data "azurerm_subnet" "internal" {
 }
 
 resource "azurerm_network_security_group" "example" {
-  name                = "xmew1-dop-c-oem-vmss-nsg"
+  name                = "xmew1-dop-c-${var.oem}-vmss-nsg"
   location            = data.azurerm_resource_group.example.location
   resource_group_name = data.azurerm_resource_group.example.name
 }
@@ -75,11 +77,11 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   }
 
   network_interface {
-    name    = "xmew1-dop-c-oem-vmss-nic"
+    name    = "xmew1-dop-c-${var.oem}-vmss-nic"
     primary = true
 
     ip_configuration {
-      name      = "internal"
+      name      = "${var.oem}ip"
       primary   = true
       subnet_id = data.azurerm_subnet.internal.id
     }
