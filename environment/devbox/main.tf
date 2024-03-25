@@ -36,7 +36,7 @@ data "azapi_resource" "existing_gallery" {
 
 data "azapi_resource" "existing_project" {
   type = "Microsoft.DevCenter/projects@2023-04-01"
-  name = "xmew1-dop-c-abc-d-project-002"
+  name = "xmew1-dop-c-abc-d-project-001"
   parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001"
 }
 # Define devbox definitions
