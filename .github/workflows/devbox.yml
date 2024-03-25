@@ -2,6 +2,10 @@ name: Deploy.environment.devbox
 
 on:
   workflow_dispatch:
+    inputs:
+      OEM:
+        description: 'The name of OEM'
+        required: true
       
 permissions:
   id-token: write
@@ -23,13 +27,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Prompt for OEM variable
-        id: prompt-oem
-        run: |
-          echo "Enter the OEM value:"
-          read OEM
-          echo "::set-output name=oem::$OEM"
-
       - name: Initialize Terraform
         run: |
           cd environment/devbox
@@ -38,7 +35,7 @@ jobs:
       - name: Plan Terraform changes
         run: |
           cd environment/devbox
-          terraform plan -out=tfplan -var "OEM=${{ steps.prompt-oem.outputs.oem }}"
+          terraform plan -out=tfplan -var="OEM=${{ github.event.inputs.OEM }}" 
 
       - name: Apply Terraform changes
         run: |
