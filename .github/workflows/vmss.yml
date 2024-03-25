@@ -56,6 +56,7 @@ jobs:
       - name: Plan Terraform changes
         run: |
           cd environment/vmss
+          
           terraform plan -out=tfplan -var="admin_username=${{ github.event.inputs.admin_username }}" -var="admin_password=${{ github.event.inputs.admin_password }}" -var="resource_group_name=${{ github.event.inputs.resource_group_name }}" -var="resource_name=${{ github.event.inputs.resource_name }}" -var="oem=${{ github.event.inputs.oem }}" -var="location=${{ github.event.inputs.location }}"
 
       - name: Apply Terraform changes
