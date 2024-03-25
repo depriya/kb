@@ -15,7 +15,6 @@ provider "azurerm" {
   skip_provider_registration = true
 }
 
-variable "resource_group_name" {}
 variable "oem" {}
 variable "resource_name" {}
 variable "admin_username" {}
@@ -27,14 +26,16 @@ variable "admin_password" {
 #   default = "xmew1-dop-c-oem-vnet-001"
 # }
 
-variable "location" {}
+variable "location" {
+  default = "west europe"
+}
 
 # #variable "subnet" {
 #   default = "OEMSubnet"
 # }
 
 data "azurerm_resource_group" "example" {
-  name = var.resource_group_name
+  name = "xmew1-dop-c-${var.oem}-d-rg-001"
 }
 
 data "azurerm_virtual_network" "example" {
