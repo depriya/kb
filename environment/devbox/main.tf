@@ -79,16 +79,7 @@ data "azapi_resource" "existing_project" {
   parent_id = data.azapi_resource.existing_rg.id
 }
 
-# Define environment types
-resource "azapi_resource" "environment_type" {
-  type = "Microsoft.DevCenter/devcenters/environmentTypes@2023-04-01"
-  name = "sandbox"
-  parent_id = data.azapi_resource.existing_devcenter.id
-  body = jsonencode({
-    properties = {}
-  })
-  depends_on = [data.azapi_resource.existing_devcenter]
-}
+
 # Define devbox definitions
 resource "azapi_resource" "devbox_definition" {
   type = "Microsoft.DevCenter/devcenters/devboxdefinitions@2023-04-01"
