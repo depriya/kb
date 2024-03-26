@@ -39,9 +39,9 @@ variable "vnet" {
 variable "subnet"{
    default = "OEMSubnet"
 }
-variable "gallery" {
-    default = "xmew1dopsstampdcomputegallery001"
-    }
+#variable "gallery" {
+ #   default = "xmew1dopsstampdcomputegallery001"
+  #  }
 
 data "azapi_resource" "existing_rg" {
   type = "Microsoft.Resources/resourceGroups@2022-09-01"
@@ -67,11 +67,11 @@ data "azapi_resource" "existing_devcenter" {
   parent_id = data.azapi_resource.existing_rg.id
 }
 
-data "azapi_resource" "existing_gallery" {
-  type = "Microsoft.DevCenter/devcenters/galleries@2023-04-01"
-  name = var.gallery
-  parent_id = data.azapi_resource.existing_devcenter.id
-}
+# #data "azapi_resource" "existing_gallery" {
+#   type = "Microsoft.DevCenter/devcenters/galleries@2023-04-01"
+#   name = var.gallery
+#   parent_id = data.azapi_resource.existing_devcenter.id
+# }
 
 data "azapi_resource" "existing_project" {
   type = "Microsoft.DevCenter/projects@2023-04-01"
