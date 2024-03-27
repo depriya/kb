@@ -1,0 +1,39 @@
+name: Deploy.environment.devbox
+
+on:
+  workflow_dispatch:
+      
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: sub-AVL_DevopsPilot
+
+    steps:
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Initialize Terraform
+        run: |
+          cd environment/devbox
+          terraform init
+
+      - name: Plan Terraform changes
+        run: |
+          cd environment/devbox
+          terraform plan -out=tfplan 
+
+      - name: Apply Terraform changes
+        run: |
+          cd environment/devbox
+          terraform apply -auto-approve tfplan

@@ -36,6 +36,8 @@ variable "vnet" {
   default = "xmew1-dop-c-oem-vnet-001"
 }
 
+variable "project"{}
+
 variable "subnet"{
    default = "OEMSubnet"
 }
@@ -75,7 +77,7 @@ data "azapi_resource" "existing_devcenter" {
 
 data "azapi_resource" "existing_project" {
   type = "Microsoft.DevCenter/projects@2023-04-01"
-  name = "xmew1-dop-c-${var.OEM}-d-project-001"
+  name = "xmew1-dop-c-${var.OEM}-p-${var.project}-001"
   parent_id = data.azapi_resource.existing_rg.id
 }
 
