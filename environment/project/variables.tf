@@ -19,6 +19,7 @@ variable "devcenter_id" {
 variable "project_description" {
   type        = string
   description = "The description of the Dev Center project."
+  default = "The description of the Dev Center project."
 }
 
 variable "project_members" {
