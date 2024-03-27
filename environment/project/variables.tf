@@ -13,11 +13,6 @@ variable "devcenter_id" {
   description = "The ID of the Dev Center project."
 }
 
-variable "project_name" {
-  type        = string
-  description = "The name of the Dev Center project."
-}
-
 variable "project_description" {
   type        = string
   description = "The description of the Dev Center project."
@@ -35,11 +30,6 @@ variable "environment_types" {
     target_subscription_id = string
   }))
   description = "The environment types to create on the Dev Center project."
-}
-
-variable "location" {
-  type        = string
-  description = "The location/region in which to create the Dev Center project."
 }
 
 variable "project_name" {
