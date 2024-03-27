@@ -68,5 +68,5 @@ variable "environment_name" {
 variable "target_subscription_id" {
   type        = string
   description = "The subscription ID of the target subscription."
-  //default = "db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+  default = "db401b47-f622-4eb4-a99b-e0cebc0ebad4"
 }
