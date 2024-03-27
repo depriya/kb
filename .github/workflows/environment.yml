@@ -1,93 +1,31 @@
-name: Deploy.environment.project
+name: Run config.sh
 
 on:
   workflow_dispatch:
-    inputs:
-      customerOEMsuffix:
-        description: "Suffix used for customer OEM in lowercase. (Ensure that dev center is created using customer-stamp)"
-        required: true
-      environment:
-        type: choice
-        description: "Choose the environment used for customer OEM: 'd' for dev, 'p' for Prod"
-        options:
-          - d
-          - p
-        required: true
-
+  
 permissions:
-  id-token: write
-  contents: read
-
+    id-token: write
+    contents: read
+    
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    environment: sub-AVL_DevopsPilot
+      build:
+        runs-on: ubuntu-latest
+        environment: sub-AVL_DevopsPilot
+    
+        steps:
+          - name: 'Az CLI login'
+            uses: azure/login@v1
+            with:
+              client-id: ${{ secrets.AZURE_CLIENT_ID }}
+              tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+              subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    
+          - name: Checkout code
+            uses: actions/checkout@v2
 
-    steps:
-      - name: 'Az CLI login'
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: CheckoutRepo
-        uses: actions/checkout@v2
-      
-      - name: Set Names
-        id: set-names
-        run: |
-          echo "rgName=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-rg-001" >> $GITHUB_ENV
-          echo "devcenter=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-dc" >> $GITHUB_ENV
-          echo "projectname=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-project-001" >> $GITHUB_ENV
-
-      - name: Create Resource Group
-        run: az group create --name ${{ env.rgName }} --location westeurope
-
-      - name: Debug Resource Group Name
-        run: |
-          echo "Resource Group Name ${{ env.rgName }}"
-          echo "Dev Center Name ${{ env.devcenter }}"
-          echo "Project Name ${{ env.projectname }}"
-
-      - name: Update Terraform Variables
-        run: |
-          cd environment/project  # Navigate to the Terraform project directory
-          rgName="${{ env.rgName }}"
-          devcenter="${{ env.devcenter }}"
-          projectname="${{ env.projectname }}"
-          sed -i "s/variable \"rgName\" { default = \".*\" }/variable \"rgName\" { default = \"${rgName}\" }/" variables.tf
-          sed -i "s/variable \"devcenter\" { default = \".*\" }/variable \"devcenter\" { default = \"${devcenter}\" }/" variables.tf
-          sed -i "s/variable \"projectname\" { default = \".*\" }/variable \"projectname\" { default = \"${projectname}\" }/" variables.tf
-          cat variables.tf
-        
-
-      - name: Terraform Init
-        run: |
-          cd environment/project  # Navigate to the Terraform project directory
-          terraform init
-
-      - name: Import Existing Resource Group
-        run: |
-          cd environment/project  # Navigate to the Terraform project directory
-          terraform import -var="rgName=${{ env.rgName }}" -var="devcenter=${{ env.devcenter }}" -var="projectname=${{ env.projectname }}" azurerm_resource_group.rg "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.rgName }}"
-          terraform import -var="rgName=${{ env.rgName }}" -var="devcenter=${{ env.devcenter }}" -var="projectname=${{ env.projectname }}" azurerm_dev_center.dc "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.rgName }}/providers/Microsoft.DevCenter/devCenters/${{ env.devcenter }}"
-          #terraform import -var="rgName=${{ env.rgName }}" -var="devcenter=${{ env.devcenter }}" -var="projectname=${{ env.projectname }}" azurerm_shared_image_gallery.example "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/xmew1-dop-s-stamp-d-rg-001/providers/Microsoft.Compute/galleries/xmew1dopsstampdcomputegallery001"
-
-          
-      - name: Terraform Plan
-        run: |
-          cd environment/project  # Navigate to the Terraform project directory
-          terraform plan \
-            -var="rgName=${{ env.rgName }}" \
-            -var="devcenter=${{ env.devcenter }}" \
-            -var="projectname=${{ env.projectname }}"
-
-      - name: Deploy resources Terraform apply
-        run: |
-          cd environment/project  # Navigate to the Terraform project directory
-          terraform apply \
-            -var="rgName=${{ env.rgName }}" \
-            -var="devcenter=${{ env.devcenter }}" \
-            -var="projectname=${{ env.projectname }}" \
-            -auto-approve
+          - name: Run config.sh
+            run: |
+             chmod +x environment/vmss/config.sh  # Make sure the script is executable
+             cd environment/vmss
+             ./config.sh
