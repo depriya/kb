@@ -48,12 +48,12 @@ resource "time_sleep" "wait_30_seconds" {
   create_duration = "30s"
 }
 
-# Lookup principal_id for the project system assigned identity
-data "azuread_service_principal" "environment_type_smi" {
-  display_name = "${var.project_name}/environmentTypes/${var.environment_name}"
+# # Lookup principal_id for the project system assigned identity
+# data "azuread_service_principal" "environment_type_smi" {
+#   display_name = "${var.project_name}/environmentTypes/${var.environment_name}"
 
-  depends_on = [time_sleep.wait_30_seconds]
-}
+#   depends_on = [time_sleep.wait_30_seconds]
+# }
 
 ##############################
 # Create RBAC Assignment: grant project system assigned identity Owner access to target subscription
