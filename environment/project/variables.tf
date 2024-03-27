@@ -16,11 +16,11 @@ variable "devcenter_id" {
   default = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-rrr-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-rrr-d-dc"
 }
 
-variable "project_description" {
-  type        = string
-  description = "The description of the Dev Center project."
-  default = "The description of the Dev Center project."
-}
+#variable "project_description" {
+ # type        = string
+  #description = "The description of the Dev Center project."
+  #default = "The description of the Dev Center project."
+#}
 
 variable "project_members" {
   type        = list(string)

@@ -4,9 +4,10 @@
 data "azapi_resource" "project" {
   type      = "Microsoft.DevCenter/projects@2023-04-01"
   name      = var.project_name
-  location  = var.location
+  //location  = var.location
   parent_id = var.resource_group_id
-  }
+  
+}
 
 
 ##############################
@@ -16,7 +17,7 @@ resource "azapi_resource" "environment_type_definition" {
   type      = "Microsoft.DevCenter/projects/environmentTypes@2023-04-01"
   name      = var.environment_name
   location  = var.location
-  parent_id = azapi_resource.project.id
+  parent_id = data.azapi_resource.project.id
   identity {
     type = "SystemAssigned"
     # identity_ids = [] # only used when type contains UserAssigned to reference the user assigned identity
@@ -67,7 +68,7 @@ resource "time_sleep" "wait_30_seconds" {
 data "azapi_resource" "allowed_env_types" {
   type      = "Microsoft.DevCenter/projects/allowedEnvironmentTypes@2023-04-01"
   name      = var.environment_name
-  parent_id = azapi_resource.project.id
+  parent_id = data.azapi_resource.project.id
 
   depends_on = [azapi_resource.environment_type_definition]
 }
@@ -81,7 +82,7 @@ data "azapi_resource" "allowed_env_types" {
 resource "azurerm_role_assignment" "devcenter_environment_user" {
   for_each = toset(var.project_members)
 
-  scope                = azapi_resource.project.id
+  scope                = data.azapi_resource.project.id
   role_definition_name = "Deployment Environments User"
   principal_id         = each.key
 }
