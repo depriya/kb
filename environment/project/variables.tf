@@ -1,7 +1,13 @@
+variable "OEM" {
+  type        = string
+}
+variable "project"{
+  type = string
+}
 variable "resource_group_id" {
   type        = string
   description = "The ID of the resource group in which to create the Dev Center project."
-  default = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-rrr-d-rg-001"
+  default = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001"
 }
 
 variable "location" {
@@ -13,19 +19,19 @@ variable "location" {
 variable "devcenter_id" {
   type        = string
   description = "The ID of the Dev Center project."
-  default = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-rrr-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-rrr-d-dc"
+  default = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-${var.OEM}-d-dc"
 }
 
-#variable "project_description" {
- # type        = string
-  #description = "The description of the Dev Center project."
-  #default = "The description of the Dev Center project."
-#}
+variable "project_description" {
+  type        = string
+  description = "The description of the Dev Center project."
+  default = "The description of the Dev Center project."
+}
 
 variable "project_members" {
   type        = list(string)
   description = "The members of the Dev Center project."
-  default = [ "b9082dac-d369-4435-a4b9-9779f666c1e0" ]
+  default = [ "b9082dac-d369-4435-a4b9-9779f666c1e0" ]  //Alex's objectid
 }
 
 variable "environment_types" {
@@ -48,7 +54,7 @@ variable "environment_types" {
 variable "project_name" {
   type        = string
   description = "The name of the Dev Center project."
-  default = "xmew1-dop-c-rrr-d-project-001"
+  default = "xmew1-dop-c-${var.OEM}-p-${var.project}-001"
 }
 
 

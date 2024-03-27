@@ -2,6 +2,13 @@ name: Deploy.environment.project
 
 on:
   workflow_dispatch:
+    inputs:
+        customerOEMsuffix:
+          description: "suffix required for customer OEM in lowercase"
+          required: true
+        Project:
+            description: "enter the project name within 5 characters"
+            required: true
       
 permissions:
   id-token: write
@@ -11,7 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: sub-AVL_DevopsPilot
-
+    
     steps:
       - name: 'Az CLI login'
         uses: azure/login@v1
@@ -31,7 +38,7 @@ jobs:
       - name: Plan Terraform changes
         run: |
           cd environment/project
-          terraform plan -out=tfplan 
+          terraform plan -out=tfplan -var="OEM=${{ github.event.inputs.customerOEMsuffix }}" -var="project=${{ github.event.inputs.Project }}"
 
       - name: Apply Terraform changes
         run: |
