@@ -3,13 +3,13 @@
 ##############################
 resource "azapi_resource" "project" {
   type      = "Microsoft.DevCenter/projects@2023-04-01"
-  name      = var.project_name
+  name      = "xmew1-dop-c-${var.OEM}-p-${var.project}-001"
   location  = var.location
-  parent_id = var.resource_group_id
+  parent_id = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001"
   body = jsonencode({
     properties = {
       description = "${var.project_description}"
-      devCenterId = "${var.devcenter_id}"
+      devCenterId = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-${var.OEM}-d-dc"
     }
   })
 }
@@ -20,7 +20,7 @@ resource "azapi_resource" "project" {
 ##############################
 resource "azapi_resource" "environment_type_definition" {
   type      = "Microsoft.DevCenter/projects/environmentTypes@2023-04-01"
-  name      = var.environment_name
+  name      = "Test"
   location  = var.location
   parent_id = azapi_resource.project.id
   identity {
@@ -72,7 +72,7 @@ resource "time_sleep" "wait_30_seconds" {
 ##############################
 data "azapi_resource" "allowed_env_types" {
   type      = "Microsoft.DevCenter/projects/allowedEnvironmentTypes@2023-04-01"
-  name      = var.environment_name
+  name      = "Test"
   parent_id = azapi_resource.project.id
 
   depends_on = [azapi_resource.environment_type_definition]
