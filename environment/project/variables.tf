@@ -48,7 +48,7 @@ variable "environment_types" {
 variable "project_name" {
   type        = string
   description = "The name of the Dev Center project."
-  default = "xmew1-dop-c-rrr-d-project-004"
+  default = "xmew1-dop-c-rrr-d-project-001"
 }
 
 

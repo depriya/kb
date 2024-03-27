@@ -1,18 +1,12 @@
 ##############################
 # DevCenter project
 ##############################
-resource "azapi_resource" "project" {
+data "azapi_resource" "project" {
   type      = "Microsoft.DevCenter/projects@2023-04-01"
   name      = var.project_name
   location  = var.location
   parent_id = var.resource_group_id
-  body = jsonencode({
-    properties = {
-      description = "${var.project_description}"
-      devCenterId = "${var.devcenter_id}"
-    }
-  })
-}
+  }
 
 
 ##############################
