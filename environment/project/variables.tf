@@ -1,16 +1,19 @@
 variable "resource_group_id" {
   type        = string
   description = "The ID of the resource group in which to create the Dev Center project."
+  default = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-rrr-d-rg-001"
 }
 
 variable "location" {
   type        = string
   description = "The location/region in which to create the Dev Center project."
+  default = "west europe"
 }
 
 variable "devcenter_id" {
   type        = string
   description = "The ID of the Dev Center project."
+  default = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-rrr-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-rrr-d-dc"
 }
 
 variable "project_description" {
@@ -21,6 +24,7 @@ variable "project_description" {
 variable "project_members" {
   type        = list(string)
   description = "The members of the Dev Center project."
+  default = [ "b9082dac-d369-4435-a4b9-9779f666c1e0" ]
 }
 
 variable "environment_types" {
@@ -30,24 +34,28 @@ variable "environment_types" {
     target_subscription_id = string
   }))
   description = "The environment types to create on the Dev Center project."
+  default = {
+    "name" = Test
+  }
+  
 }
 
 variable "project_name" {
   type        = string
   description = "The name of the Dev Center project."
+  default = "xmew1-dop-c-rrr-d-project-002"
 }
 
-variable "project_id" {
-  type        = string
-  description = "The ID of the Dev Center project."
-}
+
 
 variable "environment_name" {
   type        = string
   description = "The name of the Dev Center project."
+  default = "Test"
 }
 
 variable "target_subscription_id" {
   type        = string
   description = "The subscription ID of the target subscription."
+  default = "db401b47-f622-4eb4-a99b-e0cebc0ebad4"
 }

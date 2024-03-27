@@ -22,7 +22,7 @@ resource "azapi_resource" "environment_type_definition" {
   type      = "Microsoft.DevCenter/projects/environmentTypes@2023-04-01"
   name      = var.environment_name
   location  = var.location
-  parent_id = var.project_id
+  parent_id = azapi_resource.project.id
   identity {
     type = "SystemAssigned"
     # identity_ids = [] # only used when type contains UserAssigned to reference the user assigned identity
@@ -73,7 +73,7 @@ resource "azurerm_role_assignment" "project_owner_sub" {
 data "azapi_resource" "allowed_env_types" {
   type      = "Microsoft.DevCenter/projects/allowedEnvironmentTypes@2023-04-01"
   name      = var.environment_name
-  parent_id = var.project_id
+  parent_id = azapi_resource.project.id
 
   depends_on = [azapi_resource.environment_type_definition]
 }
