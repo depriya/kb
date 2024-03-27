@@ -35,10 +35,14 @@ variable "environment_types" {
   }))
   description = "The environment types to create on the Dev Center project."
   default = {
-    "name" = Test
+    "Test" = {
+      name                   = "Test"
+      description            = "Description for Test environment"
+      target_subscription_id = "db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+    }
   }
-  
 }
+
 
 variable "project_name" {
   type        = string
