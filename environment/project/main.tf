@@ -61,11 +61,11 @@ data "azuread_service_principal" "environment_type_smi" {
 #   - Role: Owner
 #   - Scope: Subscription
 ##############################
-resource "azurerm_role_assignment" "project_owner_sub" {
-  scope                = "/subscriptions/${var.target_subscription_id}"
-  role_definition_name = "Owner"
-  principal_id         = data.azuread_service_principal.environment_type_smi.object_id
-}
+# #resource "azurerm_role_assignment" "project_owner_sub" {
+#   scope                = "/subscriptions/${var.target_subscription_id}"
+#   role_definition_name = "Owner"
+#   principal_id         = data.azuread_service_principal.environment_type_smi.object_id
+# }
 
 ##############################
 # Allow Environment Type
