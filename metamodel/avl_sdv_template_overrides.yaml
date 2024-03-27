@@ -1,0 +1,214 @@
+# Copyright (C) Microsoft Corporation.
+
+config:
+  project_name: AVL_DevOps_Pilot
+  version: 0.1.0
+
+  symphony:
+    toolchain_output_path: https://xmew1dopctstoemdst.blob.core.windows.net/demo-metamode-output/avl_devops_pilot
+    symphony_authority: 192.168.0.75
+
+  jfrog:
+    download_url: https://avlartiedgeew1.jfrog.io/artifactory/generic/avl/sms/6.5/5460_137/Install%20AVL%20Smart%20Mobile%20Solutions%20R6.5%20Build%205460_137.exe
+    edge_token: <<jfrog_edge_token_value>> #TODO: Update
+
+  staging_storage_account:
+    name: xmew1dopctstoemdst
+    resource_group: xmew1-dop-c-tstoem-d-rg-001
+    subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
+
+  clone_github_repositories:
+    - repository: model_releases
+      organisation: avl-sdv
+      pat_token: <<github_pat_token_value>> #TODO: Update
+    - repository: xcu_releases
+      organisation: avl-sdv
+      pat_token: <<github_pat_token_value>> #TODO: Update
+    - repository: Projects_Repo
+      organisation: avl-sdv
+      pat_token: <<github_pat_token_value>> #TODO: Update
+
+  model_stack:
+    model_repo_owner: <MODEL_REPO_OWNER>
+    model_repo_name: <MODEL_REPO_NAME>
+    ModulesLibrary:
+      PlantModelLibrary:
+        - BlockName: BEV_Truck_Mdl
+          RootPath: ''
+          SubSys:
+            - Name: BEV_Truck_1Spd
+              ModuleFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/FMU/BEV_Truck_1Spd.fmu
+              TimeStepSize:
+              SubSysParam:
+                - Param: BEV_Truck_1Spd_default
+                  ParamFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/param/BEV_Truck_1Spd_default.dcm
+        - BlockName: Driver_Mdl
+          RootPath: ''
+          SubSys:
+            - Name: Driver
+              ModuleFilePath: model_releases/Driver/v1.0/FMU/Driver.fmu
+              TimeStepSize:
+              XCPSettings:
+                XCPSlave:
+                HostIP:
+                Port:
+              SubSysParam:
+                - Param: Driver_default
+                  ParamFilePath: model_releases/Driver/v1.0/param/Driver_default.dcm
+        - BlockName: TMS_Mdl
+          RootPath: ''
+          SubSys:
+            - Name: TMS
+              ModuleFilePath: model_releases/TMS/v3.0/FMU/TMS.fmu
+              TimeStepSize:
+              XCPSettings:
+                XCPSlave:
+                HostIP:
+                Port:
+              SubSysParam:
+                - Param: TMS_default
+                  ParamFilePath: model_releases/TMS/v3.0/param/TMS_default.dcm
+        - BlockName: Cabin_Mdl
+          RootPath: ''
+          SubSys:
+            - Name: Simple_Cabin
+              ModuleFilePath: model_releases/Cabin/v2.0/FMU/Simple_Cabin.fmu
+              TimeStepSize:
+              XCPSettings:
+                XCPSlave:
+                HostIP:
+                Port:
+              SubSysParam:
+                - Param: Simple_Cabin_default
+                  ParamFilePath: model_releases/Cabin/v2.0/Param/Simple_Cabin_default.dcm
+    PredefinedDriveCycleLibrary:
+      - BlockName: DriveCycle_Mdl
+        RootPath: ''
+        SubSys:
+          - Name: DriveCycle
+            ModuleFilePath: model_releases/DriveCycle/v2.0/DriveCycle_Built-in/FMU/DriveCycle.fmu
+            TimeStepSize:
+            XCPSettings:
+              XCPSlave:
+              HostIP:
+              Port:
+            SubSysParam: []
+    ControllerModelLibrary:
+      - BlockName: VehicleCtrl_ECU
+        RootPath: ''
+        SubSys:
+          - Name: VCU
+            ModuleFilePath: xcu_releases/VehicleContrUnit/v3.0/FMU/VCU.fmu
+            TimeStepSize:
+            XCPSettings:
+              XCPSlave:
+              HostIP:
+              Port:
+            SubSysParam:
+              - Param: VehicleContr_default
+                ParamFilePath: xcu_releases/VehicleContrUnit/v1.0/param/VehicleContr_default.dcm
+      - BlockName: TransmissionCtrl_ECU
+        RootPath: ''
+        SubSys:
+          - Name: TCU_Simple
+            ModuleFilePath: xcu_releases/TransmissionContrUnit/v1.0/FMU/TCU_Simple.fmu
+            TimeStepSize:
+            XCPSettings:
+              XCPSlave:
+              HostIP:
+              Port:
+            SubSysParam:
+              - Param: TransmissionContr_default
+                ParamFilePath: xcu_releases/TransmissionContrUnit/v1.0/param/TransmissionContr_default.dcm
+      - BlockName: TMSCtrl_ECU
+        RootPath: ''
+        SubSys:
+          - Name: Controller_NextETruck_2023
+            ModuleFilePath: xcu_releases/TMSContr/v1.0/FMU/Controller_NextETruck_2023.fmu
+            TimeStepSize:
+            XCPSettings:
+              XCPSlave:
+              HostIP:
+              Port:
+            SubSysParam:
+              - Param: TMSContr_default
+                ParamFilePath: xcu_releases/TMSContr/v1.0/param/TMSContr_default.dcm
+      - BlockName: EAxleCtrl_ECU
+        RootPath: ''
+        SubSys:
+          - Name: EAxle_Controller
+            ModuleFilePath: xcu_releases/EAxleContrUnit/EAxle_Controller/v1.0/FMU/EAxle_Controller.fmu
+            TimeStepSize:
+            XCPSettings:
+              XCPSlave:
+              HostIP:
+              Port:
+            SubSysParam:
+              - Param: EAxle_Ctrl_default
+                ParamFilePath: xcu_releases/EAxleContrUnit/EAxle_Controller/v1.1/param/EAxle_Ctrl_default.dcm
+      - BlockName: ChargingCtrl_ECU
+        RootPath: ''
+        SubSys:
+          - Name: ChargingControlUnit
+            ModuleFilePath: xcu_releases/ChargingContrUnit/v1.0/FMU/ChargingControlUnit.fmu
+            TimeStepSize:
+            XCPSettings:
+              XCPSlave:
+              HostIP:
+              Port:
+            SubSysParam:
+              - Param: ChargingUnitContr_default
+                ParamFilePath: xcu_releases/ChargingContrUnit/v1.0/param/ChargingUnitContr_default.dcm
+      - BlockName: CabinContr_ECU
+        RootPath: ''
+        SubSys:
+          - Name: Cabin_Controller
+            ModuleFilePath: xcu_releases/CabinContrUnit/v1.0/FMU/Cabin_Controller.fmu
+            TimeStepSize:
+            XCPSettings:
+              XCPSlave:
+              HostIP:
+              Port:
+            SubSysParam:
+              - Param: CabinContr_default
+                ParamFilePath: xcu_releases/CabinContrUnit/v1.0/param/CabinContr_default.dcm
+    StimuliLibrary:
+      - BlockName: ChargingStation
+        RootPath: ''
+        SubSys:
+          - Name: ChargingStation
+            ModuleFilePath: Projects_Repo/Next-E-Truck/Stimuli/CSV/Charging_Station/ChargingStation.csv
+      - BlockName: Powertrain_Transient
+        RootPath: ''
+        SubSys:
+          - Name: PowertrainTransient
+            ModuleFilePath: Projects_Repo/Next-E-Truck/Stimuli/CSV/Powertrain_Transient/PowertrainTransient.csv
+      - BlockName: Cycle_Switch
+        RootPath: ''
+        SubSys:
+          - Name: CycleSwitch
+            ModuleFilePath: Projects_Repo/Next-E-Truck/Stimuli/CSV/Cycle_Switch/CycleSwitch.csv
+    UserFunctionLibrary:
+      - BlockName: Func_Total_PWD
+        RootPath: ''
+        SubSys:
+          - Name: Func_Total_Power_Demand
+            ModuleFilePath: Projects_Repo/Next-E-Truck/Functions/Total_Power_Demand/Func_Total_Power_Demand.py
+    ConstantLibrary:
+      - BlockName: BC_01
+        SubSys:
+          - Name: RHair_Amb
+            Value: 0.3
+            Unit: dimensionless~none
+          - Name: Tair_Amb_degC
+            Value: 35
+            Unit: temperature~degC
+          - Name: Valve5PosDmd
+            Value: 50
+            Unit: dimensionless~none
+          - Name: vVV_ExtAirAmbHumid_pc
+            Value: 0.3
+            Unit: dimensionless~none
+          - Name: vVV_ExtAirAmbTemp_C
+            Value: 50
+            Unit: temperature~degC

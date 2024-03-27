@@ -1,0 +1,31 @@
+{
+    "spec": {
+        "firstStage": "azure_login",
+        "stages": {
+            "azure_login": {
+                "name": "azure_login",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "azure_login",
+                    "script": "azure_login.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/azure_login?<<sas_token>>",
+                    "stagingFolder": "./azure_login"
+                },
+                "stageSelector": "execute_avl_devops_artifact_collection"
+            },
+            "execute_avl_devops_artifact_collection": {
+                "name": "execute_avl_devops_artifact_collection",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute artifact collection script",
+                    "script": "avl_devops_artifact_collection.ps1",
+                    "scriptEngine": "powershell",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/execute_avl_devops_artifact_collection?<<sas_token>>",
+                    "stagingFolder": "./execute_avl_devops_artifact_collection"
+                }
+            }
+        },
+        "selfDriving": true
+    }
+}
