@@ -28,4 +28,4 @@ jobs:
             run: |
              chmod +x environment/vmss/config.sh  # Make sure the script is executable
              cd environment/vmss
-             ./config.sh
+             ./create_environment.sh
