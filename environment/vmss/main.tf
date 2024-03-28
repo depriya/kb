@@ -68,8 +68,8 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   location             = data.azurerm_resource_group.example.location
   sku                  = "Standard_F2"
   instances            = 1
-  admin_password       = "devipriya"
-  admin_username       = "Azure@123456"
+  admin_password       = "Azure@1234"
+  admin_username       = "devipriya"
   computer_name_prefix = "vm-"
 
   source_image_reference {
