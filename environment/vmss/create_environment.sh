@@ -111,6 +111,8 @@ az role assignment create --assignee $MYOID \
 echo "List all the Azure Deployment Environments projects you have access to:"
 az graph query -q "Resources | where type =~ 'microsoft.devcenter/projects'" -o table || handle_error "Failed to list projects."
 
+az account set --subscription $SUBID
+
 # Remove group default scope for next command. Leave blank for group.
 az configure --defaults group=
 
@@ -128,7 +130,7 @@ az devcenter dev environment-definition list --dev-center $DEV_CENTER_NAME --pro
 
 echo "Creating environment..."
 az devcenter dev environment create \
-    --name $ENVIRONMENT_NAME \
+    --environment-name $ENVIRONMENT_NAME \
     --environment-type $ENVIRONMENT_TYPE \
     --dev-center-name $DEV_CENTER_NAME \
     --project-name $DEV_CENTER_PROJECT_NAME \

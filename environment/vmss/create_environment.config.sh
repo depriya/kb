@@ -13,7 +13,7 @@ MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261"
 DEV_CENTER_NAME="xmew1-dop-c-rrr-d-dc"
 
 # The name to use for the new environment to be created.
-ENVIRONMENT_NAME="xmew1-dop-rrr-vmss-008"
+ENVIRONMENT_NAME="xmew1-dop-rrr-vmss-009"
 
 # The environment type to use for this environment.
 ENVIRONMENT_TYPE="sandbox"
