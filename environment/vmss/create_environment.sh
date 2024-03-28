@@ -114,8 +114,10 @@ az graph query -q "Resources | where type =~ 'microsoft.devcenter/projects'" -o 
 # Remove group default scope for next command. Leave blank for group.
 az configure --defaults group=
 
+# Set default resource group again
+az configure --defaults group=$RESOURCE_GROUP
 echo "Configure the default resource group as the resource group that contains the project:"
-az configure set defaults.group=$RESOURCE_GROUP || handle_error "Failed to set default resource group."
+#az configure set defaults.group=$RESOURCE_GROUP || handle_error "Failed to set default resource group."
 
 echo "List the type of environments you can create in a specific project:"
 az devcenter dev environment-type list --dev-center $DEV_CENTER_NAME --project-name $DEV_CENTER_PROJECT_NAME -o table || handle_error "Failed to list environment types."
