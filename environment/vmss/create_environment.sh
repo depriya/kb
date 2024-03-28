@@ -128,6 +128,7 @@ az devcenter dev environment-definition list --dev-center $DEV_CENTER_NAME --pro
 
 echo "Creating environment..."
 az devcenter dev environment create \
+    --name $ENVIRONMENT_NAME \
     --environment-type $ENVIRONMENT_TYPE \
     --dev-center-name $DEV_CENTER_NAME \
     --project-name $DEV_CENTER_PROJECT_NAME \
