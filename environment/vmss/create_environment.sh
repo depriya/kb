@@ -58,14 +58,14 @@ az devcenter admin project show -n $DEV_CENTER_PROJECT_NAME
 # SUBID=$(az account show --name $SUBSCRIPTIONNAME --query id -o tsv)
 # echo $SUBID
 
-# Retrieve the Object ID of the dev center's identity
-OID=$(az ad sp list --display-name $DEV_CENTER_NAME --query [].id -o tsv)
-echo $OID
+# # Retrieve the Object ID of the dev center's identity
+# OID=$(az ad sp list --display-name $DEV_CENTER_NAME --query [].id -o tsv)
+# echo $OID
 
-# Assign the role of Owner to the dev center on the subscription
-az role assignment create --assignee $OID \
---role "Owner" \
---scope "/subscriptions/$SUBID"
+# # Assign the role of Owner to the dev center on the subscription
+# az role assignment create --assignee $OID \
+# --role "Owner" \
+# --scope "/subscriptions/$SUBID"
 
 # Configure a project
 
@@ -92,9 +92,9 @@ az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
 
 # Assign environment access
 
-# Retrieve your own Object ID
-MYOID=$(az ad signed-in-user show --query id -o tsv)
-echo $MYOID
+# # Retrieve your own Object ID
+# MYOID=$(az ad signed-in-user show --query id -o tsv)
+# echo $MYOID
 
 # # Assign admin access
 # az role assignment create --assignee $MYOID \
