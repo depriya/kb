@@ -47,8 +47,8 @@ az devcenter dev environment create \
     --dev-center $DEV_CENTER_NAME \
     --project $DEV_CENTER_PROJECT_NAME \
     --catalog-name $DEV_CENTER_CATALOG_NAME \
-    --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
-    --parameters $PARAMETERS_FILE || handle_error "Failed to create environment."
+    --environment-definition-name $ENVIRONMENT_DEFINITION_NAME
+    #--parameters $PARAMETERS_FILE || handle_error "Failed to create environment."
 
 log_message "Environment creation complete!"
 

@@ -15,10 +15,17 @@ provider "azurerm" {
   skip_provider_registration = true
 }
 
-variable "oem" {}
-variable "resource_name" {}
-variable "admin_username" {}
+variable "oem" {
+  default = "rrr"
+}
+variable "resource_name" {
+  default = "xmew1-dop-c-oem-rrr-vmss-001"
+}
+variable "admin_username" {
+  default = "dkpriya"
+}
 variable "admin_password" {
+  default = "Admin@123456"
   sensitive = true
 }
 
