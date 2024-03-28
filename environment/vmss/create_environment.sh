@@ -55,7 +55,7 @@ az devcenter admin project show -n $DEV_CENTER_PROJECT_NAME
 # Assign the Owner role to a managed identity
 
 # Retrieve Subscription ID
-SUBID=$(az account show --name AVL DevopsPilot --query id -o tsv)
+SUBID=$(az account show --name $SUBSCRIPTIONNAME --query id -o tsv)
 echo $SUBID
 
 # Retrieve the Object ID of the dev center's identity
