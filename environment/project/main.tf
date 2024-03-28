@@ -15,9 +15,8 @@
 # }
 
 variable "owner" {
-  default = "Owner" 
+  default = "Owner"
 }
-
 
 data "azapi_resource" "project" {
   type      = "Microsoft.DevCenter/projects@2023-04-01"
@@ -43,13 +42,14 @@ resource "azapi_resource" "environment_type_definition" {
     properties = {
        creatorRoleAssignment = {
         
-         roles = {
-          "${var.owner}" = {}
+          roles = {
+             "${var.owner}"= {}
+                
         }
+       }
       deploymentTargetId = "/subscriptions/${var.target_subscription_id}"
       status             = "Enabled"
       # userRoleAssignments = {}
-    }
     }
   })
 }
