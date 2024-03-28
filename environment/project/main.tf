@@ -26,7 +26,7 @@ parent_id = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-d
 ##############################
 resource "azapi_resource" "environment_type_definition" {
   type      = "Microsoft.DevCenter/projects/environmentTypes@2023-04-01"
-  name      = "Test"
+  name      = "sandbox"
   location  = var.location
   parent_id = data.azapi_resource.project.id
   identity {
@@ -83,7 +83,7 @@ resource "time_sleep" "wait_30_seconds" {
 ##############################
 data "azapi_resource" "allowed_env_types" {
   type      = "Microsoft.DevCenter/projects/allowedEnvironmentTypes@2023-04-01"
-  name      = "Test"
+  name      = "sandbox"
   parent_id = data.azapi_resource.project.id
 
   depends_on = [azapi_resource.environment_type_definition]
