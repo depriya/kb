@@ -6,7 +6,7 @@
 DEV_CENTER_NAME="xmew1-dop-c-rrr-d-dc"
 
 # The name to use for the new environment to be created.
-ENVIRONMENT_NAME="rrrvmss"
+ENVIRONMENT_NAME="rrradevmss"
 
 # The environment type to use for this environment.
 ENVIRONMENT_TYPE="Test"
