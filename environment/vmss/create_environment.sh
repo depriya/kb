@@ -48,8 +48,8 @@ az devcenter dev environment create \
     --project $DEV_CENTER_PROJECT_NAME \
     --catalog-name $DEV_CENTER_CATALOG_NAME \
     --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
-    --parameters '{"resource_name":"xmew1-dop-c-oem-rrr-vmss-001","OEM":"rrr","admin_username":"dkpriya","admin_password":"Azure@123456"}'
-
+    --parameters '{"resource_name":"xmew1-dop-c-oem-rrr-vmss-001","OEM":"rrr","admin_username":"dkpriya","admin_password":"Azure@123456"}' \
+    --verbose
     #--parameters $PARAMETERS_FILE || handle_error "Failed to create environment."
 
 log_message "Environment creation complete!"
