@@ -108,6 +108,19 @@ az role assignment create --assignee $MYOID \
 
 # End of new commands
 
+echo "List all the Azure Deployment Environments projects you have access to:"
+az graph query -q "Resources | where type =~ 'microsoft.devcenter/projects'" -o table || handle_error "Failed to list projects."
+
+echo "Configure the default resource group as the resource group that contains the project:"
+az configure set defaults.group=$RESOURCE_GROUP || handle_error "Failed to set default resource group."
+
+echo "List the type of environments you can create in a specific project:"
+az devcenter dev environment-type list --dev-center $DEV_CENTER_NAME --project-name $DEV_CENTER_PROJECT_NAME -o table || handle_error "Failed to list environment types."
+
+echo "List the environment definitions that are available to a specific project:"
+az devcenter dev environment-definition list --dev-center $DEV_CENTER_NAME --project-name $DEV_CENTER_PROJECT_NAME -o table || handle_error "Failed to list environment definitions."
+
+
 echo "Creating environment..."
 az devcenter dev environment create \
     --name $ENVIRONMENT_NAME \
