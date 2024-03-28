@@ -123,15 +123,15 @@ az devcenter dev environment-definition list --dev-center $DEV_CENTER_NAME --pro
 
 echo "Creating environment..."
 az devcenter dev environment create \
-    --name $ENVIRONMENT_NAME \
     --environment-type $ENVIRONMENT_TYPE \
-    --dev-center $DEV_CENTER_NAME \
-    --project $DEV_CENTER_PROJECT_NAME \
+    --dev-center-name $DEV_CENTER_NAME \
+    --project-name $DEV_CENTER_PROJECT_NAME \
     --catalog-name $DEV_CENTER_CATALOG_NAME \
     --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
     --parameters '{"resource_name":"xmew1-dop-c-oem-rrr-vmss-001","OEM":"rrr","admin_username":"dkpriya","admin_password":"Azure@123456"}' \
     --debug
     #--parameters $PARAMETERS_FILE || handle_error "Failed to create environment."
+    #--name $ENVIRONMENT_NAME \
 
 echo "Environment creation complete!"
 
