@@ -14,9 +14,8 @@
 #   })
 # }
 
-locals {
-  
-  ownerroleid                   = "f0e04b27-58c5-49a7-b142-5cc5296a4261"
+variable "owner" {
+  default = "Owner" 
 }
 
 
@@ -45,7 +44,7 @@ resource "azapi_resource" "environment_type_definition" {
        creatorRoleAssignment = {
         
          roles = {
-          "${local.ownerroleid}" = {}
+          "${var.owner}" = {}
         }
       deploymentTargetId = "/subscriptions/${var.target_subscription_id}"
       status             = "Enabled"
