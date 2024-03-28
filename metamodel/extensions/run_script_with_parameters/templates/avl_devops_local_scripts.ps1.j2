@@ -1,0 +1,41 @@
+#!/usr/bin/env pwsh
+
+# Copyright (C) Microsoft Corporation.
+
+# Exit immediately if a command fails
+$ErrorActionPreference = "Stop"
+
+# Fail if an unset variable is used
+Set-StrictMode -Version Latest
+
+. ./symphony_stage_script_provider.ps1
+
+#region Getting config from metamodel config yaml
+$configEncoded = "{{ parameters.input_parameter_to_script }}"
+$config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($configEncoded)) | ConvertFrom-Json
+#endregion Getting config from metamodel config yaml
+
+
+$VMSS_RESOURCE_GROUP = "$($config.VMSS.resource_group)"
+$VMSS_NAME = "$($config.VMSS.name)"
+
+$ADDITIONAL_SOFTWARE_STACK = $config.additional_software_stack
+$command_id="RunPowerShellScript"
+$name="Local_Artifact_$($config.project_name)_$($config.version)"
+
+mkdir $name
+cd $name
+
+#endregion initialize variables
+
+foreach ($softwareStack in $ADDITIONAL_SOFTWARE_STACK.GetEnumerator()) {
+    $name = $softwareStack.Value.name
+    $ArtifactPath="$($softwareStack.Value.path)"
+    cp $ArtifactPath .
+    $script="$($softwareStack.Value.build_script)"
+    $scriptContent=$(cat "$script")
+    $instance_ids=($(az vmss list-instances --resource-group "$VMSS_RESOURCE_GROUP" --name "$VMSS_NAME" --query "[].instanceId" -o tsv))
+    foreach ($instanceId in $instance_ids) {
+      az vmss run-command invoke --resource-group "$VMSS_RESOURCE_GROUP" --name "$VMSS_NAME" --instance-id "$instanceId" --command-id $command_id --scripts "$scriptContent"
+    }
+  }
