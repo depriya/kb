@@ -31,7 +31,7 @@ variable "project_description" {
 variable "project_members" {
   type        = list(string)
   description = "The members of the Dev Center project."
-  default = [ "b9082dac-d369-4435-a4b9-9779f666c1e0", "f0e04b27-58c5-49a7-b142-5cc5296a4261" ]  //Alex's objectid
+  default = [ "70608667-2dc3-4b2a-a433-30d6ca41e377", "e7b48204-dac0-43a3-8f54-ed628b0d62d5" ]  //Alex's objectid
 }
 
 # #variable "environment_types" {
