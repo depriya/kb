@@ -6,7 +6,7 @@
 
 RESOURCE_GROUP="xmew1-dop-c-rrr-d-rg-001"
 
-SUBSCRIPTIONNAME="AVL DevopsPilot"
+$SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
 
 MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261"
 
