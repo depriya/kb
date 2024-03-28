@@ -91,9 +91,16 @@ az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
 --status Enabled
 
 
+# #az role assignment create \
+#     --role "Contributor" \
+#     --assignee-object-id $CLIENTID \
+#     --scope /subscriptions/$SUBID
+# echo "sandbox role sucessfully added"
+
 az role assignment create \
     --role "Contributor" \
     --assignee-object-id $CLIENTID \
+    --assignee-principal-type "SystemAssignedIdentity" \
     --scope /subscriptions/$SUBID
 echo "sandbox role sucessfully added"
 # Assign environment access
@@ -111,6 +118,7 @@ echo "sandbox role sucessfully added"
 az role assignment create --assignee $MYOID \
 --role "Deployment Environments User" \
 --scope "/subscriptions/$SUBID"
+
 
 # End of new commands
 
