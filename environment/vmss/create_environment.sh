@@ -90,6 +90,12 @@ az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
 --deployment-target-id "/subscriptions/${SUBID}" \
 --status Enabled
 
+
+az role assignment create \
+    --role "Contributor" \
+    --assignee-object-id $CLIENTID \
+    --scope /subscriptions/$SUBID
+
 # Assign environment access
 
 # # Retrieve your own Object ID

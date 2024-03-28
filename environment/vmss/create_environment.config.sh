@@ -10,6 +10,8 @@ SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
 
 MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261"
 
+CLIENTID="693278c7-5ee9-4875-afdb-ddc0c6ae0e8c"
+
 DEV_CENTER_NAME="xmew1-dop-c-rrr-d-dc"
 
 # The name to use for the new environment to be created.
