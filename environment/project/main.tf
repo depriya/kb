@@ -14,6 +14,12 @@
 #   })
 # }
 
+locals {
+  
+  ownerroleid                   = "f0e04b27-58c5-49a7-b142-5cc5296a4261"
+}
+
+
 data "azapi_resource" "project" {
   type      = "Microsoft.DevCenter/projects@2023-04-01"
  name      = "xmew1-dop-c-rrr-d-project-001"
@@ -38,13 +44,13 @@ resource "azapi_resource" "environment_type_definition" {
     properties = {
        creatorRoleAssignment = {
         
-          roles = {
-             "owner"= {}
+         roles = {
+          "${local.ownerroleid}" = {}
         }
-       }
       deploymentTargetId = "/subscriptions/${var.target_subscription_id}"
       status             = "Enabled"
       # userRoleAssignments = {}
+    }
     }
   })
 }
