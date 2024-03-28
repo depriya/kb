@@ -38,7 +38,7 @@ echo "Role assignment complete!"
 # Add your new commands here
 # Start of new commands
 
-
+az configure --defaults group=$RESOURCE_GROUP
 
 # Retrieve dev center resource ID
 DEVCID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query id -o tsv)
