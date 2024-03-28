@@ -14,6 +14,11 @@ cd "$(dirname "$0")"
 # Load the variables from the config file
 source create_environment.config.sh
 
+echo "Installing the devcenter extension..."
+az extension add --name devcenter
+
+echo "Extension installation complete!"
+
 echo "Assigning role to DevCenter identity..."
 az role assignment create --assignee eb47c23a-720a-4576-b494-5491e1f134ca --role owner --scope /subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4
 #echo "Assigning role to DevCenter identity for managing resource groups..."
