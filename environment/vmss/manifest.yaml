@@ -3,20 +3,20 @@ summary: Creates a vmss
 description: Deploys an environment using Terraform containing a vmss
 runner: Terraform
 templatePath: main.tf
-parameters:
-  - id: "resource_name"
-    name: "Resource Name"
-    required: true
-    type: "string"
-  - id: "OEM"
-    name: "OEM Value"
-    required: true
-    type: "string"
-  - id: "admin_username"
-    name: "username"
-    required: true
-    type: "string"
-  - id: "admin_password"
-    name: "password"
-    required: true
-    type: "string"
+# #parameters:
+#   - id: "resource_name"
+#     name: "Resource Name"
+#     required: true
+#     type: "string"
+#   - id: "OEM"
+#     name: "OEM Value"
+#     required: true
+#     type: "string"
+#   - id: "admin_username"
+#     name: "username"
+#     required: true
+#     type: "string"
+#   - id: "admin_password"
+#     name: "password"
+#     required: true
+#     type: "string"

@@ -42,7 +42,7 @@ variable "location" {
 # }
 
 data "azurerm_resource_group" "example" {
-  name = "xmew1-dop-c-${var.oem}-d-rg-001"
+  name = "xmew1-dop-c-rrr-d-rg-001"
 }
 
 data "azurerm_virtual_network" "example" {
@@ -57,19 +57,19 @@ data "azurerm_subnet" "internal" {
 }
 
 resource "azurerm_network_security_group" "example" {
-  name                = "xmew1-dop-c-${var.oem}-vmss-nsg"
+  name                = "xmew1-dop-c-rrr-vmss-nsg"
   location            = data.azurerm_resource_group.example.location
   resource_group_name = data.azurerm_resource_group.example.name
 }
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                 = var.resource_name
+  name                 = "xmew1-dop-c-oem-rrr-vmss-006"
   resource_group_name  = data.azurerm_resource_group.example.name
   location             = data.azurerm_resource_group.example.location
   sku                  = "Standard_F2"
   instances            = 1
-  admin_password       = var.admin_password
-  admin_username       = var.admin_username
+  admin_password       = "devipriya"
+  admin_username       = "Azure@123456"
   computer_name_prefix = "vm-"
 
   source_image_reference {
@@ -85,11 +85,11 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   }
 
   network_interface {
-    name    = "xmew1-dop-c-${var.oem}-vmss-nic"
+    name    = "xmew1-dop-c-rrr-vmss-nic"
     primary = true
 
     ip_configuration {
-      name      = "${var.oem}ip"
+      name      = "rrrip"
       primary   = true
       subnet_id = data.azurerm_subnet.internal.id
     }
