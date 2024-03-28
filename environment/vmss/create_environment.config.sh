@@ -6,13 +6,13 @@
 DEV_CENTER_NAME="xmew1-dop-c-rrr-d-dc"
 
 # The name to use for the new environment to be created.
-ENVIRONMENT_NAME="vmss"
+ENVIRONMENT_NAME="adevmss"
 
 # The environment type to use for this environment.
 ENVIRONMENT_TYPE="Test"
 
 # The name of your Azure dev center project.
-DEV_CENTER_PROJECT_NAME="xmew1-dop-c-rrr-d-project-002"
+DEV_CENTER_PROJECT_NAME="xmew1-dop-c-rrr-d-project-001"
 
 # The name of your catalog.
 DEV_CENTER_CATALOG_NAME="catalog"
