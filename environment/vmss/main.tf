@@ -63,7 +63,7 @@ resource "azurerm_network_security_group" "example" {
 }
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                 = "xmew1-dop-c-oem-rrr-vmss-006"
+  name                 = "xmew1-dop-c-oem-rrr-vmss-008"
   resource_group_name  = data.azurerm_resource_group.example.name
   location             = data.azurerm_resource_group.example.location
   sku                  = "Standard_F2"
