@@ -99,6 +99,6 @@ resource "azurerm_role_assignment" "devcenter_environment_user" {
   for_each = toset(var.project_members)
 
   scope                = data.azapi_resource.project.id
-  role_definition_name = "Deployment Environments User"
+  role_definition_name = "DevCenter Project Admin"
   principal_id         = each.key
 }
