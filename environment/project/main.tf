@@ -40,7 +40,7 @@ resource "azapi_resource" "environment_type_definition" {
        creatorRoleAssignment = {
         
           roles = {
-             "rolename"= "Owner"
+              "Owner" = {}
                 
         }
        }
