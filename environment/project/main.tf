@@ -39,7 +39,9 @@ resource "azapi_resource" "environment_type_definition" {
        creatorRoleAssignment = {
         
           roles = {
-             "[f0e04b27-58c5-49a7-b142-5cc5296a4261]": {}
+             "owner": {
+                "principalId": "f0e04b27-58c5-49a7-b142-5cc5296a4261"
+            }
         }
        }
       deploymentTargetId = "/subscriptions/${var.target_subscription_id}"
