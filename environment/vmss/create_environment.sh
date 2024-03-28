@@ -95,7 +95,7 @@ az role assignment create \
     --role "Contributor" \
     --assignee-object-id $CLIENTID \
     --scope /subscriptions/$SUBID
-
+echo "sandbox role sucessfully added"
 # Assign environment access
 
 # # Retrieve your own Object ID
