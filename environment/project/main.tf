@@ -79,7 +79,7 @@ resource "time_sleep" "wait_30_seconds" {
 ##############################
 # Allow Environment Type
 ##############################
-data "azapi_resource" "allowed_env_types" {
+resource "azapi_resource" "allowed_env_types" {
   type      = "Microsoft.DevCenter/projects/allowedEnvironmentTypes@2023-04-01"
   name      = "sandbox"
   parent_id = data.azapi_resource.project.id
