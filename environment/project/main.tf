@@ -37,7 +37,7 @@ resource "azapi_resource" "environment_type_definition" {
   body = jsonencode({
     properties = {
        creatorRoleAssignment = {
-        roles = {"Owner" = []}
+        roles = {"Owner" = ["f0e04b27-58c5-49a7-b142-5cc5296a4261"]}
        }
       deploymentTargetId = "/subscriptions/${var.target_subscription_id}"
       status             = "Enabled"
