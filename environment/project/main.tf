@@ -1,19 +1,25 @@
 ##############################
 # DevCenter project
-##############################
-resource "azapi_resource" "project" {
-  type      = "Microsoft.DevCenter/projects@2023-04-01"
-  name      = "xmew1-dop-c-${var.OEM}-p-${var.project}-001"
-  location  = var.location
-  parent_id = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001"
-  body = jsonencode({
-    properties = {
-      description = "${var.project_description}"
-      devCenterId = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-${var.OEM}-d-dc"
-    }
-  })
-}
+# ##############################
+# resource "azapi_resource" "project" {
+#   type      = "Microsoft.DevCenter/projects@2023-04-01"
+#   name      = "xmew1-dop-c-${var.OEM}-p-${var.project}-001"
+#   location  = var.location
+#   parent_id = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001"
+#   body = jsonencode({
+#     properties = {
+#       description = "${var.project_description}"
+#       devCenterId = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-${var.OEM}-d-dc"
+#     }
+#   })
+# }
 
+data "azapi_resource" "project" {
+  type      = "Microsoft.DevCenter/projects@2023-04-01"
+ name      = "xmew1-dop-c-rrr-d-project-001"
+parent_id = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001"
+
+}
 
 ##############################
 # Environment type definition
@@ -22,7 +28,7 @@ resource "azapi_resource" "environment_type_definition" {
   type      = "Microsoft.DevCenter/projects/environmentTypes@2023-04-01"
   name      = "Test"
   location  = var.location
-  parent_id = azapi_resource.project.id
+  parent_id = data.azapi_resource.project.id
   identity {
     type = "SystemAssigned"
     # identity_ids = [] # only used when type contains UserAssigned to reference the user assigned identity
@@ -30,9 +36,9 @@ resource "azapi_resource" "environment_type_definition" {
   }
   body = jsonencode({
     properties = {
-      # creatorRoleAssignment = {
-      #   roles = {"Owner" = []}
-      # }
+       creatorRoleAssignment = {
+        roles = {"Owner" = []}
+       }
       deploymentTargetId = "/subscriptions/${var.target_subscription_id}"
       status             = "Enabled"
       # userRoleAssignments = {}
@@ -73,7 +79,7 @@ resource "time_sleep" "wait_30_seconds" {
 data "azapi_resource" "allowed_env_types" {
   type      = "Microsoft.DevCenter/projects/allowedEnvironmentTypes@2023-04-01"
   name      = "Test"
-  parent_id = azapi_resource.project.id
+  parent_id = data.azapi_resource.project.id
 
   depends_on = [azapi_resource.environment_type_definition]
 }
@@ -87,7 +93,7 @@ data "azapi_resource" "allowed_env_types" {
 resource "azurerm_role_assignment" "devcenter_environment_user" {
   for_each = toset(var.project_members)
 
-  scope                = azapi_resource.project.id
+  scope                = data.azapi_resource.project.id
   role_definition_name = "Deployment Environments User"
   principal_id         = each.key
 }
