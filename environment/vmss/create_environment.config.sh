@@ -12,7 +12,7 @@ ENVIRONMENT_NAME="xmew1-dop-rrr-vmss-001"
 ENVIRONMENT_TYPE="sandbox"
 
 # The name of your Azure dev center project.
-DEV_CENTER_PROJECT_NAME="xmew1-dop-c-rrr-p-project-001"
+DEV_CENTER_PROJECT_NAME="xmew1-dop-c-rrr-d-project-001"
 
 # The name of your catalog.
 DEV_CENTER_CATALOG_NAME="catalog"
