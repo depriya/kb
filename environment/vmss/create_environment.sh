@@ -111,6 +111,9 @@ az role assignment create --assignee $MYOID \
 echo "List all the Azure Deployment Environments projects you have access to:"
 az graph query -q "Resources | where type =~ 'microsoft.devcenter/projects'" -o table || handle_error "Failed to list projects."
 
+# Remove group default scope for next command. Leave blank for group.
+az configure --defaults group=
+
 echo "Configure the default resource group as the resource group that contains the project:"
 az configure set defaults.group=$RESOURCE_GROUP || handle_error "Failed to set default resource group."
 
