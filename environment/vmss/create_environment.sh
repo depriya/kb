@@ -15,9 +15,9 @@ cd "$(dirname "$0")"
 source create_environment.config.sh
 
 echo "Assigning role to DevCenter identity..."
-az role assignment create --assignee eb47c23a-720a-4576-b494-5491e1f134ca --role Contributor --scope /subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4
-echo "Assigning role to DevCenter identity for managing resource groups..."
-az role assignment create --assignee eb47c23a-720a-4576-b494-5491e1f134ca --role "Resource Group Contributor" --scope /subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4
+az role assignment create --assignee eb47c23a-720a-4576-b494-5491e1f134ca --role owner --scope /subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4
+#echo "Assigning role to DevCenter identity for managing resource groups..."
+#az role assignment create --assignee eb47c23a-720a-4576-b494-5491e1f134ca --role "Resource Group Contributor" --scope /subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4
 
 echo "Role assignment complete!"
 
