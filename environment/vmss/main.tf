@@ -48,7 +48,7 @@ data "azurerm_resource_group" "example" {
 }
 
 data "azurerm_virtual_network" "example" {
-  name                = "xmew1-dop-c-oem-vnet-001"
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-vnet-001"
   resource_group_name = data.azurerm_resource_group.example.name
 }
 
