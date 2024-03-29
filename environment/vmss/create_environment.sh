@@ -65,9 +65,9 @@ echo "Installing the devcenter extension..."
 az extension add --name devcenter --upgrade || handle_error "Failed to install the devcenter extension."
 echo "Extension installation complete!"
 
-echo "Assigning owner role to DevCenter identity..."
-az role assignment create --assignee eb47c23a-720a-4576-b494-5491e1f134ca --role Owner --scope /subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4 || handle_error "Failed to assign owner role to DevCenter identity."
-echo "Role assignment complete!"
+# #echo "Assigning owner role to DevCenter identity..."
+# az role assignment create --assignee eb47c23a-720a-4576-b494-5491e1f134ca --role Owner --scope /subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4 || handle_error "Failed to assign owner role to DevCenter identity."
+# echo "Role assignment complete!"
 
 # Start of new commands
 
@@ -78,7 +78,7 @@ DEVCID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query id -o tsv
 echo $DEVCID
 
 # Replace <DEV_CENTER_NAME> with your actual DevCenter name
-DEVC_INFO=$(az devcenter admin devcenter show -n <DEV_CENTER_NAME> --query '[id, identity.principalId]' -o tsv)
+DEVC_INFO=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query '[id, identity.principalId]' -o tsv)
 read DEVC_ID DEVC_OBJ_ID <<< "$DEVC_INFO"
 echo "DevCenter Resource ID: $DEVC_ID"
 echo "DevCenter Object ID: $DEVC_OBJ_ID"
