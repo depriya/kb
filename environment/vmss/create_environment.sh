@@ -20,23 +20,26 @@ cd "$(dirname "$0")"
 # Copyright (C) Microsoft Corporation.
 
 # The name of your Azure dev center.
+customerOEMsuffix="rrr"
 
-RESOURCE_GROUP="xmew1-dop-c-rrr-d-rg-001"
+projectname="proj"
+
+RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
 
 SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
 
 MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261"
 
-DEV_CENTER_NAME="xmew1-dop-c-rrr-d-dc"
+DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
 
 # The name to use for the new environment to be created.
-ENVIRONMENT_NAME="xmew1-dop-c-rrr-p-proj-vmss-001"
+ENVIRONMENT_NAME="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-vmss-001"
 
 # The environment type to use for this environment.
 ENVIRONMENT_TYPE="sandbox"
 
 # The name of your Azure dev center project.
-projectname="xmew1-dop-c-rrr-p-proj-001"
+projectname="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
 
 # The name of your catalog.
 DEV_CENTER_CATALOG_NAME="catalog"
@@ -198,7 +201,7 @@ az role assignment create --assignee $MYOID \
      --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
      --parameters $PARAMETERS_FILE || handle_error "Failed to create environment." \
      #--debug
-     #--parameters '{"resource_name":"xmew1-dop-c-oem-rrr-vmss-001","OEM":"rrr","admin_username":"dkpriya","admin_password":"Azure@123456"}' \
+     #--parameters '{"resource_name":"xmew1-dop-c-oem-${customerOEMsuffix}-vmss-001","OEM":"${customerOEMsuffix}","admin_username":"dkpriya","admin_password":"Azure@123456"}' \
     
 
  echo "Environment creation complete!"

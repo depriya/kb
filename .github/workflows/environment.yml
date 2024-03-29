@@ -1,4 +1,4 @@
-name: Run config.sh
+name: Deploy.ADE.vmss
 
 on:
   workflow_dispatch:
