@@ -147,14 +147,14 @@ echo sandbox objectid is $objectId
 az role assignment create \
     --role "Contributor" \
     --assignee-object-id $objectId \
-    #--assignee-principal-type "SystemAssignedIdentity" \
     --scope /subscriptions/$SUBID
+    #--assignee-principal-type "SystemAssignedIdentity" \
 echo " role sucessfully added"
 # Assign environment access
 
-# # Retrieve your own Object ID
- MYOID=$(az ad signed-in-user show --query id -o tsv)
- echo $MYOID
+# # # Retrieve your own Object ID
+#  MYOID=$(az ad signed-in-user show --query id -o tsv)
+#  echo $MYOID
 
  # Assign admin access
  az role assignment create --assignee $MYOID \
