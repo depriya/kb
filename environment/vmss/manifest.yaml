@@ -12,6 +12,10 @@ parameters:
     name: "customerOEMsuffix Value"
     required: true
     type: "string"
+  - id: "environmentStage"
+    name: "environmentStage Value either d or p"
+    required: true
+    type: "string"
   - id: "admin_username"
     name: "username"
     required: true

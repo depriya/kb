@@ -1,6 +1,7 @@
 {
     "projectname": "pj",
     "customerOEMsuffix": "rrr",
+    "environmentStage": "d",
     "admin_username": "Devipriya",
     "admin_password": "Azure@123456"
 }

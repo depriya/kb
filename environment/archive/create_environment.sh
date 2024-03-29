@@ -22,7 +22,7 @@ cd "$(dirname "$0")"
 # The name of your Azure dev center.
 customerOEMsuffix="rrr"
 
-projectname="pj"
+projectname="proj"
 
 RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
 
