@@ -4,8 +4,8 @@ description: Deploys an environment using Terraform containing a vmss
 runner: Terraform
 templatePath: main.tf
 parameters:
-  - id: "resource_name"
-    name: "Resource Name"
+  - id: "project_name"
+    name: "Project Name"
     required: true
     type: "string"
   - id: "OEM"

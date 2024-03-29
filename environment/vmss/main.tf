@@ -19,7 +19,6 @@ variable "OEM" {
   #default = "rrr"
 }
 variable "project_name" {
-  #default = "xmew1-dop-c-oem-rrr-vmss-001"
 }
 variable "admin_username" {
   #default = "dkpriya"
