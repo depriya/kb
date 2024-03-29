@@ -1,6 +1,6 @@
 {
-    "project_name": "proj",
-    "OEM": "rrr",
+    "projectname": "proj",
+    "customerOEMsuffix": "rrr",
     "admin_username": "Devipriya",
     "admin_password": "Azure@123456"
 }

@@ -30,13 +30,13 @@ MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261"
 DEV_CENTER_NAME="xmew1-dop-c-rrr-d-dc"
 
 # The name to use for the new environment to be created.
-ENVIRONMENT_NAME="xmew1-dop-c-rrr-p-proj-vmss-006"
+ENVIRONMENT_NAME="xmew1-dop-c-rrr-p-proj-vmss-001"
 
 # The environment type to use for this environment.
 ENVIRONMENT_TYPE="sandbox"
 
 # The name of your Azure dev center project.
-DEV_CENTER_PROJECT_NAME="xmew1-dop-c-rrr-p-proj-006"
+projectname="xmew1-dop-c-rrr-p-proj-001"
 
 # The name of your catalog.
 DEV_CENTER_CATALOG_NAME="catalog"
@@ -87,12 +87,12 @@ echo "DevCenter Object ID: $DEVC_OBJ_ID"
 
 
 # Create project in dev center
-az devcenter admin project create -n $DEV_CENTER_PROJECT_NAME \
+az devcenter admin project create -n $projectname \
 --description "My first project." \
 --dev-center-id $DEVCID
 
 # Confirm project creation
-az devcenter admin project show -n $DEV_CENTER_PROJECT_NAME
+az devcenter admin project show -n $projectname
 
 # Assign the Owner role to a managed identity
 
@@ -122,7 +122,7 @@ echo $ROID
 az configure --defaults group=$RESOURCE_GROUP
 
 # Show allowed environment type for the project
-az devcenter admin project-allowed-environment-type list --project $DEV_CENTER_PROJECT_NAME --query [].name
+az devcenter admin project-allowed-environment-type list --project $projectname --query [].name
 
 # # Choose an environment type and create it for the project
 # az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
@@ -134,7 +134,7 @@ az devcenter admin project-allowed-environment-type list --project $DEV_CENTER_P
 
 # # Choose an environment type and create it for the project
 objectId=$(az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
---project $DEV_CENTER_PROJECT_NAME \
+--project $projectname \
 --identity-type "SystemAssigned" \
 --roles "{\"${ROID}\":{}}" \
 --deployment-target-id "/subscriptions/${SUBID}" \
@@ -182,10 +182,10 @@ az role assignment create --assignee $MYOID \
  echo "Configure the default resource group as the resource group that contains the project:"
 
  echo "List the type of environments you can create in a specific project:"
- az devcenter dev environment-type list --dev-center $DEV_CENTER_NAME --project-name $DEV_CENTER_PROJECT_NAME -o table || handle_error "Failed to list environment types."
+ az devcenter dev environment-type list --dev-center $DEV_CENTER_NAME --project-name $projectname -o table || handle_error "Failed to list environment types."
 
  echo "List the environment definitions that are available to a specific project:"
- az devcenter dev environment-definition list --dev-center $DEV_CENTER_NAME --project-name $DEV_CENTER_PROJECT_NAME -o table || handle_error "Failed to list environment definitions."
+ az devcenter dev environment-definition list --dev-center $DEV_CENTER_NAME --project-name $projectname -o table || handle_error "Failed to list environment definitions."
 
 
  echo "Creating environment..."
@@ -193,7 +193,7 @@ az role assignment create --assignee $MYOID \
      --environment-name $ENVIRONMENT_NAME \
      --environment-type $ENVIRONMENT_TYPE \
      --dev-center-name $DEV_CENTER_NAME \
-     --project-name $DEV_CENTER_PROJECT_NAME \
+     --project-name $projectname \
      --catalog-name $DEV_CENTER_CATALOG_NAME \
      --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
      --parameters $PARAMETERS_FILE || handle_error "Failed to create environment." \
