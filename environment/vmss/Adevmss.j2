@@ -18,7 +18,7 @@ provider "azurerm" {
 variable "OEM" {
   #default = "rrr"
 }
-variable "project_name" {
+variable "resource_name" {
   #default = "xmew1-dop-c-oem-rrr-vmss-001"
 }
 variable "admin_username" {
@@ -57,13 +57,13 @@ data "azurerm_subnet" "internal" {
 }
 
 resource "azurerm_network_security_group" "example" {
-  name                = "xmew1-dop-c-${var.OEM}-p-${var.project_name}-vmss-nsg"
+  name                = "xmew1-dop-c-${var.OEM}-vmss-nsg"
   location            = data.azurerm_resource_group.example.location
   resource_group_name = data.azurerm_resource_group.example.name
 }
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                 = "xmew1-dop-c-${var.OEM}-p-${var.project_name}-vmss-006"
+  name                 = var.resource_name
   resource_group_name  = data.azurerm_resource_group.example.name
   location             = data.azurerm_resource_group.example.location
   sku                  = "Standard_F2"
@@ -85,11 +85,11 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   }
 
   network_interface {
-    name    = "xmew1-dop-c-${var.OEM}-p-${var.project_name}-vmss-nic"
+    name    = "xmew1-dop-c-${var.OEM}-vmss-nic"
     primary = true
 
     ip_configuration {
-      name      = "${var.OEM}${var.project_name}ip"
+      name      = "${var.OEM}ip"
       primary   = true
       subnet_id = data.azurerm_subnet.internal.id
     }

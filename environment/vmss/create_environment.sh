@@ -27,18 +27,16 @@ SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
 
 MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261"
 
-#CLIENTID="693278c7-5ee9-4875-afdb-ddc0c6ae0e8c"
-
 DEV_CENTER_NAME="xmew1-dop-c-rrr-d-dc"
 
 # The name to use for the new environment to be created.
-ENVIRONMENT_NAME="xmew1-dop-rrr-vmss-009"
+ENVIRONMENT_NAME="xmew1-dop-c-rrr-p-proj-vmss-006"
 
 # The environment type to use for this environment.
 ENVIRONMENT_TYPE="sandbox"
 
 # The name of your Azure dev center project.
-DEV_CENTER_PROJECT_NAME="xmew1-dop-c-rrr-d-project-005"
+DEV_CENTER_PROJECT_NAME="xmew1-dop-c-rrr-p-proj-006"
 
 # The name of your catalog.
 DEV_CENTER_CATALOG_NAME="catalog"
@@ -47,7 +45,8 @@ DEV_CENTER_CATALOG_NAME="catalog"
 ENVIRONMENT_DEFINITION_NAME="vmss"
 
 # The name of the ARM template parameters file to use for the deployment.
-#PARAMETERS_FILE="existing.json"
+PARAMETERS_FILE="existing.json"
+
 # Load the variables from the config file
 #source create_environment.config.sh
 
@@ -62,9 +61,9 @@ set +x  # Disable tracing for this section
 echo "Starting environment creation process..."
 
 
-# # Retrieve your own Object ID
- MYOID=$(az ad signed-in-user show --query id -o tsv)
- echo $MYOID
+# # # Retrieve your own Object ID
+#  MYOID=$(az ad signed-in-user show --query id -o tsv)
+#  echo $MYOID
 
 
 
@@ -72,9 +71,6 @@ echo "Installing the devcenter extension..."
 az extension add --name devcenter --upgrade || handle_error "Failed to install the devcenter extension."
 echo "Extension installation complete!"
 
-# #echo "Assigning owner role to DevCenter identity..."
-# az role assignment create --assignee eb47c23a-720a-4576-b494-5491e1f134ca --role Owner --scope /subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4 || handle_error "Failed to assign owner role to DevCenter identity."
-# echo "Role assignment complete!"
 
 # Start of new commands
 
@@ -85,6 +81,7 @@ DEVCID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query id -o tsv
 echo $DEVCID
 
 # Replace <DEV_CENTER_NAME> with your actual DevCenter name
+# # Retrieve the Object ID of the dev center's identity
 DEVC_OBJ_ID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query identity.principalId -o tsv)
 echo "DevCenter Object ID: $DEVC_OBJ_ID"
 
@@ -135,7 +132,7 @@ az devcenter admin project-allowed-environment-type list --project $DEV_CENTER_P
 # --deployment-target-id "/subscriptions/${SUBID}" \
 # --status Enabled
 
-
+# # Choose an environment type and create it for the project
 objectId=$(az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
 --project $DEV_CENTER_PROJECT_NAME \
 --identity-type "SystemAssigned" \
@@ -147,16 +144,10 @@ objectId=$(az devcenter admin project-environment-type create -n $ENVIRONMENT_TY
 echo sandbox objectid is $objectId
 
 
-# #az role assignment create \
-#     --role "Contributor" \
-#     --assignee-object-id $CLIENTID \
-#     --scope /subscriptions/$SUBID
-# echo "sandbox role sucessfully added"
-
 az role assignment create \
     --role "Contributor" \
     --assignee-object-id $objectId \
-    --assignee-principal-type "SystemAssignedIdentity" \
+    #--assignee-principal-type "SystemAssignedIdentity" \
     --scope /subscriptions/$SUBID
 echo " role sucessfully added"
 # Assign environment access
@@ -205,10 +196,10 @@ az role assignment create --assignee $MYOID \
      --project-name $DEV_CENTER_PROJECT_NAME \
      --catalog-name $DEV_CENTER_CATALOG_NAME \
      --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
-     --debug
+     --parameters $PARAMETERS_FILE || handle_error "Failed to create environment." \
+     #--debug
      #--parameters '{"resource_name":"xmew1-dop-c-oem-rrr-vmss-001","OEM":"rrr","admin_username":"dkpriya","admin_password":"Azure@123456"}' \
     
-     #--parameters $PARAMETERS_FILE || handle_error "Failed to create environment."
 
  echo "Environment creation complete!"
 
