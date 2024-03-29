@@ -78,9 +78,8 @@ DEVCID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query id -o tsv
 echo $DEVCID
 
 # Replace <DEV_CENTER_NAME> with your actual DevCenter name
-DEVC_INFO=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query '[id, identity.principalId]' -o tsv)
-read DEVC_ID DEVC_OBJ_ID <<< "$DEVC_INFO"
-echo "DevCenter Resource ID: $DEVC_ID"
+DEVC_ID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query id -o tsv)
+DEVC_OBJ_ID=$(az rest --method get --uri "$DEVC_ID" --query identity.principalId -o tsv)
 echo "DevCenter Object ID: $DEVC_OBJ_ID"
 
 
