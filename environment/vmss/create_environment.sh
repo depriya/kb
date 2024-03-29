@@ -160,8 +160,8 @@ echo " role sucessfully added"
 # Assign environment access
 
 # # Retrieve your own Object ID
-# MYOID=$(az ad signed-in-user show --query id -o tsv)
-# echo $MYOID
+ MYOID=$(az ad signed-in-user show --query id -o tsv)
+ echo $MYOID
 
  # Assign admin access
  az role assignment create --assignee $MYOID \
