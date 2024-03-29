@@ -99,7 +99,7 @@ objectId=$(az devcenter admin project-environment-type create -n $ENVIRONMENT_TY
 --status Enabled \
 --query 'identity.principalId' \
 --output tsv)
-echo $objectId
+echo sandbox objectid is $objectId
 
 
 # #az role assignment create \

@@ -18,7 +18,7 @@ DEV_CENTER_NAME="xmew1-dop-c-rrr-d-dc"
 ENVIRONMENT_NAME="xmew1-dop-rrr-vmss-009"
 
 # The environment type to use for this environment.
-ENVIRONMENT_TYPE="Test"
+ENVIRONMENT_TYPE="sandbox"
 
 # The name of your Azure dev center project.
 DEV_CENTER_PROJECT_NAME="xmew1-dop-c-rrr-d-project-001"
