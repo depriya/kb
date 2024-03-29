@@ -82,13 +82,24 @@ az configure --defaults group=$RESOURCE_GROUP
 # Show allowed environment type for the project
 az devcenter admin project-allowed-environment-type list --project $DEV_CENTER_PROJECT_NAME --query [].name
 
-# Choose an environment type and create it for the project
-az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
+# # Choose an environment type and create it for the project
+# az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
+# --project $DEV_CENTER_PROJECT_NAME \
+# --identity-type "SystemAssigned" \
+# --roles "{\"${ROID}\":{}}" \
+# --deployment-target-id "/subscriptions/${SUBID}" \
+# --status Enabled
+
+
+objectId=$(az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
 --project $DEV_CENTER_PROJECT_NAME \
 --identity-type "SystemAssigned" \
 --roles "{\"${ROID}\":{}}" \
 --deployment-target-id "/subscriptions/${SUBID}" \
---status Enabled
+--status Enabled \
+--query 'identity.principalId' \
+--output tsv)
+echo $objectId
 
 
 # #az role assignment create \
@@ -99,10 +110,10 @@ az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
 
 az role assignment create \
     --role "Contributor" \
-    --assignee-object-id $CLIENTID \
+    --assignee-object-id $objectId \
     --assignee-principal-type "SystemAssignedIdentity" \
     --scope /subscriptions/$SUBID
-echo "sandbox role sucessfully added"
+echo " role sucessfully added"
 # Assign environment access
 
 # # Retrieve your own Object ID
@@ -120,43 +131,41 @@ az role assignment create --assignee $MYOID \
 --scope "/subscriptions/$SUBID"
 
 
-# End of new commands
+# # End of new commands
 
-echo "List all the Azure Deployment Environments projects you have access to:"
-az graph query -q "Resources | where type =~ 'microsoft.devcenter/projects'" -o table || handle_error "Failed to list projects."
+# echo "List all the Azure Deployment Environments projects you have access to:"
+# az graph query -q "Resources | where type =~ 'microsoft.devcenter/projects'" -o table || handle_error "Failed to list projects."
 
-az account set --subscription $SUBID
+# az account set --subscription $SUBID
 
-# Remove group default scope for next command. Leave blank for group.
-az configure --defaults group=
+# # Remove group default scope for next command. Leave blank for group.
+# az configure --defaults group=
 
-# Set default resource group again
-az configure --defaults group=$RESOURCE_GROUP
-echo "Configure the default resource group as the resource group that contains the project:"
-#az configure set defaults.group=$RESOURCE_GROUP || handle_error "Failed to set default resource group."
+# # Set default resource group again
+# az configure --defaults group=$RESOURCE_GROUP
+# echo "Configure the default resource group as the resource group that contains the project:"
 
-echo "List the type of environments you can create in a specific project:"
-az devcenter dev environment-type list --dev-center $DEV_CENTER_NAME --project-name $DEV_CENTER_PROJECT_NAME -o table || handle_error "Failed to list environment types."
+# echo "List the type of environments you can create in a specific project:"
+# az devcenter dev environment-type list --dev-center $DEV_CENTER_NAME --project-name $DEV_CENTER_PROJECT_NAME -o table || handle_error "Failed to list environment types."
 
-echo "List the environment definitions that are available to a specific project:"
-az devcenter dev environment-definition list --dev-center $DEV_CENTER_NAME --project-name $DEV_CENTER_PROJECT_NAME -o table || handle_error "Failed to list environment definitions."
+# echo "List the environment definitions that are available to a specific project:"
+# az devcenter dev environment-definition list --dev-center $DEV_CENTER_NAME --project-name $DEV_CENTER_PROJECT_NAME -o table || handle_error "Failed to list environment definitions."
 
 
-echo "Creating environment..."
-az devcenter dev environment create \
-    --environment-name $ENVIRONMENT_NAME \
-    --environment-type $ENVIRONMENT_TYPE \
-    --dev-center-name $DEV_CENTER_NAME \
-    --project-name $DEV_CENTER_PROJECT_NAME \
-    --catalog-name $DEV_CENTER_CATALOG_NAME \
-    --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
-    --debug
-    #--parameters '{"resource_name":"xmew1-dop-c-oem-rrr-vmss-001","OEM":"rrr","admin_username":"dkpriya","admin_password":"Azure@123456"}' \
+# echo "Creating environment..."
+# az devcenter dev environment create \
+#     --environment-name $ENVIRONMENT_NAME \
+#     --environment-type $ENVIRONMENT_TYPE \
+#     --dev-center-name $DEV_CENTER_NAME \
+#     --project-name $DEV_CENTER_PROJECT_NAME \
+#     --catalog-name $DEV_CENTER_CATALOG_NAME \
+#     --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
+#     --debug
+#     #--parameters '{"resource_name":"xmew1-dop-c-oem-rrr-vmss-001","OEM":"rrr","admin_username":"dkpriya","admin_password":"Azure@123456"}' \
     
-    #--parameters $PARAMETERS_FILE || handle_error "Failed to create environment."
-    #--name $ENVIRONMENT_NAME \
+#     #--parameters $PARAMETERS_FILE || handle_error "Failed to create environment."
 
-echo "Environment creation complete!"
+# echo "Environment creation complete!"
 
-# Disable tracing
-set +x
+# # Disable tracing
+# set +x
