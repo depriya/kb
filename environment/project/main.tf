@@ -17,7 +17,7 @@
 
 data "azapi_resource" "project" {
   type      = "Microsoft.DevCenter/projects@2023-04-01"
- name      = "xmew1-dop-c-rrr-d-project-005"
+ name      = "xmew1-dop-c-rrr-p-proj-006"
 parent_id = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001"
 
 }

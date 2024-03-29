@@ -6,9 +6,6 @@ on:
         customerOEMsuffix:
           description: "suffix required for customer OEM in lowercase"
           required: true
-        Project:
-            description: "enter the project name within 5 characters"
-            required: true
       
 permissions:
   id-token: write
