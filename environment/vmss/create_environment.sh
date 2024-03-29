@@ -20,7 +20,7 @@ cd "$(dirname "$0")"
 # Copyright (C) Microsoft Corporation.
 
 # The name of your Azure dev center.
-customerOEMsuffix="rrr"
+customerOEMsuffix="avl"
 
 projectname="pj"
 
