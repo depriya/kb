@@ -14,42 +14,8 @@ set -x
 # Change the current directory to the location of the script
 cd "$(dirname "$0")"
 
-
-#!/bin/bash
-
-# Copyright (C) Microsoft Corporation.
-
-# The name of your Azure dev center.
-
-RESOURCE_GROUP="xmew1-dop-c-rrr-d-rg-001"
-
-SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
-
-MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261"
-
-#CLIENTID="693278c7-5ee9-4875-afdb-ddc0c6ae0e8c"
-
-DEV_CENTER_NAME="xmew1-dop-c-rrr-d-dc"
-
-# The name to use for the new environment to be created.
-ENVIRONMENT_NAME="xmew1-dop-rrr-vmss-009"
-
-# The environment type to use for this environment.
-ENVIRONMENT_TYPE="sandbox"
-
-# The name of your Azure dev center project.
-DEV_CENTER_PROJECT_NAME="xmew1-dop-c-rrr-d-project-005"
-
-# The name of your catalog.
-DEV_CENTER_CATALOG_NAME="catalog"
-
-# The name of the ARM template to deploy (specified in the evironment.yaml).
-ENVIRONMENT_DEFINITION_NAME="vmss"
-
-# The name of the ARM template parameters file to use for the deployment.
-#PARAMETERS_FILE="existing.json"
 # Load the variables from the config file
-#source create_environment.config.sh
+source create_environment.config.sh
 
 # Function to handle errors
 handle_error() {
@@ -69,6 +35,7 @@ echo "Assigning owner role to DevCenter identity..."
 az role assignment create --assignee eb47c23a-720a-4576-b494-5491e1f134ca --role Owner --scope /subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4 || handle_error "Failed to assign owner role to DevCenter identity."
 echo "Role assignment complete!"
 
+# Add your new commands here
 # Start of new commands
 
 az configure --defaults group=$RESOURCE_GROUP
@@ -76,13 +43,6 @@ az configure --defaults group=$RESOURCE_GROUP
 # Retrieve dev center resource ID
 DEVCID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query id -o tsv)
 echo $DEVCID
-
-# Replace <DEV_CENTER_NAME> with your actual DevCenter name
-DEVC_INFO=$(az devcenter admin devcenter show -n <DEV_CENTER_NAME> --query '[id, identity.principalId]' -o tsv)
-read DEVC_ID DEVC_OBJ_ID <<< "$DEVC_INFO"
-echo "DevCenter Resource ID: $DEVC_ID"
-echo "DevCenter Object ID: $DEVC_OBJ_ID"
-
 
 # Create project in dev center
 az devcenter admin project create -n $DEV_CENTER_PROJECT_NAME \
@@ -102,10 +62,10 @@ az devcenter admin project show -n $DEV_CENTER_PROJECT_NAME
 # OID=$(az ad sp list --display-name $DEV_CENTER_NAME --query [].id -o tsv)
 # echo $OID
 
- # Assign the role of Owner to the dev center on the subscription
- az role assignment create --assignee $OID \
-  --role "Owner" \
-  --scope "/subscriptions/$SUBID"
+# # Assign the role of Owner to the dev center on the subscription
+# az role assignment create --assignee $OID \
+# --role "Owner" \
+# --scope "/subscriptions/$SUBID"
 
 # Configure a project
 
@@ -151,7 +111,7 @@ echo sandbox objectid is $objectId
 az role assignment create \
     --role "Contributor" \
     --assignee-object-id $objectId \
-   --assignee-principal-type "SystemAssignedIdentity" \
+#    --assignee-principal-type "SystemAssignedIdentity" \
     --scope /subscriptions/$SUBID
 echo " role sucessfully added"
 # Assign environment access
