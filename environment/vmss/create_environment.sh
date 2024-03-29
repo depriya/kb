@@ -79,9 +79,8 @@ echo $DEVCID
 
 # Replace <DEV_CENTER_NAME> with your actual DevCenter name
 DEVC_ID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query id -o tsv)
-DEVC_OBJ_ID=$(az rest --method get --uri "$DEVC_ID" --query identity.principalId -o tsv)
+DEVC_OBJ_ID=$(az rest --method get --uri "$DEVC_ID?api-version=2022-01-01" --query identity.principalId -o tsv)
 echo "DevCenter Object ID: $DEVC_OBJ_ID"
-
 
 # Create project in dev center
 az devcenter admin project create -n $DEV_CENTER_PROJECT_NAME \
