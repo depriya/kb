@@ -89,6 +89,13 @@ DEVC_OBJ_ID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query iden
 echo "DevCenter Object ID: $DEVC_OBJ_ID"
 
 
+# Retrieve the user-assigned identity resource ID
+IDENTITY_RESOURCE_ID=$(az resource list --name Computegalleryid --query '[0].id' -o tsv)
+
+# Retrieve the object ID of the user-assigned identity
+USER_ASSIGNED_IDENTITY_OBJ_ID=$(az resource show --ids $IDENTITY_RESOURCE_ID --query properties.principalId -o tsv)
+echo "User Assigned Identity Object ID: $USER_ASSIGNED_IDENTITY_OBJ_ID"
+
 # Create project in dev center
 az devcenter admin project create -n $projectname \
 --description "My first project." \
@@ -109,6 +116,10 @@ az devcenter admin project show -n $projectname
 
  # Assign the role of Owner to the dev center on the subscription
  az role assignment create --assignee $DEVC_OBJ_ID \
+  --role "Owner" \
+  --scope "/subscriptions/$SUBID"
+
+az role assignment create --assignee $USER_ASSIGNED_IDENTITY_OBJ_ID \
   --role "Owner" \
   --scope "/subscriptions/$SUBID"
 
