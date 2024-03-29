@@ -61,9 +61,11 @@ set +x  # Disable tracing for this section
 
 echo "Starting environment creation process..."
 
-# Retrieve the Object ID of the signed-in user
-MY_OID=$(az account show --query user.id -o tsv)
-echo "Signed-in User Object ID: $MY_OID"
+
+# # Retrieve your own Object ID
+ MYOID=$(az ad signed-in-user show --query id -o tsv)
+ echo $MYOID
+
 
 
 echo "Installing the devcenter extension..."
