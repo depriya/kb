@@ -32,15 +32,15 @@ jobs:
 
       - name: Initialize Terraform
         run: |
-          cd environment/project
+          cd environment/archive/project
           terraform init
 
       - name: Plan Terraform changes
         run: |
-          cd environment/project
+          cd environment/archive/project
           terraform plan -out=tfplan -var="OEM=${{ github.event.inputs.customerOEMsuffix }}" -var="project=${{ github.event.inputs.projectname }}"
 
       - name: Apply Terraform changes
         run: |
-          cd environment/project
+          cd environment/archive/project
           terraform apply -auto-approve tfplan
