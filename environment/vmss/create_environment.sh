@@ -90,8 +90,7 @@ echo "DevCenter Object ID: $DEVC_OBJ_ID"
 
 
 # Retrieve the user-assigned identity resource ID
-IDENTITY_RESOURCE_ID=$(az resource list --name Computegalleryid --query '[0].id' -o tsv)
-echo "Id of computegallery is: $IDENTITY_RESOURCE_ID"
+IDENTITY_RESOURCE_ID=$(az identity show --name Computegalleryid --resource-group xmew1-dop-s-stamp-d-rg-001 --query id -o tsv)
 
 # Retrieve the object ID of the user-assigned identity
 USER_ASSIGNED_IDENTITY_OBJ_ID=$(az resource show --ids $IDENTITY_RESOURCE_ID --query properties.principalId -o tsv)
