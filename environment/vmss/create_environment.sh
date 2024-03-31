@@ -109,13 +109,16 @@ az devcenter admin project show -n $projectname
 # OID=$(az ad sp list --display-name $DEV_CENTER_NAME --query [].id -o tsv)
 # echo $OID
 
+
  # Assign the role of Owner to the dev center on the subscription
- az role assignment create --assignee $DEVC_OBJ_ID \
+ az role assignment create \
   --role "Owner" \
+  --assignee-object-id $DEVC_OBJ_ID \
   --scope "/subscriptions/$SUBID"
 
-az role assignment create --assignee $USER_ASSIGNED_IDENTITY_OBJ_ID \
+az role assignment create \
   --role "Owner" \
+  --assignee-object-id $USER_ASSIGNED_IDENTITY_OBJ_ID \
   --scope "/subscriptions/$SUBID"
 
 # Configure a project
@@ -157,7 +160,8 @@ az role assignment create \
     --role "Contributor" \
     --assignee-object-id $objectId \
     --scope /subscriptions/$SUBID
-echo " role sucessfully added"
+    #----assignee-principal-type "ServicePrincipal" \
+echo "role sucessfully added"
 
 # Assign environment access
 
@@ -168,8 +172,8 @@ echo " role sucessfully added"
 
 # Optionally, assign the Dev Environment User role
 az role assignment create --assignee $MYOID \
---role "Deployment Environments User" \
---scope "/subscriptions/$SUBID"
+ --role "Deployment Environments User" \
+ --scope "/subscriptions/$SUBID"
 
 
 # End of new commands
