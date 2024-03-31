@@ -83,7 +83,6 @@ az configure --defaults group=$RESOURCE_GROUP
 DEVCID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query id -o tsv)
 echo $DEVCID
 
-# Replace <DEV_CENTER_NAME> with your actual DevCenter name
 # # Retrieve the Object ID of the dev center's identity
 DEVC_OBJ_ID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query identity.principalId -o tsv)
 echo "DevCenter Object ID: $DEVC_OBJ_ID"
@@ -105,10 +104,6 @@ az devcenter admin project create -n $projectname \
 az devcenter admin project show -n $projectname
 
 # Assign the Owner role to a managed identity
-
-# # Retrieve Subscription ID
-# SUBID=$(az account show --name $SUBSCRIPTIONNAME --query id -o tsv)
-# echo $SUBID
 
 # # Retrieve the Object ID of the dev center's identity
 # OID=$(az ad sp list --display-name $DEV_CENTER_NAME --query [].id -o tsv)
@@ -162,13 +157,9 @@ az role assignment create \
     --role "Contributor" \
     --assignee-object-id $objectId \
     --scope /subscriptions/$SUBID
-    #--assignee-principal-type "SystemAssignedIdentity" \
 echo " role sucessfully added"
-# Assign environment access
 
-# # # Retrieve your own Object ID
-#  MYOID=$(az ad signed-in-user show --query id -o tsv)
-#  echo $MYOID
+# Assign environment access
 
  # Assign admin access
  az role assignment create --assignee $MYOID \
@@ -212,7 +203,6 @@ az role assignment create --assignee $MYOID \
      --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
      --parameters $PARAMETERS_FILE || handle_error "Failed to create environment." \
      #--debug
-     #--parameters '{"resource_name":"xmew1-dop-c-oem-${customerOEMsuffix}-vmss-001","OEM":"${customerOEMsuffix}","admin_username":"dkpriya","admin_password":"Azure@123456"}' \
     
 
  echo "Environment creation complete!"

@@ -16,29 +16,18 @@ provider "azurerm" {
 }
 
 variable "customerOEMsuffix" {
-  #default = "rrr"
 }
 variable "projectname" {
 }
 variable "admin_username" {
-  #default = "dkpriya"
 }
 variable "admin_password" {
-  #default = "Admin@123456"
   sensitive = true
 }
-
-# #variable "vnet" {
-#   default = "xmew1-dop-c-oem-vnet-001"
-# }
 
 variable "location" {
   default = "west europe"
 }
-
-# #variable "subnet" {
-#   default = "OEMSubnet"
-# }
 
 variable "environmentStage"{
   
