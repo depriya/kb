@@ -3,7 +3,7 @@ name: Deploy.environment.devbox
 on:
   workflow_dispatch:
     inputs:
-      OEM:
+      customerOEMsuffix:
         description: 'The name of OEM'
         required: true
       

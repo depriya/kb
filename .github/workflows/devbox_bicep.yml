@@ -5,7 +5,7 @@ on:
       customerOEMsuffix:
         description: "suffix required for customer OEM in lowercase"
         required: true
-      environment:
+      environmentStage:
         type: choice
         description: "Choose the environment: d for dev, p for Prod"
         options:
@@ -36,9 +36,9 @@ jobs:
       - name: Set Names
         id: set-names
         run: |
-          echo "rgName=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-rg-001" >> $GITHUB_ENV
-          echo "devcenter=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-dc" >> $GITHUB_ENV
-          echo "projectteamname=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environment }}-project-001" >> $GITHUB_ENV
+          echo "rgName=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environmentStage }}-rg-001" >> $GITHUB_ENV
+          echo "devcenter=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environmentStage }}-dc" >> $GITHUB_ENV
+          echo "projectteamname=xmew1-dop-c-${{ inputs.customerOEMsuffix }}-${{ inputs.environmentStage }}-project-001" >> $GITHUB_ENV
 
 
       - name: Create Resource Group
