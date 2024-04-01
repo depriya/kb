@@ -2,8 +2,8 @@
 
 
 # Set your Git configuration
-#git config --global user.email "devi.priya@microsoft.com"
-#git config --global user.name "devi-priya_avl"
+git config user.email "devi.priya@microsoft.com"
+git config user.name "devi-priya_avl"
 
 
 # Create and push a trigger tag
