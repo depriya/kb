@@ -12,6 +12,7 @@ provider "azapi" {
 }
 variable OEM{
   description = "The OEM Value in three letters"
+  default = "avl"
 }
 
 variable "location"{
