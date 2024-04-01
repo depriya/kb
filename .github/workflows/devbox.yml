@@ -1,8 +1,9 @@
 name: Deploy.environment.devbox
 
 on:
-  repository_dispatch:
-    types: [trigger-terraform]
+  push:
+    tags:
+      - 'trigger-workflow'
 
   # #workflow_dispatch:
   #   inputs:
