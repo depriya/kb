@@ -24,8 +24,15 @@ jobs:
             uses: actions/checkout@v2
 
 
-          - name: Run config.sh
+        #   #- name: Run config.sh
+        #     run: |
+        #      chmod +x environment/devbox/trigger.sh  # Make sure the script is executable
+        #      cd environment/devbox
+        #      ./trigger.sh
+
+          - name: Run PowerShell script
+            shell: pwsh
             run: |
-             chmod +x environment/devbox/trigger.sh  # Make sure the script is executable
-             cd environment/devbox
-             ./trigger.sh
+               cd environment/devbox
+               ./create_tag.ps1
+           
