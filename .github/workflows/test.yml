@@ -1,7 +1,9 @@
 name: Deploy.test.devbox
 
 on:
-  workflow_dispatch:
+    push:
+      tags:
+        - 'trigger-workflow'
   
 permissions:
     id-token: write
@@ -29,3 +31,5 @@ jobs:
              chmod +x environment/devbox/trigger.sh  # Make sure the script is executable
              cd environment/devbox
              ./trigger.sh
+
+            
