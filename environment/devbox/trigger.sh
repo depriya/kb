@@ -9,7 +9,7 @@ event_type="trigger-terraform"
 # Create a repository dispatch event using Azure CLI
 az rest \
   --method post \
-  --uri "https://api.github.com/repos/avl-sdv/DevOpsPilot.SiL.Workflows" \
+  --uri "https://api.github.com/avl-sdv/DevOpsPilot.SiL.Workflows" \
   --header "Accept=application/vnd.github.everest-preview+json" \
   --body "{ \"event_type\": \"$event_type\", \"client_payload\": { \"workflow_file\": \"$workflow_file\" } }"
 
