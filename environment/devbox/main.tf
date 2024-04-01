@@ -34,7 +34,8 @@ variable "image" {
 }
 
 variable "vnet" {
-  default = "xmew1-dop-c-oem-vnet-001"
+  //default = "xmew1-dop-c-oem-vnet-001"
+  default = "xmew1-dop-c-avl-d-vnet-001"
 }
 
 variable "project"{}
