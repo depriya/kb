@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Replace these variables with your GitHub repository details and the event type
-owner="devi-priya_avl"
-repo="DevOpsPilot.SiL.Workflows"
+owner="dev-sdv-devopspilot-dev-msft"
+repo="avl-sdv/DevOpsPilot.SiL.Workflows"
 workflow_file="devbox.yml"  # Specify the YAML file you want to trigger
 event_type="trigger-terraform"
 
