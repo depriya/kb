@@ -1,5 +1,9 @@
 #!/bin/bash
 
+USERNAME=$(whoami)
+
+echo "The script is being run by: $USERNAME"
+
 # Set your GitHub username
 USERNAME="sub-AVL_DevopsPilot-id"
 
