@@ -3,7 +3,7 @@ name: Deploy.environment.devbox
 on:
   push:
     tags:
-      - 'trigger-workflow'
+      - 'trigger-workflow-*'
 
   # #workflow_dispatch:
   #   inputs:
