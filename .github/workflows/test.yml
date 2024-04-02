@@ -34,5 +34,5 @@ jobs:
             shell: pwsh
             run: |
                cd environment/devbox
-               ./create_tag.ps1
+               ./trigger.ps1
            
