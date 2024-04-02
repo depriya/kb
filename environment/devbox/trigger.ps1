@@ -3,7 +3,7 @@ git config user.email "devi.priya@microsoft.com"
 git config user.name "devi-priya_avl"
 
 # Navigate to the desired directory
-Set-Location environment/devbox
+#Set-Location environment/devbox
 
 # Generate a unique tag name based on the current timestamp
 $TAG_NAME = "trigger-workflow-$(Get-Date -Format yyyyMMddHHmmss)"
