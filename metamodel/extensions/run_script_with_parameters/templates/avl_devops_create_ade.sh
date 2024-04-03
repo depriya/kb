@@ -24,8 +24,9 @@ customerOEMsuffix="" #TODO: Get from template
 
 projectname="" #TODO: Get from template
 
-admin_username= ""
-admin_password= ""
+admin_username= "" #TODO: Get from template
+
+admin_password= "" #TODO: Get from template
 
 RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
 
