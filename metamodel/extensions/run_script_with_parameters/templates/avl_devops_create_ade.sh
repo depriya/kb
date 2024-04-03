@@ -28,7 +28,7 @@ admin_username="" #TODO: Get from template
 
 admin_password="" #TODO: Get from template
 
-environmentStage=""
+environmentStage="" #TODO: Get from template
 
 RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-${var.environmentStage}-rg-001"
 
