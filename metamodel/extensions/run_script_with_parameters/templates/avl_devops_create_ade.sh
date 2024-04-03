@@ -105,7 +105,7 @@ echo "User Assigned Identity Object ID: $USER_ASSIGNED_IDENTITY_OBJ_ID"
 
 # Create project in dev center
 az devcenter admin project create -n $project \
---description "My first project." \
+--description $projectdescription \
 --dev-center-id $DEVCID
 
 # Confirm project creation
