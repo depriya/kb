@@ -20,9 +20,12 @@ cd "$(dirname "$0")"
 # Copyright (C) Microsoft Corporation.
 
 # The name of your Azure dev center.
-customerOEMsuffix=""#TODO: Get from template
+customerOEMsuffix="" #TODO: Get from template
 
-projectname="pj"
+projectname="" #TODO: Get from template
+
+admin_username= ""
+admin_password= ""
 
 RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
 

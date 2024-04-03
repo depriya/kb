@@ -20,15 +20,17 @@ cd "$(dirname "$0")"
 # Copyright (C) Microsoft Corporation.
 
 # The name of your Azure dev center.
-customerOEMsuffix="avl"
+customerOEMsuffix="" #comes from metamodel
 
-projectname="pj"
+projectname="" #comes from metamodel
+
+projectdescription="" #comes from metamodel
 
 RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
 
 SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
 
-MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261"
+MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261" #comes from metamodel
 
 DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
 
@@ -39,7 +41,7 @@ ENVIRONMENT_NAME="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-vmss-001"
 ENVIRONMENT_TYPE="sandbox"
 
 # The name of your Azure dev center project.
-projectname="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
+project="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
 
 # The name of your catalog.
 DEV_CENTER_CATALOG_NAME="catalog"
@@ -48,7 +50,7 @@ DEV_CENTER_CATALOG_NAME="catalog"
 ENVIRONMENT_DEFINITION_NAME="vmss"
 
 # The name of the ARM template parameters file to use for the deployment.
-PARAMETERS_FILE="existing.json"
+PARAMETERS_FILE="vmssparameters.json"
 
 # Load the variables from the config file
 #source create_environment.config.sh
@@ -96,8 +98,8 @@ USER_ASSIGNED_IDENTITY_OBJ_ID=$(az resource show --ids $IDENTITY_RESOURCE_ID --q
 echo "User Assigned Identity Object ID: $USER_ASSIGNED_IDENTITY_OBJ_ID"
 
 # Create project in dev center
-az devcenter admin project create -n $projectname \
---description "My first project." \
+az devcenter admin project create -n $project \
+--description $projectdescription \   #it will be fetched from metamodel
 --dev-center-id $DEVCID
 
 # Confirm project creation
