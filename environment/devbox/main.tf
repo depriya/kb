@@ -10,7 +10,7 @@ terraform {
 provider "azapi" {
     skip_provider_registration = true
 }
-variable OEM{
+variable customerOEMsuffix{
   description = "The OEM Value in three letters"
   default = "avl"
 }
@@ -35,10 +35,10 @@ variable "image" {
 
 variable "vnet" {
   //default = "xmew1-dop-c-oem-vnet-001"
-  default = "xmew1-dop-c-avl-d-vnet-001"
+  default = "xmew1-dop-c-${var.customerOEMsuffix}-d-vnet-001" 
 }
 
-variable "project"{}
+variable "projectname"{}
 
 variable "subnet"{
    default = "OEMSubnet"
@@ -49,7 +49,7 @@ variable "subnet"{
 
 data "azapi_resource" "existing_rg" {
   type = "Microsoft.Resources/resourceGroups@2022-09-01"
-  name = "xmew1-dop-c-${var.OEM}-d-rg-001"
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-d-rg-001"
 }
 
 data "azapi_resource" "existing_vnet" {
@@ -67,7 +67,7 @@ data "azapi_resource" "existing_subnet" {
 # Data sources to fetch IDs of existing resources
 data "azapi_resource" "existing_devcenter" {
   type = "Microsoft.DevCenter/devcenters@2023-04-01"
-  name = "xmew1-dop-c-${var.OEM}-d-dc"
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-d-dc"
   parent_id = data.azapi_resource.existing_rg.id
 }
 
@@ -79,7 +79,7 @@ data "azapi_resource" "existing_devcenter" {
 
 data "azapi_resource" "existing_project" {
   type = "Microsoft.DevCenter/projects@2023-04-01"
-  name = "xmew1-dop-c-${var.OEM}-p-${var.project}-001"
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-001"
   parent_id = data.azapi_resource.existing_rg.id
 }
 
@@ -87,7 +87,7 @@ data "azapi_resource" "existing_project" {
 # Define devbox definitions
 resource "azapi_resource" "devbox_definition" {
   type = "Microsoft.DevCenter/devcenters/devboxdefinitions@2023-04-01"
-  name = "xmew1-dop-c-${var.OEM}-devboxdef"
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-devboxdef"
   parent_id = data.azapi_resource.existing_devcenter.id
   body = jsonencode({
     location = "${var.location}"
@@ -113,15 +113,15 @@ resource "azapi_resource" "devbox_definition" {
 # Define pools
 resource "azapi_resource" "pool" {
   type = "Microsoft.DevCenter/projects/pools@2023-04-01"
-  name = "xmew1-dop-c-${var.OEM}-pools-001"
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-pools-001"
   parent_id = data.azapi_resource.existing_project.id
   body = jsonencode({
     location = "${var.location}"
     properties = {
-      devBoxDefinitionName = "xmew1-dop-c-${var.OEM}-devboxdef"
+      devBoxDefinitionName = "xmew1-dop-c-${var.customerOEMsuffix}-devboxdef"
       licenseType = "Windows_Client"
       localAdministrator = "Enabled"
-      networkConnectionName = "xmew1-dop-c-${var.OEM}-ntwk-001"
+      networkConnectionName = "xmew1-dop-c-${var.customerOEMsuffix}-ntwk-001"
       
     }
   })
@@ -131,7 +131,7 @@ resource "azapi_resource" "pool" {
 # Define attached network
 resource "azapi_resource" "networkConnection" {
   type = "Microsoft.DevCenter/networkConnections@2023-01-01-preview"
-  name = "xmew1-dop-c-${var.OEM}-ntwkcon-001"
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-ntwkcon-001"
   parent_id = data.azapi_resource.existing_rg.id
   body = jsonencode({
     location = "${var.location}"
@@ -139,14 +139,14 @@ resource "azapi_resource" "networkConnection" {
       domainJoinType = "AzureADJoin"
       subnetId = "${data.azapi_resource.existing_subnet.id}"
       //subnetId = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.Network/virtualNetworks/xmew1-dop-c-oem-vnet-001/subnets/OEMSubnet"
-      networkingResourceGroupName = "xmew1-dop-c-${var.OEM}-d-rg-networkconnection-001"
+      networkingResourceGroupName = "xmew1-dop-c-${var.customerOEMsuffix}-d-rg-networkconnection-001"
     }
   })
 }
 
 resource "azapi_resource" "attachedNetworks" {
   type = "Microsoft.DevCenter/devcenters/attachednetworks@2023-01-01-preview"
-  name = "xmew1-dop-c-${var.OEM}-ntwk-001"
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-ntwk-001"
   parent_id = data.azapi_resource.existing_devcenter.id
   body = jsonencode({
     properties = {
