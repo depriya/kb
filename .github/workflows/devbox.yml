@@ -1,9 +1,19 @@
 name: Deploy.environment.devbox
 
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
+    inputs:
+        customerOEMsuffix:
+          description: "suffix required for customer OEM in lowercase"
+          required: true
+        projectname:
+          description: "ente the project name"
+          required: true
+
+# #on:
+#   push:
+#     tags:
+#       - '*'
 
 permissions:
   id-token: write
@@ -33,7 +43,7 @@ jobs:
       - name: Plan Terraform changes
         run: |
           cd environment/devbox
-          terraform plan -out=tfplan
+          terraform plan -out=tfplan -var="customerOEMsuffix=${{ github.event.inputs.customerOEMsuffix }}" -var="projectname=${{ github.event.inputs.projectname }}"
 
       - name: Apply Terraform changes
         run: |
