@@ -28,13 +28,15 @@ admin_username="" #TODO: Get from template
 
 admin_password="" #TODO: Get from template
 
-RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
+environmentStage=""
+
+RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-${var.environmentStage}-rg-001"
 
 SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
 
 MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261"
 
-DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
+DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-${var.environmentStage}-dc"
 
 # The name to use for the new environment to be created.
 ENVIRONMENT_NAME="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-vmss-001"
