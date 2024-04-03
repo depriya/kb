@@ -30,6 +30,8 @@ admin_password="" #TODO: Get from template
 
 environmentStage="" #TODO: Get from template
 
+projectdescription="" #TODO: Get from template
+
 RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-${var.environmentStage}-rg-001"
 
 SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
