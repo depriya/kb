@@ -4,13 +4,6 @@ terraform {
       source = "Azure/azapi"
     }
   }
-
-
-  backend "azurerm" {
-    storage_account_name = "your_storage_account_name"
-    container_name       = "your_container_name"
-    key                  = "terraform.tfstate"
-  }
 }
 
 provider "azapi" {
@@ -41,7 +34,7 @@ variable "image" {
 
 variable "vnet" {
   //default = "xmew1-dop-c-oem-vnet-001"
-  default = "xmew1-dop-c-${var.customerOEMsuffix}-d-vnet-001" 
+  default = "vnetname"
 }
 
 variable "projectname"{}
@@ -60,7 +53,7 @@ data "azapi_resource" "existing_rg" {
 
 data "azapi_resource" "existing_vnet" {
   type = "Microsoft.Network/virtualNetworks@2022-07-01"
-  name = var.vnet
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-d-vnet-001" 
   parent_id = data.azapi_resource.existing_rg.id
 }
 
