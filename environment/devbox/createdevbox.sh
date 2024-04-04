@@ -33,6 +33,6 @@ MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261"
  az role assignment create --assignee $MYOID \
  --role "DevCenter Dev Box User" \
  --scope "/subscriptions/$SUBID"
-az devcenter dev dev-box create --pool-name $Pool_name --name "DevBoxavl" --dev-center-name $DEV_CENTER_NAME --project-name $project --user-id "me"
+az devcenter dev dev-box create --pool-name $Pool_name --name "DevBoxavl" --dev-center-name $DEV_CENTER_NAME --project-name $project
 # # Disable tracing
  set +x
