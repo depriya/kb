@@ -107,7 +107,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
       user     = var.admin_username
       password = var.admin_password
       # Use the private IP address of the VMSS instances
-      host     = azurerm_windows_virtual_machine_scale_set.example.instance[0].private_ip_address
+      host     = azurerm_virtual_machine_scale_set_vm.example[0].private_ip_address
       timeout  = "5m"
 
       # Configure WinRM connection options
