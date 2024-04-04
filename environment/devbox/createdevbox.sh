@@ -38,5 +38,6 @@ echo "Extension installation complete!"
  az role assignment create --assignee $MYOID \
  --role "DevCenter Dev Box User" \
  --scope "/subscriptions/$SUBID"
-az devcenter dev dev-box create --pool-name $Pool_name --name "DevBoxavl" --dev-center-name $DEV_CENTER_NAME --project-name $project --user-id $MYOID
+#az devcenter dev dev-box create --pool-name $Pool_name --name "MyDevBox" --endpoint "https://8a40af38-3b4c-4672-a6a4-5e964b1870ed-contosodevcenter.centralus.devcenter.azure.com/" --project-name $project --user-id $MYOID
+az devcenter dev dev-box create --pool-name $Pool_name --name "DevBoxavl" --dev-center-name $DEV_CENTER_NAME --project-name $project --user-id e7b48204-dac0-43a3-8f54-ed628b0d62d5
 set +x
