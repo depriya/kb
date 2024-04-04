@@ -1,4 +1,4 @@
-name: Deploy.environment.devbox
+name: Deploy.environment.devbox.terraform
 
 on:
   workflow_dispatch:

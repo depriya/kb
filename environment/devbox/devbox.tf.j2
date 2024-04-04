@@ -6,7 +6,6 @@ terraform {
   }
 }
 
-
 provider "azapi" {
     skip_provider_registration = true
 }
@@ -35,7 +34,7 @@ variable "image" {
 
 variable "vnet" {
   //default = "xmew1-dop-c-oem-vnet-001"
-  default = "xmew1-dop-c-${var.customerOEMsuffix}-d-vnet-001" 
+  default = "vnetname"
 }
 
 variable "projectname"{}
@@ -54,7 +53,7 @@ data "azapi_resource" "existing_rg" {
 
 data "azapi_resource" "existing_vnet" {
   type = "Microsoft.Network/virtualNetworks@2022-07-01"
-  name = var.vnet
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-d-vnet-001" 
   parent_id = data.azapi_resource.existing_rg.id
 }
 
@@ -125,7 +124,7 @@ resource "azapi_resource" "pool" {
       
     }
   })
-   depends_on = [azapi_resource.networkConnection]
+   depends_on = [azapi_resource.networkConnection,azapi_resource.attachedNetworks]
 }
 
 # Define attached network

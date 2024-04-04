@@ -1,4 +1,4 @@
-name: Deploy.environment.vmss
+name: Deploy.environment.vmss.terraform
 
 on:
   workflow_dispatch:

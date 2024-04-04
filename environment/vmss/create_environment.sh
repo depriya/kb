@@ -20,9 +20,9 @@ cd "$(dirname "$0")"
 # Copyright (C) Microsoft Corporation.
 
 # The name of your Azure dev center.
-customerOEMsuffix="" #comes from metamodel
+customerOEMsuffix="avl" #comes from metamodel
 
-projectname="" #comes from metamodel
+projectname="pj" #comes from metamodel
 
 projectdescription="" #comes from metamodel
 

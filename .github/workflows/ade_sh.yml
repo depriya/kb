@@ -1,4 +1,4 @@
-name: Deploy.ADE.vmss
+name: Deploy.ADE.vmss.shscript
 
 on:
   workflow_dispatch:
