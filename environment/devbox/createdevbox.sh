@@ -24,7 +24,7 @@ project="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
 DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
 Pool_name="xmew1-dop-c-${customerOEMsuffix}-pools-001"
 SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
-MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261" 
+MYOID="e7b48204-dac0-43a3-8f54-ed628b0d62d5" 
 
 echo "Installing the devcenter extension..."
 az extension add --name devcenter --upgrade || handle_error "Failed to install the devcenter extension."
@@ -38,6 +38,5 @@ echo "Extension installation complete!"
  az role assignment create --assignee $MYOID \
  --role "DevCenter Dev Box User" \
  --scope "/subscriptions/$SUBID"
-az devcenter dev dev-box create --pool-name $Pool_name --name "DevBoxavl" --dev-center-name $DEV_CENTER_NAME --project-name $project
-# # Disable tracing
- set +x
+az devcenter dev dev-box create --pool-name $Pool_name --name "DevBoxavl" --dev-center-name $DEV_CENTER_NAME --project-name $project --user-id $MYOID
+set +x
