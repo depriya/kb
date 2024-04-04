@@ -94,9 +94,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   }
 }
 
-data "azurerm_virtual_machine_scale_set" "example" {
-  name                = azurerm_windows_virtual_machine_scale_set.example.name
-  resource_group_name = azurerm_windows_virtual_machine_scale_set.example.resource_group_name
+data "azurerm_virtual_machine_scale_set_vm" "example" {
 }
 
 resource "null_resource" "install_az_cli" {
@@ -115,7 +113,7 @@ resource "null_resource" "install_az_cli" {
       type     = "winrm"
       user     = var.admin_username
       password = var.admin_password
-      host     = data.azurerm_virtual_machine_scale_set.example.private_ip_address
+      host     = data.azurerm_virtual_machine_scale_set_vm.example.*.private_ip_address[0]
       timeout  = "5m"
 
       # Configure WinRM connection options
