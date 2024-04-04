@@ -37,7 +37,9 @@ variable "vnet" {
   default = "vnetname"
 }
 
-variable "projectname"{}
+variable "projectname"{
+  default = "pjdb"
+}
 
 variable "subnet"{
    default = "OEMSubnet"

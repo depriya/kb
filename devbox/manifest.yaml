@@ -1,0 +1,5 @@
+name: devbox
+summary: Creates a devbox
+description: Deploys an environment using Terraform containing a devboxdefinition and pool
+runner: Terraform
+templatePath: devbox.tf

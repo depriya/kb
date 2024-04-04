@@ -20,35 +20,37 @@ cd "$(dirname "$0")"
 # Copyright (C) Microsoft Corporation.
 
 # The name of your Azure dev center.
-customerOEMsuffix="rrr"
+customerOEMsuffix="avl" #comes from metamodel
 
-projectname="proj"
+projectname="pjdb" #comes from metamodel
+
+projectdescription="my devbox proj" #comes from metamodel
 
 RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
 
 SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
 
-MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261"
+MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261" #comes from metamodel
 
 DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
 
 # The name to use for the new environment to be created.
-ENVIRONMENT_NAME="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-vmss-001"
+ENVIRONMENT_NAME="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-db-001"
 
 # The environment type to use for this environment.
-ENVIRONMENT_TYPE="sandbox"
+ENVIRONMENT_TYPE="Test"
 
 # The name of your Azure dev center project.
-projectname="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
+project="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
 
 # The name of your catalog.
 DEV_CENTER_CATALOG_NAME="catalog"
 
 # The name of the ARM template to deploy (specified in the evironment.yaml).
-ENVIRONMENT_DEFINITION_NAME="vmss"
+ENVIRONMENT_DEFINITION_NAME="devbox"
 
 # The name of the ARM template parameters file to use for the deployment.
-PARAMETERS_FILE="existing.json"
+#PARAMETERS_FILE="parameters.json"
 
 # Load the variables from the config file
 #source create_environment.config.sh
@@ -83,15 +85,21 @@ az configure --defaults group=$RESOURCE_GROUP
 DEVCID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query id -o tsv)
 echo $DEVCID
 
-# Replace <DEV_CENTER_NAME> with your actual DevCenter name
 # # Retrieve the Object ID of the dev center's identity
 DEVC_OBJ_ID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query identity.principalId -o tsv)
 echo "DevCenter Object ID: $DEVC_OBJ_ID"
 
 
+# Retrieve the user-assigned identity resource ID
+IDENTITY_RESOURCE_ID=$(az identity show --name Computegalleryid --resource-group xmew1-dop-s-stamp-d-rg-001 --query id -o tsv)
+
+# Retrieve the object ID of the user-assigned identity
+USER_ASSIGNED_IDENTITY_OBJ_ID=$(az resource show --ids $IDENTITY_RESOURCE_ID --query properties.principalId -o tsv)
+echo "User Assigned Identity Object ID: $USER_ASSIGNED_IDENTITY_OBJ_ID"
+
 # Create project in dev center
-az devcenter admin project create -n $projectname \
---description "My first project." \
+az devcenter admin project create -n $project \
+--description $projectdescription \   #it will be fetched from metamodel
 --dev-center-id $DEVCID
 
 # Confirm project creation
@@ -99,17 +107,20 @@ az devcenter admin project show -n $projectname
 
 # Assign the Owner role to a managed identity
 
-# # Retrieve Subscription ID
-# SUBID=$(az account show --name $SUBSCRIPTIONNAME --query id -o tsv)
-# echo $SUBID
-
 # # Retrieve the Object ID of the dev center's identity
 # OID=$(az ad sp list --display-name $DEV_CENTER_NAME --query [].id -o tsv)
 # echo $OID
 
+
  # Assign the role of Owner to the dev center on the subscription
- az role assignment create --assignee $DEVC_OBJ_ID \
+ az role assignment create \
   --role "Owner" \
+  --assignee-object-id $DEVC_OBJ_ID \
+  --scope "/subscriptions/$SUBID"
+
+az role assignment create \
+  --role "Owner" \
+  --assignee-object-id $USER_ASSIGNED_IDENTITY_OBJ_ID \
   --scope "/subscriptions/$SUBID"
 
 # Configure a project
@@ -144,20 +155,17 @@ objectId=$(az devcenter admin project-environment-type create -n $ENVIRONMENT_TY
 --status Enabled \
 --query 'identity.principalId' \
 --output tsv)
-echo sandbox objectid is $objectId
+echo Test objectid is $objectId
 
 
 az role assignment create \
     --role "Contributor" \
     --assignee-object-id $objectId \
     --scope /subscriptions/$SUBID
-    #--assignee-principal-type "SystemAssignedIdentity" \
-echo " role sucessfully added"
-# Assign environment access
+    #----assignee-principal-type "ServicePrincipal" \
+echo "role sucessfully added"
 
-# # # Retrieve your own Object ID
-#  MYOID=$(az ad signed-in-user show --query id -o tsv)
-#  echo $MYOID
+# Assign environment access
 
  # Assign admin access
  az role assignment create --assignee $MYOID \
@@ -166,8 +174,8 @@ echo " role sucessfully added"
 
 # Optionally, assign the Dev Environment User role
 az role assignment create --assignee $MYOID \
---role "Deployment Environments User" \
---scope "/subscriptions/$SUBID"
+ --role "Deployment Environments User" \
+ --scope "/subscriptions/$SUBID"
 
 
 # End of new commands
@@ -184,12 +192,6 @@ az role assignment create --assignee $MYOID \
  az configure --defaults group=$RESOURCE_GROUP
  echo "Configure the default resource group as the resource group that contains the project:"
 
- echo "List the type of environments you can create in a specific project:"
- az devcenter dev environment-type list --dev-center $DEV_CENTER_NAME --project-name $projectname -o table || handle_error "Failed to list environment types."
-
- echo "List the environment definitions that are available to a specific project:"
- az devcenter dev environment-definition list --dev-center $DEV_CENTER_NAME --project-name $projectname -o table || handle_error "Failed to list environment definitions."
-
 
  echo "Creating environment..."
  az devcenter dev environment create \
@@ -199,9 +201,8 @@ az role assignment create --assignee $MYOID \
      --project-name $projectname \
      --catalog-name $DEV_CENTER_CATALOG_NAME \
      --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
-     --parameters $PARAMETERS_FILE || handle_error "Failed to create environment." \
+     #--parameters $PARAMETERS_FILE || handle_error "Failed to create environment." \
      #--debug
-     #--parameters '{"resource_name":"xmew1-dop-c-oem-${customerOEMsuffix}-vmss-001","OEM":"${customerOEMsuffix}","admin_username":"dkpriya","admin_password":"Azure@123456"}' \
     
 
  echo "Environment creation complete!"
