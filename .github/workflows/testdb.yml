@@ -26,6 +26,6 @@ jobs:
 
           - name: Run config.sh
             run: |
-             chmod +x devbox/devbox.sh  # Make sure the script is executable
-             cd devbox
+             chmod +x environment/devbox/devbox.sh  # Make sure the script is executable
+             cd environment/devbox
              ./devbox.sh
