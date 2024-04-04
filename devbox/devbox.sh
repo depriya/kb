@@ -24,7 +24,7 @@ customerOEMsuffix="avl" #comes from metamodel
 
 projectname="pjdb" #comes from metamodel
 
-projectdescription="my devbox proj" #comes from metamodel
+projectdescription="mydevboxproj" #comes from metamodel
 
 RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
 
