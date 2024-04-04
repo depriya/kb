@@ -16,23 +16,28 @@ provider "azurerm" {
 }
 
 variable "customerOEMsuffix" {
-    default = "avl"
+  default = "avl"
 }
+
 variable "projectname" {
-    default = "pj"
+  default = "pj"
 }
+
 variable "admin_username" {
-    default = "devipriya"
+  default = "devipriya"
 }
+
 variable "admin_password" {
   sensitive = true
-  default = "Azure@1234"
+  default   = "Azure@1334"
 }
+
 variable "location" {
-  default = "west europe"
+  default = "westeurope"
 }
+
 variable "environmentStage" {
-    default = "d"
+  default = "d"
 }
 
 data "azurerm_resource_group" "example" {
@@ -51,13 +56,18 @@ data "azurerm_subnet" "internal" {
 }
 
 resource "azurerm_network_security_group" "example" {
-  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nsg12"
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nsg13"
   location            = data.azurerm_resource_group.example.location
   resource_group_name = data.azurerm_resource_group.example.name
 }
 
+data "azurerm_windows_virtual_machine_scale_set" "example" {
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-013"
+  resource_group_name = data.azurerm_resource_group.example.name
+}
+
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                 = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-012"
+  name                 = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-013"
   resource_group_name  = data.azurerm_resource_group.example.name
   location             = data.azurerm_resource_group.example.location
   sku                  = "Standard_F2"
@@ -79,11 +89,11 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   }
 
   network_interface {
-    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nic12"
+    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nic13"
     primary = true
 
     ip_configuration {
-      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip12"
+      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip13"
       primary   = true
       subnet_id = data.azurerm_subnet.internal.id
     }
@@ -104,7 +114,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
       type     = "winrm"
       user     = var.admin_username
       password = var.admin_password
-      host     = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-012"
+      host     = data.azurerm_windows_virtual_machine_scale_set.example.private_ips[0] # Use the first private IP address
       timeout  = "5m"
 
       # Configure WinRM connection options
