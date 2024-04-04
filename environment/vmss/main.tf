@@ -11,65 +11,61 @@ terraform {
 
 provider "azurerm" {
   features {}
-
-  skip_provider_registration = true
 }
 
 variable "customerOEMsuffix" {
-  default = "avl"
+    default = "avl"
 }
-
 variable "projectname" {
-  default = "pj"
+    default = "pj"
 }
-
 variable "admin_username" {
-  default = "devipriya"
+    default = "devipriya"
 }
-
 variable "admin_password" {
   sensitive = true
-  default   = "Azure@1334"
+  default = "Azure@1234"
 }
-
 variable "location" {
-  default = "westeurope"
+  default = "west europe"
 }
-
 variable "environmentStage" {
-  default = "d"
+    default = "d"
 }
 
-data "azurerm_resource_group" "example" {
-  name = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-rg-001"
+resource "azurerm_resource_group" "example" {
+  name     = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-rg-001"
+  location = var.location
 }
 
-data "azurerm_virtual_network" "example" {
+resource "azurerm_virtual_network" "example" {
   name                = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-vnet-001"
-  resource_group_name = data.azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  address_space       = ["10.0.0.0/16"]
 }
 
-data "azurerm_subnet" "internal" {
+resource "azurerm_subnet" "internal" {
   name                 = "OEMSubnet"
-  resource_group_name  = data.azurerm_resource_group.example.name
-  virtual_network_name = data.azurerm_virtual_network.example.name
+  resource_group_name  = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.example.name
+  address_prefixes     = ["10.0.2.0/24"]
 }
 
 resource "azurerm_network_security_group" "example" {
-  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nsg13"
-  location            = data.azurerm_resource_group.example.location
-  resource_group_name = data.azurerm_resource_group.example.name
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nsg12"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
 }
 
-
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                 = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-013"
-  resource_group_name  = data.azurerm_resource_group.example.name
-  location             = data.azurerm_resource_group.example.location
-  sku                  = "Standard_F2"
-  instances            = 1
-  admin_password       = var.admin_password
-  admin_username       = var.admin_username
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-012"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  sku                 = "Standard_F2"
+  instances           = 1
+  admin_password      = var.admin_password
+  admin_username      = var.admin_username
   computer_name_prefix = "vm-"
 
   source_image_reference {
@@ -85,13 +81,13 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   }
 
   network_interface {
-    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nic13"
+    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nic12"
     primary = true
 
     ip_configuration {
-      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip13"
+      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip12"
       primary   = true
-      subnet_id = data.azurerm_subnet.internal.id
+      subnet_id = azurerm_subnet.internal.id
     }
     # Attach the NSG to the VMSS
     network_security_group_id = azurerm_network_security_group.example.id
@@ -110,7 +106,8 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
       type     = "winrm"
       user     = var.admin_username
       password = var.admin_password
-      host     = data.azurerm_windows_virtual_machine_scale_set.example.private_ips[0] # Use the first private IP address
+      # Use the private IP address of the VMSS instances
+      host     = azurerm_windows_virtual_machine_scale_set.example.instance[0].private_ip_address
       timeout  = "5m"
 
       # Configure WinRM connection options
