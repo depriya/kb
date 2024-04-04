@@ -61,10 +61,6 @@ resource "azurerm_network_security_group" "example" {
   resource_group_name = data.azurerm_resource_group.example.name
 }
 
-data "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-013"
-  resource_group_name = data.azurerm_resource_group.example.name
-}
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
   name                 = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-013"
