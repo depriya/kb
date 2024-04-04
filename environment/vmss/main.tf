@@ -16,7 +16,7 @@ provider "azurerm" {
 }
 
 variable "customerOEMsuffix" {
-    default = "rrr"
+    default = "avl"
 }
 variable "projectname" {
     default = "pj"
@@ -57,7 +57,7 @@ resource "azurerm_network_security_group" "example" {
 }
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                 = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-001"
+  name                 = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-012"
   resource_group_name  = data.azurerm_resource_group.example.name
   location             = data.azurerm_resource_group.example.location
   sku                  = "Standard_F2"
@@ -104,7 +104,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
       type     = "winrm"
       user     = var.admin_username
       password = var.admin_password
-      host     = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-001"
+      host     = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-012"
       timeout  = "5m"
 
       # Configure WinRM connection options
