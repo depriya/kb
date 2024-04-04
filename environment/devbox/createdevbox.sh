@@ -24,7 +24,7 @@ project="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
 DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
 Pool_name="xmew1-dop-c-${customerOEMsuffix}-pools-001"
 SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
-MYOID="e7b48204-dac0-43a3-8f54-ed628b0d62d5" 
+MYOID="70608667-2dc3-4b2a-a433-30d6ca41e377" 
 
 echo "Installing the devcenter extension..."
 az extension add --name devcenter --upgrade || handle_error "Failed to install the devcenter extension."
