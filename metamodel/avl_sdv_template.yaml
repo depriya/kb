@@ -1,27 +1,30 @@
 # Copyright (C) Microsoft Corporation.
-
+#region Configuration
 config:
-  project_name: <PROJECT_NAME>
   version: <VERSION>
 
-  jfrog: #TODO: Discuss
-    download_url: <JFROG_DOWNLOAD_URL>
-    edge_token: <JFROG_EDGE_TOKEN>
+  environment_stage_short: <ENVIRONMENT_SATGE_SHORT Example. 'd'>
 
-  clone_github_repositories: #TODO: Discuss
+  project_name: <PROJECT_NAME>
+  project_description: <PROJECT_DESCRIPTION>
+
+  customer_OEM_suffix: <OEM_IDENTIFIER>
+
+  jfrog:
+    download_url: <JFROG_DOWNLOAD_URL> #TODO: Discuss where to get this from
+    edge_token: <JFROG_EDGE_TOKEN> #TODO: Fetch from Key Vault, discuss the secret name
+
+  clone_github_repositories: #TODO: Discuss how to handle this
     - repository: <REPOSITORY_NAME>
       organisation: <REPOSITORY_ORGANISATION>
-      pat_token: <REPOSITORY_TOKEN>
+      pat_token: <REPOSITORY_TOKEN> #TODO: Fetch from Key Vault, discuss the secret name
 
-  staging_storage_account: #TODO: Discuss
-    name: <STORAGE_ACCOUNT_NAME>
-    resource_group: <STORAGE_ACCOUNT_RESOURCE_GROUP_NAME>
-    subscription_id: <STORAGE_ACCOUNT_SUBSCRIPTION_ID>
+  staging_storage_account:
+    name: <STORAGE_ACCOUNT_NAME> #TODO: Can be constructed using prefix, suffix and environment. Update the syntax and remove from config
+    resource_group: <STORAGE_ACCOUNT_RESOURCE_GROUP_NAME> #TODO: Can be constructed using prefix, suffix and environment. Update the syntax and remove from config
+    subscription_id: <STORAGE_ACCOUNT_SUBSCRIPTION_ID> #TODO: Discuss how to handle this?
 
-  symphony:
-    toolchain_output_path: <TOOLCHAIN_OUTPUT_PATH>
-    symphony_authority: localhost
-
+  #region model_stack configuration
   model_stack:
     model_repo_owner: <MODEL_REPO_OWNER>
     model_repo_name: <MODEL_REPO_NAME>
@@ -33,6 +36,7 @@ config:
             - Name: BEV_Truck_1Spd
               ModuleFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/FMU/BEV_Truck_1Spd.fmu
               TimeStepSize:
+              # XCP parameters to get defined in a separate XCP section below
               SubSysParam:
                 - Param: BEV_Truck_1Spd_default
                   ParamFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/param/BEV_Truck_1Spd_default.dcm
@@ -206,8 +210,17 @@ config:
           - Name: vVV_ExtAirAmbTemp_C
             Value: 50
             Unit: temperature~degC
+  #endregion model_stack configuration
 
+#endregion Configuration
 
+#region Symphony Configuration
+  symphony:
+    toolchain_output_path: <TOOLCHAIN_OUTPUT_PATH> #TODO: This should be a storage account path, should be changed to be constructed dynamically using the prefix, suffix and environment. Update in targets and remove from config
+    symphony_authority: localhost #TODO: Should be configured to the deployed Symphony Instance. Is this static? Discuss how to handle this.
+#endregion Symphony Configuration
+
+#region Extensions
 extensions:
   providers:
     - provider: local filesystem
@@ -216,6 +229,9 @@ extensions:
     - provider: local filesystem
       location: ./extensions
       staging_directory: ./extensions
+#endregion Extensions
 
+#region Targets
 targets: ./targets/avl_sdv_targets.yaml.j2
+#endregion Targets
 
