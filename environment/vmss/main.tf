@@ -51,7 +51,7 @@ data "azurerm_subnet" "internal" {
 }
 
 resource "azurerm_network_security_group" "example" {
-  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nsg"
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nsg12"
   location            = data.azurerm_resource_group.example.location
   resource_group_name = data.azurerm_resource_group.example.name
 }
@@ -79,11 +79,11 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   }
 
   network_interface {
-    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nic"
+    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nic12"
     primary = true
 
     ip_configuration {
-      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip"
+      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip12"
       primary   = true
       subnet_id = data.azurerm_subnet.internal.id
     }
