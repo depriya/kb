@@ -21,8 +21,8 @@ cd "$(dirname "$0")"
 customerOEMsuffix="avl" #comes from metamodel
 projectname="pj" #comes from metamodel
 project="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
-DEV_CENTER_NAME="xmew1-dop-c-${var.customerOEMsuffix}-d-dc"
-Pool_name="xmew1-dop-c-${var.customerOEMsuffix}-pools-001"
+DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
+Pool_name="xmew1-dop-c-${customerOEMsuffix}-pools-001"
 SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
 MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261" 
  # Assign admin access
