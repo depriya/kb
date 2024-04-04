@@ -124,7 +124,7 @@ resource "azapi_resource" "pool" {
       
     }
   })
-   depends_on = [azapi_resource.networkConnection]
+   depends_on = [azapi_resource.networkConnection,azapi_resource.attachedNetworks]
 }
 
 # Define attached network
