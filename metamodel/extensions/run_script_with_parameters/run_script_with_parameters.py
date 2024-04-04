@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+# Copyright (C) Microsoft Corporation.
+
 import base64
 import json
 from dataclasses import dataclass, field
@@ -13,7 +17,6 @@ class RunScriptWithParamsExtension(BaseMetamodelExtension):
         input_parameter_to_script: str = field(init=False)
 
         def __post_init__(self) -> None:
-            # set the value of input_parameter_to_script to the value of input_parameter converted to a json string that is encoded in base64 format
             self.input_parameter_to_script = base64.b64encode(
                 json.dumps(self.input_parameter).encode("ascii")
             ).decode("ascii")
