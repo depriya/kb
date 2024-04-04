@@ -92,6 +92,15 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
     # Attach the NSG to the VMSS
     network_security_group_id = azurerm_network_security_group.example.id
   }
+}
+
+data "azurerm_virtual_machine_scale_set" "example" {
+  name                = azurerm_windows_virtual_machine_scale_set.example.name
+  resource_group_name = azurerm_windows_virtual_machine_scale_set.example.resource_group_name
+}
+
+resource "null_resource" "install_az_cli" {
+  depends_on = [azurerm_windows_virtual_machine_scale_set.example]
 
   provisioner "remote-exec" {
     inline = [
@@ -106,8 +115,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
       type     = "winrm"
       user     = var.admin_username
       password = var.admin_password
-      # Use the private IP address of the VMSS instances
-      host     = azurerm_virtual_machine_scale_set_vm.example[0].private_ip_address
+      host     = data.azurerm_virtual_machine_scale_set.example.private_ip_address
       timeout  = "5m"
 
       # Configure WinRM connection options
