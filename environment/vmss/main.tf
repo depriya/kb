@@ -15,11 +15,18 @@ provider "azurerm" {
   skip_provider_registration = true
 }
 
-variable "customerOEMsuffix" {}
-variable "projectname" {}
-variable "admin_username" {}
+variable "customerOEMsuffix" {
+    default = "rrr"
+}
+variable "projectname" {
+    default = "pj"
+}
+variable "admin_username" {
+    default = "devipriya"
+}
 variable "admin_password" {
   sensitive = true
+  default = "Azure@1234"
 }
 variable "location" {
   default = "west europe"
