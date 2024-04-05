@@ -26,6 +26,6 @@ jobs:
 
           - name: Run devbox.sh
             run: |
-             chmod +x environment/devbox/createdevbox.sh  # Make sure the script is executable
-             cd environment/devbox
-             ./createdevbox.sh
+             chmod +x devbox/devbox.sh  # Make sure the script is executable
+             cd devbox
+             ./devbox.sh
