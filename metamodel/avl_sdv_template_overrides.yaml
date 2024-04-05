@@ -33,5 +33,7 @@ config:
 #region Symphony Configuration
   symphony:
     toolchain_output_path: https://xmew1dopctstoemdst.blob.core.windows.net/demo-metamode-output/avl_devops_pilot
-    symphony_authority: 192.168.0.75
+    agent:
+      port: 8098
+    base_url: http://192.168.0.75
 #endregion Symphony Configuration

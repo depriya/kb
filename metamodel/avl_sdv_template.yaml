@@ -217,7 +217,9 @@ config:
 #region Symphony Configuration
   symphony:
     toolchain_output_path: <TOOLCHAIN_OUTPUT_PATH> #TODO: This should be a storage account path, should be changed to be constructed dynamically using the prefix, suffix and environment. Update in targets and remove from config
-    symphony_authority: localhost #TODO: Should be configured to the deployed Symphony Instance. Is this static? Discuss how to handle this.
+    agent:
+      port: 8098
+    base_url: localhost #TODO: Should be configured to the deployed Symphony Instance. Is this static? Discuss how to handle this.
 #endregion Symphony Configuration
 
 #region Extensions
