@@ -24,7 +24,7 @@ customerOEMsuffix="avl" #comes from metamodel
 
 projectname="pjn" #comes from metamodel
 
-projectdescription="test project" #comes from metamodel
+projectdescription="testproject" #comes from metamodel
 
 RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
 
