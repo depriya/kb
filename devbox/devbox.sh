@@ -17,7 +17,7 @@ echo "Extension installation complete!"
 az devcenter admin devbox-definition create \
     --dev-center "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-avl-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-avl-d-dc" \
     --devbox-definition-name "xmew1-dop-c-${customerOEMsuffix}-devboxdef" \
-    --image-reference "$image" \
+    --image-reference '{"id": "'"$image"'"}' \
     --os-storage-type "ssd_256gb" \
     --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001" \
     --sku '{"capacity": 1, "family": "Standard", "name": "general_i_8c32gb256ssd_v2", "size": "Standard_DS1_v2", "tier": "Standard"}' \
