@@ -21,10 +21,10 @@ SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4" #TODO: Discuss. Should this come fr
 MYOID="7cc6c11b-ad9c-43cc-a7d5-2a0a0e4f3648" #TODO: Discuss. How to get this value? As of now hardcoded objectid of AKS
 #endregion Declare Constants
 
-#region Getting config from metamodel config yaml
-configEncoded="{{ parameters.input_parameter_to_script }}"
-config=$(echo $configEncoded | base64 -d)
-#endregion Getting config from metamodel config yaml
+# #region Getting config from metamodel config yaml
+# configEncoded="{{ parameters.input_parameter_to_script }}"
+# config=$(echo $configEncoded | base64 -d)
+# #endregion Getting config from metamodel config yaml
 
 # #region parameters - get from config
 # customer_OEM_suffix=$(echo $config | jq -r '.customer_OEM_suffix')
