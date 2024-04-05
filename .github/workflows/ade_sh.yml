@@ -26,6 +26,6 @@ jobs:
 
           - name: Run config.sh
             run: |
-             chmod +x Archive/archive/create_environment.sh  # Make sure the script is executable
-             cd Archive/archive
-             ./create_environment.sh
+             chmod +x Archive/avl_devops_create_ade.sh  # Make sure the script is executable
+             cd Archive
+             ./avl_devops_create_ade.sh
