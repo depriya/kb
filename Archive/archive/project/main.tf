@@ -95,7 +95,7 @@ parent_id = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-d
 #   - Role: Deployment Environments User
 #   - Scope: Project
 ##############################
-resource "azurerm_role_assignment" "devcenter_environment_user" {
+resource "azurerm_role_assignment" "devcenter_project_admin" {
   for_each = toset(var.project_members)
 
   #scope                = data.azapi_resource.project.id
