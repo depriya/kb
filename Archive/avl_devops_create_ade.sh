@@ -8,7 +8,7 @@ set -e
 # Fail if an unset variable is used
 set -u
 
-source $(dirname $0)/symphony_stage_script_provider.sh
+#source $(dirname $0)/symphony_stage_script_provider.sh
 
 #region Declare Constants
 DEV_CENTER_CATALOG_NAME="catalog"            #TODO: Discuss. Should this come from the config?
