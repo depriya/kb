@@ -21,14 +21,11 @@ echo "Installing the devcenter extension..."
 az extension add --name devcenter --upgrade || handle_error "Failed to install the devcenter extension."
 echo "Extension installation complete!"
 
-# Fetch image ID
-#image_id=$(az devcenter image show --gallery-name default --gallery-image-name microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os --gallery-image-version 1.0.0 --resource-group xmew1-dop-c-avl-d-rg-001 --query id --output tsv)
-
 # Create devbox definition
 az devcenter admin devbox-definition create \
     --dev-center $DEV_CENTER_NAME \
     --devbox-definition-name $devbox_definition_name \
-    --image-reference "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/devcenters/$DEV_CENTER_NAME/galleries/default/images/$image" \
+    --image-reference "{\"id\": \"/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/devcenters/$DEV_CENTER_NAME/galleries/default/images/$image\"}" \
     --os-storage-type $osstoragetype \
     --resource-group $RESOURCE_GROUP \
     --sku "{\"capacity\": $capacity, \"family\": \"$family\", \"name\": \"$compute\", \"size\": \"$size\", \"tier\": \"$tier\"}" \
@@ -48,7 +45,7 @@ az devcenter admin network-connection create \
     --networking-resource-group-name "xmew1-dop-c-${customerOEMsuffix}-d-rg-networkconnection-001"
 
 # Fetch network connection ID
-network_connection_id=$(az devcenter admin network-connection show --name "xmew1-dop-c-${customerOEMsuffix}-ntwkcon-001" --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001" --query id --output tsv)
+network_connection_id=$(az devcenter admin network-connection show --name "xmew1-dop-c-${customerOEMsuffix}-ntwkcon-001" --resource-group "$RESOURCE_GROUP" --query id --output tsv)
 
 # Create attached network
 az devcenter admin attached-network create \
