@@ -3,7 +3,7 @@
 # Set variables
 customerOEMsuffix="avl"
 location="westeurope"
-image="/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-avl-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-avl-d-dc/galleries/default/images/microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os"
+#image="/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-avl-d-rg-001/providers/Microsoft.DevCenter/devcenters/xmew1-dop-c-avl-d-dc/galleries/default/images/microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os"
 projectname="pjdb"
 project="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
 DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
@@ -21,12 +21,13 @@ echo "Extension installation complete!"
 
 subnet_id=$(az network vnet subnet show --name OEMSubnet --vnet-name xmew1-dop-c-${customerOEMsuffix}-d-vnet-001 --resource-group xmew1-dop-c-${customerOEMsuffix}-d-rg-001 --query id --output tsv)
 # Fetch image ID
+#image_id=$(az devcenter image show --gallery-name default --gallery-image-name microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os --gallery-image-version 1.0.0 --resource-group xmew1-dop-c-avl-d-rg-001 --query id --output tsv)
 image_id=$(az devcenter image show --gallery-name default --gallery-image-name microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os --gallery-image-version "2023.01.01-preview" --resource-group xmew1-dop-c-${customerOEMsuffix}-d-rg-001 --dev-center $DEV_CENTER_NAME --query id --output tsv)
 # Create devbox definition
 az devcenter admin devbox-definition create \
     --dev-center $DEV_CENTER_NAME \
     --devbox-definition-name "xmew1-dop-c-${customerOEMsuffix}-devboxdef" \
-    --image-reference '{"id": "'$image'"}' \
+    --image-reference '{"id": "'"$image_id"'"}' \
     --os-storage-type $osstoragetype \
     --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001" \
     --sku "{\"capacity\": $capacity, \"family\": \"$family\", \"name\": \"$compute\", \"size\": \"$size\", \"tier\": \"$tier\"}" \
