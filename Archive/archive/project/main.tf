@@ -94,15 +94,15 @@
 #   - Identity: each project member define in root main.tf
 #   - Role: Deployment Environments User
 #   - Scope: Project
-##############################
-resource "azurerm_role_assignment" "devcenter_project_admin" {
-  for_each = toset(var.project_members)
+# ##############################
+# resource "azurerm_role_assignment" "devcenter_project_admin" {
+#   for_each = toset(var.project_members)
 
-  #scope                = data.azapi_resource.project.id
-  scope = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4"
-  role_definition_name = "DevCenter Project Admin"
-  principal_id         = each.key
-}
+#   #scope                = data.azapi_resource.project.id
+#   scope = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+#   role_definition_name = "DevCenter Project Admin"
+#   principal_id         = each.key
+# }
 
 resource "azurerm_role_assignment" "devcenter_environment_user" {
   for_each = toset(var.project_members)
