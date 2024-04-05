@@ -22,7 +22,7 @@ cd "$(dirname "$0")"
 # The name of your Azure dev center.
 customerOEMsuffix="avl" #comes from metamodel
 
-projectname="pj" #comes from metamodel
+projectname="pjn" #comes from metamodel
 
 projectdescription="" #comes from metamodel
 
@@ -50,7 +50,7 @@ DEV_CENTER_CATALOG_NAME="catalog"
 ENVIRONMENT_DEFINITION_NAME="vmss"
 
 # The name of the ARM template parameters file to use for the deployment.
-PARAMETERS_FILE="vmssparameters.json"
+#PARAMETERS_FILE="vmssparameters.json"
 
 # Load the variables from the config file
 #source create_environment.config.sh
@@ -207,11 +207,13 @@ az role assignment create --assignee $MYOID \
      --project-name $projectname \
      --catalog-name $DEV_CENTER_CATALOG_NAME \
      --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
-     --parameters $PARAMETERS_FILE || handle_error "Failed to create environment." \
+     --parameters "{\"customerOEMsuffix\":\"$customerOEMsuffix\",\"admin_username\":\"$admin_username\",\"admin_password\":\"$admin_password\",\"environmentStage\":\"$environment_stage_short\",\"projectname\":\"$projectname\"}"
      #--debug
+     #--parameters $PARAMETERS_FILE || handle_error "Failed to create environment." \
+
     
 
  echo "Environment creation complete!"
 
 # # Disable tracing
- set +x
+set +x
