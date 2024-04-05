@@ -22,12 +22,12 @@ echo "Extension installation complete!"
 subnet_id=$(az network vnet subnet show --name OEMSubnet --vnet-name xmew1-dop-c-${customerOEMsuffix}-d-vnet-001 --resource-group xmew1-dop-c-${customerOEMsuffix}-d-rg-001 --query id --output tsv)
 # Fetch image ID
 #image_id=$(az devcenter image show --gallery-name default --gallery-image-name microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os --gallery-image-version 1.0.0 --resource-group xmew1-dop-c-avl-d-rg-001 --query id --output tsv)
-image_id=$(az devcenter image show --gallery-name default --gallery-image-name microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os --gallery-image-version "2023.01.01-preview" --resource-group xmew1-dop-c-${customerOEMsuffix}-d-rg-001 --dev-center $DEV_CENTER_NAME --query id --output tsv)
+image_id=$(az devcenter image show --gallery-name default --gallery-image-name microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os --gallery-image-version "1.0.0" --resource-group xmew1-dop-c-avl-d-rg-001 --query id --output tsv)
 # Create devbox definition
 az devcenter admin devbox-definition create \
     --dev-center $DEV_CENTER_NAME \
     --devbox-definition-name "xmew1-dop-c-${customerOEMsuffix}-devboxdef" \
-    --image-reference '{"id": "'"$image_id"'"}' \
+    --image-reference "{\"id\": \"${image_id}\"}" \
     --os-storage-type $osstoragetype \
     --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001" \
     --sku "{\"capacity\": $capacity, \"family\": \"$family\", \"name\": \"$compute\", \"size\": \"$size\", \"tier\": \"$tier\"}" \
