@@ -98,15 +98,16 @@ parent_id = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-d
 resource "azurerm_role_assignment" "devcenter_environment_user" {
   for_each = toset(var.project_members)
 
-  scope                = data.azapi_resource.project.id
+  #scope                = data.azapi_resource.project.id
+  scope = "xmew1-dop-c-${var.OEM}-d-rg-001"
   role_definition_name = "DevCenter Project Admin"
   principal_id         = each.key
 }
 
 resource "azurerm_role_assignment" "devcenter_environment_user" {
   for_each = toset(var.project_members)
-
-  scope                = data.azapi_resource.project.id
+  scope = "xmew1-dop-c-${var.OEM}-d-rg-001"
+  #scope                = data.azapi_resource.project.id
   role_definition_name = "DevCenter Dev Box User"
   principal_id         = each.key
 }
