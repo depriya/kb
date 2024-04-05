@@ -7,6 +7,13 @@ image="/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-
 projectname="pjdb"
 project="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
 DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
+##SKU details##
+capacity=1
+family="Standard"
+compute="general_i_8c32gb256ssd_v2"
+size="Standard_DS1_v2"
+tier="Standard"
+osstoragetype="ssd_256gb"
 
 echo "Installing the devcenter extension..."
 az extension add --name devcenter --upgrade || handle_error "Failed to install the devcenter extension."
@@ -16,10 +23,10 @@ echo "Extension installation complete!"
 az devcenter admin devbox-definition create \
     --dev-center $DEV_CENTER_NAME \
     --devbox-definition-name "xmew1-dop-c-${customerOEMsuffix}-devboxdef" \
-    --image-reference '{"id": "'"$image"'"}' \
-    --os-storage-type "ssd_256gb" \
+    --image-reference '{"id": "'$image'"}' \
+    --os-storage-type $osstoragetype \
     --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001" \
-    --sku '{"capacity": 1, "family": "Standard", "name": "general_i_8c32gb256ssd_v2", "size": "Standard_DS1_v2", "tier": "Standard"}' \
+    --sku "{\"capacity\": $capacity, \"family\": \"$family\", \"name\": \"$compute\", \"size\": \"$size\", \"tier\": \"$tier\"}" \
     --hibernate-support "Enabled" \
     --location "$location"
 
