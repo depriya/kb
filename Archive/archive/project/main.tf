@@ -108,6 +108,6 @@ resource "azurerm_role_assignment" "devcenter_environment_user" {
   for_each = toset(var.project_members)
   scope = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4"
   #scope                = data.azapi_resource.project.id
-  role_definition_name = "DevCenter Dev Box User"
+  role_definition_name = "Owner"
   principal_id         = each.key
 }
