@@ -48,7 +48,8 @@ DEV_CENTER_CATALOG_NAME="catalog"
 
 # The name of the ARM template to deploy (specified in the evironment.yaml).
 ENVIRONMENT_DEFINITION_NAME="vmss"
-
+admin_username="Azureuser"
+admin_password="Azure@123456"
 # The name of the ARM template parameters file to use for the deployment.
 #PARAMETERS_FILE="vmssparameters.json"
 
