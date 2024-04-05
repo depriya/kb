@@ -51,7 +51,8 @@ network_connection_id=$(az devcenter admin network-connection show --name "xmew1
 az devcenter admin attached-network create \
     --attached-network-connection-name "xmew1-dop-c-${customerOEMsuffix}-ntwk-001" \
     --network-connection-id "$network_connection_id" \
-    --resource-group $RESOURCE_GROUP
+    --resource-group $RESOURCE_GROUP \
+    --dev-center $DEV_CENTER_NAME
 
 # Create pool
 az devcenter admin pool create \
