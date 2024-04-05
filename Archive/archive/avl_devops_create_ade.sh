@@ -211,7 +211,7 @@ echo "Assigned Deployment Environments User role to $MYOID"
 
 #region Create Dev Environment
 echo "Creating Dev Environment"
-commandCreateDevCenter="az devcenter dev environment create --environment-name \"$ENVIRONMENT_NAME\" --environment-type \"$ENVIRONMENT_TYPE\" --dev-center-name \"$DEV_CENTER_NAME\" --project-name \"$project\" --catalog-name \"$DEV_CENTER_CATALOG_NAME\" --environment-definition-name \"$ENVIRONMENT_DEFINITION_NAME\" --parameters '{"customerOEMsuffix":"${customer_OEM_suffix}","admin_username":"${admin_username}","admin_password":"${admin_password}","environmentStage":"${environment_stage_short}","projectname":"${project_name}"}'"
+commandCreateDevCenter="az devcenter dev environment create --environment-name \"$ENVIRONMENT_NAME\" --environment-type \"$ENVIRONMENT_TYPE\" --dev-center-name \"$DEV_CENTER_NAME\" --project-name \"$project\" --catalog-name \"$DEV_CENTER_CATALOG_NAME\" --environment-definition-name \"$ENVIRONMENT_DEFINITION_NAME\" --parameters '{"customerOEMsuffix":"${customer_OEM_suffix}","admin_username":"${admin_username}","admin_password":"${admin_password}","environmentStage":"${environment_stage_short}","projectname":"${project}"}'"
 commandCreateDevCenter_output=""
 commandCreateDevCenter_status=0
 execute_command_with_status_code "$commandCreateDevCenter" commandCreateDevCenter_output commandCreateDevCenter_status
