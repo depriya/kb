@@ -19,6 +19,9 @@ echo "Installing the devcenter extension..."
 az extension add --name devcenter --upgrade || handle_error "Failed to install the devcenter extension."
 echo "Extension installation complete!"
 
+subnet_id=$(az network vnet subnet show --name OEMSubnet --vnet-name xmew1-dop-c-${customerOEMsuffix}-d-vnet-001 --resource-group xmew1-dop-c-${customerOEMsuffix}-d-rg-001 --query id --output tsv)
+# Fetch image ID
+image_id=$(az devcenter image show --gallery-name default --gallery-image-name microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os --gallery-image-version "2023.01.01-preview" --resource-group xmew1-dop-c-${customerOEMsuffix}-d-rg-001 --dev-center $DEV_CENTER_NAME --query id --output tsv)
 # Create devbox definition
 az devcenter admin devbox-definition create \
     --dev-center $DEV_CENTER_NAME \
@@ -35,15 +38,17 @@ az devcenter admin network-connection create \
     --domain-join-type "AzureADJoin" \
     --name "xmew1-dop-c-${customerOEMsuffix}-ntwkcon-001" \
     --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001" \
-    --subnet-id "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-avl-d-rg-001/providers/Microsoft.Network/virtualNetworks/xmew1-dop-c-avl-d-vnet-001/subnets/OEMSubnet" \
+    --subnet-id "$subnet_id" \
     --location "$location" \
     --networking-resource-group-name "xmew1-dop-c-${customerOEMsuffix}-d-rg-networkconnection-001"
+
+networkconnectionid=$(az devcenter admin network-connection show --name xmew1-dop-c-${customerOEMsuffix}-ntwkcon-001 --dev-center $DEV_CENTER_NAME --resource-group xmew1-dop-c-${customerOEMsuffix}-d-rg-001 --query id --output tsv)
 
 # Create attached network
 az devcenter admin attached-network create \
     --attached-network-connection-name "xmew1-dop-c-${customerOEMsuffix}-ntwk-001" \
     --dev-center $DEV_CENTER_NAME \
-    --network-connection-id "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-avl-d-rg-001/providers/Microsoft.DevCenter/networkConnections/xmew1-dop-c-avl-d-ntwkcon-001" \
+    --network-connection-id "$networkconnectionid" \
     --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
 
 # Create pool
