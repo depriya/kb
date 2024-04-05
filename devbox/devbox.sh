@@ -5,6 +5,10 @@ customerOEMsuffix="avl"
 location="westeurope"
 projectname="pjdb"
 project="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
+image="microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os"
+DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
+RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
+devbox_definition_name="xmew1-dop-c-${customerOEMsuffix}-devboxdef"
 ##SKU details##
 capacity=1
 family="Standard"
@@ -18,15 +22,15 @@ az extension add --name devcenter --upgrade || handle_error "Failed to install t
 echo "Extension installation complete!"
 
 # Fetch image ID
-image_id=$(az devcenter image show --gallery-name default --gallery-image-name microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os --gallery-image-version 1.0.0 --resource-group xmew1-dop-c-avl-d-rg-001 --query id --output tsv)
+#image_id=$(az devcenter image show --gallery-name default --gallery-image-name microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os --gallery-image-version 1.0.0 --resource-group xmew1-dop-c-avl-d-rg-001 --query id --output tsv)
 
 # Create devbox definition
 az devcenter admin devbox-definition create \
-    --dev-center "xmew1-dop-c-${customerOEMsuffix}-d-dc" \
-    --devbox-definition-name "xmew1-dop-c-${customerOEMsuffix}-devboxdef" \
-    --image-reference "{\"id\": \"${image_id}\"}" \
+    --dev-center $DEV_CENTER_NAME \
+    --devbox-definition-name $devbox_definition_name \
+    --image-reference "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/devcenters/$DEV_CENTER_NAME/galleries/default/images/$image" \
     --os-storage-type $osstoragetype \
-    --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001" \
+    --resource-group $RESOURCE_GROUP \
     --sku "{\"capacity\": $capacity, \"family\": \"$family\", \"name\": \"$compute\", \"size\": \"$size\", \"tier\": \"$tier\"}" \
     --hibernate-support "Enabled" \
     --location "$location"
@@ -38,7 +42,7 @@ subnet_id=$(az network vnet subnet show --name OEMSubnet --vnet-name xmew1-dop-c
 az devcenter admin network-connection create \
     --domain-join-type "AzureADJoin" \
     --name "xmew1-dop-c-${customerOEMsuffix}-ntwkcon-001" \
-    --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001" \
+    --resource-group $RESOURCE_GROUP \
     --subnet-id "$subnet_id" \
     --location "$location" \
     --networking-resource-group-name "xmew1-dop-c-${customerOEMsuffix}-d-rg-networkconnection-001"
@@ -50,14 +54,14 @@ network_connection_id=$(az devcenter admin network-connection show --name "xmew1
 az devcenter admin attached-network create \
     --attached-network-connection-name "xmew1-dop-c-${customerOEMsuffix}-ntwk-001" \
     --network-connection-id "$network_connection_id" \
-    --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
+    --resource-group $RESOURCE_GROUP
 
 # Create pool
 az devcenter admin pool create \
-    --devbox-definition-name "xmew1-dop-c-${customerOEMsuffix}-devboxdef" \
+    --devbox-definition-name $devbox_definition_name \
     --local-administrator "Enabled" \
     --name "xmew1-dop-c-${customerOEMsuffix}-pools-001" \
     --project "$project" \
-    --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001" \
+    --resource-group $RESOURCE_GROUP \
     --location "$location" \
     --network-connection-name "xmew1-dop-c-${customerOEMsuffix}-ntwk-001"
