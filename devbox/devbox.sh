@@ -42,7 +42,9 @@ az devcenter admin network-connection create \
     --location "$location" \
     --networking-resource-group-name "xmew1-dop-c-${customerOEMsuffix}-d-rg-networkconnection-001"
 
-networkconnectionid=$(az devcenter admin network-connection show --name xmew1-dop-c-${customerOEMsuffix}-ntwkcon-001 --dev-center $DEV_CENTER_NAME --resource-group xmew1-dop-c-${customerOEMsuffix}-d-rg-001 --query id --output tsv)
+
+# Fetch network connection ID
+networkconnectionid=$(az devcenter admin network-connection show --name "xmew1-dop-c-${customerOEMsuffix}-ntwkcon-001" --resource-group "xmew1-dop-c-${customerOEMsuffix}-d-rg-001" --query id --output tsv)
 
 # Create attached network
 az devcenter admin attached-network create \
