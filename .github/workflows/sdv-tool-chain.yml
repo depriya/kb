@@ -23,8 +23,8 @@ jobs:
           
       - name: Install dependencies
         run: |
-          pip install -r /sdv-tool-chain/platform/toolchain/requirements.txt
-          pip install -r /sdv-tool-chain/platform/toolchain/requirements_test.txt
+          pip install -r ./sdv-tool-chain/platform/toolchain/requirements.txt
+          pip install -r ./sdv-tool-chain/platform/toolchain/requirements_test.txt
         working-directory: ${{ github.workspace }}
 
       - name: Validate Metamodel
