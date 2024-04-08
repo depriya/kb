@@ -108,7 +108,7 @@ resource "azurerm_role_assignment" "devcenter_project_admin" {
 
   scope                = data.azapi_resource.keyvault.id
 #scope = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4"
-  role_definition_name = "Key Vault Contributor"
+  role_definition_name = "Key Vault Secrets Officer"
   principal_id         = each.key
  }
 
