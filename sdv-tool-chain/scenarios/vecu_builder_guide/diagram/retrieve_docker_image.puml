@@ -1,0 +1,29 @@
+' Copyright (C) Microsoft Corporation
+
+@startuml
+frame "Deploy vECU Symphony Campaign" {
+    card "Campaign Stage: vecu_download_software" as vecu_download_software {
+    }
+}
+
+frame "Host Machine" {
+    component "Symphony" as symphony {
+    }
+}
+
+frame "vECU VM" {
+    component "Symphony Agent" as agent {
+    }
+}
+
+
+cloud "Container Registry" as container_registry {
+}
+
+vecu_download_software -right-> symphony: 1. Request vECU to pull a Docker image
+symphony -down-> agent: 2. Request: pull the Docker image
+agent -down-> agent: 3.a Check if the Docker image exists locally
+agent .down.> container_registry: 3.b Pull the image if it does not exist
+agent -up-> symphony: 4. Send the status of the image pull
+
+@enduml

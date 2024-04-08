@@ -1,0 +1,13 @@
+import os
+
+class BaseSettings:
+    LISTENING_URL = ""
+    LISTENING_PORT = ""
+    DATABASE = {
+        "COSMOS_PRIMARY_KEY": "{{ parameters.azure_cosmos_db_primary_key }}",
+        "COSMOS_URI": "{{ parameters.azure_cosmos_db_uri }}",
+        "DATABASE_ID": "{{ parameters.database_id }}",
+        "JOBS_CONTAINER": "{{ parameters.jobs_container }}",
+        "PROJECTS_CONTAINER": "{{ parameters.projects_container }}"
+    }
+    USE_MSI = False

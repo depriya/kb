@@ -1,0 +1,8 @@
+{
+    "spec": {
+        "campaign": "{{parameters.campaign_name|e}}",
+        "name": "{{parameters.campaign_activation_name}}",
+        "stage": "",
+        "inputs": {{parameters.campaign_start_stage_inputs|default({},true)|tojson}}
+    }
+}

@@ -1,0 +1,38 @@
+{
+    "imageReference": "{{ parameters.image_reference }}",
+    "location": "{{ parameters.location|e }}",
+    "useExistingVNet": "{{ parameters.use_existing_vnet|string|lower }}",
+    "virtualNetworkName": "{{ parameters.virtual_network_name }}",
+{% if parameters.use_existing_vnet %}
+    "virtualNetworkResourceGroupName": "{{ parameters.virtual_network_resource_group_name }}",
+{% else %}
+    "networkSecurityGroupRules": [
+        {
+            "name": "SSH",
+            "properties": {
+                "priority": 300,
+                "protocol": "TCP",
+                "access": "Allow",
+                "direction": "Inbound",
+                "sourceAddressPrefix": "*",
+                "sourcePortRange": "*",
+                "destinationAddressPrefix": "*",
+                "destinationPortRange": "22"
+            }
+        }
+    ],
+    "addressPrefixes": [
+        "10.0.0.0/16"
+    ],
+    "subnetAddressPrefix": "10.0.0.0/24",
+{% endif %}
+    "networkInterfaceName": "{{ parameters.network_interface_name|e }}",
+    "networkInterfaceIPConfigurationName": "{{ parameters.network_interface_ip_configuration_name }}",
+    "networkInterfaceIPConfigurationSubnetName": "{{ parameters.network_interface_ip_configuration_subnet_name }}",
+    "virtualMachineName": "{{ parameters.virtual_machine_name }}",
+    "nicDeleteOption": "{{ parameters.nic_delete_option }}",
+    "virtualMachineZone": "{{ parameters.virtual_machine_zone }}",
+    "virtualMachineSize": "{{ parameters.virtual_machine_size }}",
+    "osDiskType": "{{ parameters.os_disk_type }}",
+    "osDiskDeleteOption": "{{ parameters.os_disk_delete_option }}"
+}

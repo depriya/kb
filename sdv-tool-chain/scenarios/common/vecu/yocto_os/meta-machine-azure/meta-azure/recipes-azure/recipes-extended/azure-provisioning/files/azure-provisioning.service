@@ -1,0 +1,10 @@
+[Unit]
+Description=Azure Provisioning
+After=syslog.target network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/azure-provisioning.py
+
+[Install]
+WantedBy=multi-user.target

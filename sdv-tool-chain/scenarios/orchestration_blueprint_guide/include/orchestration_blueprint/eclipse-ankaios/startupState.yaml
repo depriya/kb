@@ -1,0 +1,46 @@
+workloads:
+  service_discovery:
+    runtime: podman
+    agent: agent_A
+    tags:
+      - key: project
+        value: chariott
+    runtimeConfig: |
+      image: <IMAGE_REGISTRY>/sdvblueprint/eclipse-chariott/service-discovery:0.2.0
+      commandOptions: ["--network", "host", "--name", "service_discovery"]
+  mqtt_broker:
+    runtime: podman
+    agent: agent_A
+    tags:
+      - key: project
+        value: agemo
+    runtimeConfig: |
+      image: <IMAGE_REGISTRY>/sdvblueprint/eclipse-mosquitto/mqtt-broker:latest
+      commandOptions: ["--network", "host", "--name", "mqtt-broker"]
+  dynamic_topic_management:
+    runtime: podman
+    agent: agent_A
+    tags:
+      - key: project
+        value: agemo
+    runtimeConfig: |
+      image: <IMAGE_REGISTRY>/sdvblueprint/eclipse-agemo/pub-sub-service:0.1.1
+      commandOptions: ["--network", "host", "--name", "pub-sub-service"]
+  digital_twin_vehicle:
+    runtime: podman
+    agent: agent_A
+    tags:
+      - key: project
+        value: ibeji
+    runtimeConfig: |
+      image: <IMAGE_REGISTRY>/sdvblueprint/eclipse-ibeji/invehicle-digital-twin:0.1.0
+      commandOptions: ["--network", "host", "--name", "invehicle-digital-twin"]
+  digital_twin_cloud_sync:
+    runtime: podman
+    agent: agent_A
+    tags:
+      - key: project
+        value: freyja
+    runtimeConfig: |
+      image: <IMAGE_REGISTRY>/sdvblueprint/eclipse-freyja/local-with-ibeji:0.1.0
+      commandOptions: ["--network", "host", "--name", "local-cloud-sync"]

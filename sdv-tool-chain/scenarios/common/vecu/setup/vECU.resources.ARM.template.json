@@ -1,0 +1,198 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "userPrincipalId": {
+            "type": "string",
+            "metadata": {
+                "description": "The user to be assigned an admin role for the key vault. Use your Principal ID."
+            }
+        },
+        "emailCommunicationServiceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the email communication service to be created. Must be globally unique."
+            }
+        },
+        "communicationServiceDataLocation": {
+            "type": "string",
+            "defaultValue": "United States",
+            "metadata": {
+                "description": "This location is used to determine the data residency of the communication services.",
+                "link": "https://learn.microsoft.com/en-us/azure/communication-services/concepts/privacy#data-residency"
+            }
+        },
+        "emailCommunicationServiceSenderUsername": {
+            "type": "string",
+            "defaultValue": "toolchainemailservice",
+            "metadata": {
+                "description": "The username of the email address that emails from your Email Communication Service will be sent from."
+            }
+        },
+        "communicationServiceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the communication service to be created. Must be globally unique."
+            }
+        },
+        "keyVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the key vault to be created. Must be globally unique."
+            }
+        },
+        "workflowGithubPATSecretValue": {
+            "type": "securestring"
+        },
+        "workflowGithubPATSecretExpiry": {
+            "type": "string",
+            "metadata": {
+                "description": "The expiry date of the GitHub PAT secret in ISO 8601 datetime format. Example: '2023-12-31T00:00:00Z'"
+            }
+        }
+    },
+    "variables": {
+        "communicationServicesLocation": "global",
+        "emailCommunicationServceDomainName": "AzureManagedDomain",
+        "workflowGithubPATSecretName": "toolchain-workflow-github-pat",
+        "communicationServiceConnectionStringSecretName": "toolchain-email-connection-string",
+        "keyVaultAdministratorRoleId": "00482a5a-887f-4fb3-b363-3b7fe8e74483",
+        "clientPrincipalId": "[parameters('userPrincipalId')]",
+        "keyVaultSecretsUserRoleId": "4633458b-17de-408a-b874-0445c86b69e6"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Communication/emailServices",
+            "apiVersion": "2021-10-01-preview",
+            "name": "[parameters('emailCommunicationServiceName')]",
+            "location": "[variables('communicationServicesLocation')]",
+            "properties": {
+                "dataLocation": "[parameters('communicationServiceDataLocation')]"
+            }
+        },
+        {
+            "type": "Microsoft.Communication/emailServices/domains",
+            "apiVersion": "2021-10-01-preview",
+            "name": "[concat(parameters('emailCommunicationServiceName'), '/', variables('emailCommunicationServceDomainName'))]",
+            "location": "[variables('communicationServicesLocation')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Communication/emailServices', parameters('emailCommunicationServiceName'))]"
+            ],
+            "properties": {
+                "domainManagement": "AzureManaged"
+            }
+        },
+        {
+            "type": "Microsoft.Communication/emailServices/domains/senderUsernames",
+            "apiVersion": "2023-03-31",
+            "name": "[concat(parameters('emailCommunicationServiceName'), '/', variables('emailCommunicationServceDomainName'), '/', parameters('emailCommunicationServiceSenderUsername'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Communication/emailServices/domains', parameters('emailCommunicationServiceName'), variables('emailCommunicationServceDomainName'))]"
+            ],
+            "properties": {
+                "username": "[parameters('emailCommunicationServiceSenderUsername')]"
+            }
+        },
+        {
+            "type": "Microsoft.Communication/CommunicationServices",
+            "apiVersion": "2023-04-01-preview",
+            "name": "[parameters('communicationServiceName')]",
+            "location": "[variables('communicationServicesLocation')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Communication/emailServices/domains', parameters('emailCommunicationServiceName'), variables('emailCommunicationServceDomainName'))]"
+            ],
+            "properties": {
+                "dataLocation": "[parameters('communicationServiceDataLocation')]",
+                "linkedDomains": [
+                    "[resourceId('Microsoft.Communication/emailServices/domains', parameters('emailCommunicationServiceName'), variables('emailCommunicationServceDomainName'))]"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2022-07-01",
+            "name": "[parameters('keyVaultName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "standard"
+                },
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [],
+                "enableRbacAuthorization": true
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[guid(concat(parameters('keyVaultName'), parameters('userPrincipalId'), 'KeyVaultAdministratorRole'))]",
+            "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', variables('keyVaultAdministratorRoleId'))]",
+                "principalId": "[parameters('userPrincipalId')]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2022-07-01",
+            "name": "[concat(parameters('keyVaultName'), '/', variables('workflowGithubPATSecretName'))]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+            ],
+            "properties": {
+                "value": "[parameters('workflowGithubPATSecretValue')]",
+                "attributes": {
+                    "enabled": true,
+                    "exp": "[dateTimeToEpoch(parameters('workflowGithubPATSecretExpiry'))]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[guid(concat(parameters('keyVaultName'), variables('workflowGithubPATSecretName'), variables('clientPrincipalId'), 'KeyVaultSecretsUserRole'))]",
+            "scope": "[resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), variables('workflowGithubPATSecretName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), variables('workflowGithubPATSecretName'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', variables('keyVaultSecretsUserRoleId'))]",
+                "principalId": "[variables('clientPrincipalId')]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2022-07-01",
+            "name": "[concat(parameters('keyVaultName'), '/', variables('communicationServiceConnectionStringSecretName'))]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+                "[resourceId('Microsoft.Communication/CommunicationServices', parameters('communicationServiceName'))]"
+            ],
+            "properties": {
+                "value": "[listKeys(resourceId('Microsoft.Communication/CommunicationServices', parameters('communicationServiceName')), '2023-04-01-preview').primaryConnectionString]",
+                "attributes": {
+                    "enabled": true
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[guid(concat(parameters('keyVaultName'), variables('communicationServiceConnectionStringSecretName'), variables('clientPrincipalId'), 'KeyVaultSecretsUserRole'))]",
+            "scope": "[resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), variables('communicationServiceConnectionStringSecretName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), variables('communicationServiceConnectionStringSecretName'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', variables('keyVaultSecretsUserRoleId'))]",
+                "principalId": "[variables('clientPrincipalId')]"
+            }
+        }
+    ]
+}

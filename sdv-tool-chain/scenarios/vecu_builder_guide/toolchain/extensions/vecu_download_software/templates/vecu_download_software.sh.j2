@@ -1,0 +1,142 @@
+#!/bin/bash
+
+# Copyright (C) Microsoft Corporation.
+
+# This script is used to instantiate a target solution with Symphony.
+# Symphony notifies the Symphony Agent, running on the vECU, to download the software.
+
+# Exit immediately if a command fails
+set -e
+
+# Fail if an unset variable is used
+set -u
+
+# References:
+# https://github.com/eclipse-symphony/symphony/blob/main/coa/pkg/apis/v1alpha2/types.go
+# https://github.com/eclipse-symphony/symphony/blob/main/api/pkg/apis/v1alpha1/providers/target/script/mock-apply.sh
+# 8001: failed to update
+ERROR_SYMPHONY_AGENT_CODE=8001
+SUCCESS_SYMPHONY_AGENT_CODE=8004
+
+source $(dirname $0)/symphony_stage_script_provider.sh
+
+virtualMachineResourceGroup=$(get_value_from_output_dictionary "virtualMachineResourceGroup")
+virtualMachineName=$(get_value_from_output_dictionary "virtualMachineName")
+
+# Get the Private IP Address of the deployed vECU
+commandVirtualMachinePrivateIP="az vm show -d -g $virtualMachineResourceGroup -n $virtualMachineName --query privateIps -o tsv"
+commandVirtualMachinePrivateIP_output=""
+commandVirtualMachinePrivateIP_status=0
+execute_command_with_status_code "$commandVirtualMachinePrivateIP" commandVirtualMachinePrivateIP_output commandVirtualMachinePrivateIP_status
+
+# A non-zero exit status code will stop the Symphony campaign completely.
+# Exit with a zero-status code to stop this campaign stage early if an error occurs
+# but still allow the subsequent steps of the campaign to continue.
+# The error status and error message are returned as campaign stage outputs.
+# Failed to get the IP address of the deployed vECU
+if [ $commandVirtualMachinePrivateIP_status -ne 0 ]; then
+    echo_output_dictionary_to_output_file
+    exit 0
+fi
+
+# Read the vecu_download_software.json file
+# Set the serverUrl with the Symphony Agent's server URL.
+serverUrl="http://$commandVirtualMachinePrivateIP_output:{{parameters.symphony_agent_port}}/v1alpha2/solution/"
+vecu_download_software=$(jq --arg serverUrl "$serverUrl" '.targets."download-software".spec.topologies[0].bindings[0].config.serverUrl = $serverUrl' $(dirname $0)/vecu_download_software.json)
+
+token=$(curl -X POST -d '{"username":"admin", "password":""}' {{ parameters.symphony_base_url }}/users/auth | jq -r '.accessToken')
+
+# command_output may look like the following JSON strings:
+###### Example 1) Success
+# {
+#   "targetCount": 1,
+#   "successCount": 1,
+#   "targets": {
+#     "download-software": {
+#       "status": "OK",
+#       "components": {
+#         "download-software": {
+#           "status": 8004,
+#           "message": "Docker pull success for image ..."
+#         }
+#       }
+#     }
+#   },
+#   "skipped": false,
+#   "isRemoval": false,
+#   "allAssignedDeployed": true
+# }
+###### Example 2) Failure due to no response from the Symphony Agent.
+# {
+#   "targetCount": 1,
+#   "successCount": 0,
+#   "message": "failed to get current state: failed to invoke Percept API",
+#   "skipped": false,
+#   "isRemoval": false,
+#   "allAssignedDeployed": false
+# }
+###### Example 3) Failure due to unknown Docker image URI.
+# {
+#   "targetCount": 1,
+#   "successCount": 1,
+#   "targets": {
+#     "download-software": {
+#       "status": "OK",
+#       "components": {
+#         "download-software": {
+#           "status": 8001,
+#           "message": "Docker pull failed due to Error response from daemon: manifest unknown."
+#         }
+#       }
+#     }
+#   },
+#   "skipped": false,
+#   "isRemoval": false,
+#   "allAssignedDeployed": true
+# }
+
+command_output=""
+command_status=0
+command="curl -s -d '$vecu_download_software' -H 'Authorization: Bearer $token' \
+        {{ parameters.symphony_base_url }}/solution/instances"
+
+max_retry_attempts={{ parameters.max_retry_attempts }}
+for ((i=0; i<max_retry_attempts; i++)); do
+
+    # Reset command_status for the current attempt.
+    command_status=0
+    execute_command_with_status_code "$command" command_output command_status
+
+    if [ $command_status -ne 0 ]; then
+        echo_error_to_output_dictionary "Unable to send a request to Symphony Control Plane."
+        sleep {{ parameters.retry_interval_secs }}
+        continue
+    fi
+
+    symphony_agent_response_status=$(echo "$command_output" | jq -r '.targets."download-software".components."download-software".status')
+    # If Symphony receives a response from the Symphony Agent, then the success count will be at least 1.
+    successCount=$(echo "$command_output" | jq -r '.successCount')
+
+    if [ $symphony_agent_response_status -eq $SUCCESS_SYMPHONY_AGENT_CODE ]; then
+        echo "The Symphony Agent on the vECU has received the download software request."
+        echo_success_to_output_dictionary
+        break
+    fi
+
+    # Symphony Agent did not respond
+    if [ $successCount -eq 0 ]; then
+        failedMessage=$(echo "$command_output" | jq -r '.message')
+        echo_error_to_output_dictionary "$failedMessage"
+    # Symphony Agent responded, but it failed to download the software.
+    elif [ $symphony_agent_response_status -eq $ERROR_SYMPHONY_AGENT_CODE ]; then
+        failedMessage=$(echo "$command_output" | jq -r '.targets."download-software".components."download-software".message')
+        echo_error_to_output_dictionary "$failedMessage"
+    else
+        echo_error_to_output_dictionary "Unable to handle error: $command_output."
+    fi
+
+    sleep {{ parameters.retry_interval_secs }}
+done
+
+# Write the updated key-value pairs to the output file
+echo_output_dictionary_to_output_file

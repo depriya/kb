@@ -1,0 +1,21 @@
+# Copyright (C) Microsoft Corporation.
+
+FROM ubuntu:22.04
+
+RUN apt-get update
+RUN apt-get install python3 python3-venv xz-utils -y
+# Create and configure python venv
+RUN python3 -m venv /opt/cgn
+COPY requirements.txt .
+RUN /opt/cgn/bin/python3 -m pip install -r requirements.txt
+RUN /opt/cgn/bin/python3 -m pip install gunicorn
+RUN mkdir -p /opt/code/backend
+
+# Copy Source
+WORKDIR /opt/code/backend
+COPY *.py /opt/code/backend/
+ENV PYTHONPATH=/opt/code/backend/
+
+# Exposes port {{ parameters.simulation_ui_backend_port }} for the simulation dashboard backend.
+EXPOSE {{ parameters.simulation_ui_backend_port }}
+CMD ["/opt/cgn/bin/python3", "main.py"]

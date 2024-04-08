@@ -1,0 +1,67 @@
+{
+    "solutionName": "target-runtime-download-software-solution",
+    "solution": {
+      "metadata": {
+        "namespace": "default",
+        "name": "target-runtime-download-software-solution"
+      },
+      "spec": {
+        "displayName": "target-runtime-download-software-solution",
+        "components": [
+          {
+            "name": "download-software",
+            "type": "download-software",
+            "properties": {
+              "source": {
+                "type": "{{ parameters.source_type }}",
+                "uri": "{{ parameters.source_uri }}"
+              },
+              "dataMounts": {
+                "pathToLocalTargetDownloadDest": "",
+                "pathToContainerDirMount": ""
+              }
+            }
+          }
+        ]
+      }
+    },
+    "instance": {
+      "spec": {
+        "name": "target-runtime-download-software-instance",
+        "displayName": "target-runtime-download-software-instance",
+        "solution": "target-runtime-download-software-solution",
+        "target": {
+          "name": "download-software"
+        }
+      }
+    },
+    "targets": {
+      "download-software": {
+        "spec": {
+          "displayName": "download-software",
+          "components": [
+            {
+              "name": "download-software",
+              "type": "download-software"
+            }
+          ],
+          "topologies": [
+            {
+              "bindings": [
+                {
+                  "role": "download-software",
+                  "provider": "providers.target.proxy",
+                  "config": {
+                    "serverUrl": "<AGENT_SERVER_URL_IS_SET_AFTER_VECU_DEPLOYMENT>"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "assignments": {
+        "download-software": "{download-software}"
+    }
+}

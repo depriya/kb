@@ -1,0 +1,40 @@
+# Copyright (C) Microsoft Corporation.
+
+# Symphony base image
+FROM ghcr.io/eclipse-symphony/symphony-api:{{ parameters.symphony_version }} as symphony
+
+FROM ubuntu:22.04
+
+# Create a user with user ID 10001 and a group with group ID 10002
+# The IDs 10001 and 10002 are non-privileged IDs, and they are chosen arbitrarily
+ARG UID=10001
+ARG GID=10002
+
+# Update the package list, install sudo, create a non-root user, and grant password-less sudo permissions
+RUN apt update && \
+    apt install -y sudo wget python3 python3-pip jq curl && \
+    addgroup --gid $GID simuser && \
+    adduser --uid $UID --gid $GID --disabled-password --gecos "" simuser && \
+    echo 'simuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+
+RUN sudo apt upgrade -y  && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash && sudo apt install azure-cli -y
+
+RUN usermod -aG sudo simuser
+
+# Set the non-root user as the default user
+USER simuser
+
+WORKDIR {{ parameters.toolchain_output_path }}
+
+# Copy files into the container and set the appropriate permissions
+COPY --chown=simuser:simuser --from=symphony symphony-api {{ parameters.toolchain_output_path }}
+COPY --chown=simuser:simuser ./cognata_simulation_scripts {{ parameters.toolchain_output_path }}/cognata_simulation_scripts
+COPY --chown=simuser:simuser ./notification_email {{ parameters.toolchain_output_path }}/notification_email
+
+# The base Symphony image does not contain the symphony-api-no-k8s.json config file
+RUN wget https://raw.githubusercontent.com/eclipse-symphony/symphony/{{ parameters.symphony_version }}/api/symphony-api-no-k8s.json
+RUN chmod -R 755 {{ parameters.toolchain_output_path }}
+
+# Expose port {{ parameters.symphony_port }} which Symphony listens on.
+EXPOSE {{ parameters.symphony_port }}
+CMD ["./symphony-api", "-c", "symphony-api-no-k8s.json", "-l", "debug"]

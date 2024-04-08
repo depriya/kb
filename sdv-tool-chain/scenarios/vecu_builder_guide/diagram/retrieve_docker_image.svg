@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="393px" preserveAspectRatio="none" style="width:1112px;height:393px;background:#FEFEFE;" version="1.1" viewBox="0 0 1112 393" width="1112px" zoomAndPan="magnify"><defs><filter height="300%" id="f1rhnqmlkromd8" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[673f293c8605c1bb8162f304b539f699]
+cluster Deploy vECU Symphony Campaign--><rect fill="#FEFEFE" filter="url(#f1rhnqmlkromd8)" height="73" style="stroke: #000000; stroke-width: 1.5;" width="348" x="22" y="36"/><path d="M300,37 L300,45.2969 L290,55.2969 L22,55.2969 " fill="none" style="stroke: #000000; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="268" x="25" y="49.9951">Deploy vECU Symphony Campaign</text><!--MD5=[4ebc51cfba04176ef34100a841a87993]
+cluster Host Machine--><rect fill="#FEFEFE" filter="url(#f1rhnqmlkromd8)" height="97" style="stroke: #000000; stroke-width: 1.5;" width="144" x="628" y="24"/><path d="M744,25 L744,33.2969 L734,43.2969 L628,43.2969 " fill="none" style="stroke: #000000; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="106" x="631" y="37.9951">Host Machine</text><!--MD5=[22a7a73be60e2473e64e238a816a83c6]
+cluster vECU VM--><rect fill="#FEFEFE" filter="url(#f1rhnqmlkromd8)" height="97" style="stroke: #000000; stroke-width: 1.5;" width="496" x="605" y="170"/><path d="M684,171 L684,179.2969 L674,189.2969 L605,189.2969 " fill="none" style="stroke: #000000; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="69" x="608" y="183.9951">vECU VM</text><!--MD5=[f6f03d061917f7e796a7f12aa8b340f8]
+entity vecu_download_software--><rect fill="#FEFEFE" filter="url(#f1rhnqmlkromd8)" height="22.2969" style="stroke: #000000; stroke-width: 1.5;" width="315" x="38.5" y="71"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="295" x="48.5" y="86.9951">Campaign Stage: vecu_download_software</text><!--MD5=[a31ef3c52572e8543f5786c852a908e5]
+entity symphony--><rect fill="#FEFEFE" filter="url(#f1rhnqmlkromd8)" height="46.2969" style="stroke: #A80036; stroke-width: 1.5;" width="112" x="644" y="59"/><rect fill="#FEFEFE" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="736" y="64"/><rect fill="#FEFEFE" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="734" y="66"/><rect fill="#FEFEFE" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="734" y="70"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="72" x="659" y="91.9951">Symphony</text><!--MD5=[3908db504f15eb564d5f0e12bd7273c1]
+entity agent--><rect fill="#FEFEFE" filter="url(#f1rhnqmlkromd8)" height="46.2969" style="stroke: #A80036; stroke-width: 1.5;" width="157" x="621.5" y="205"/><rect fill="#FEFEFE" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="758.5" y="210"/><rect fill="#FEFEFE" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="756.5" y="212"/><rect fill="#FEFEFE" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="756.5" y="216"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="117" x="636.5" y="237.9951">Symphony Agent</text><!--MD5=[f3d97f972158726f27b74ad1f6c99956]
+entity container_registry--><path d="M630.8402,339.0242 C633.63,333.7353 638.9517,333.7999 642.3472,338.3132 C646.6787,332.6467 650.8181,333.6162 654.4294,339.0941 C656.255,333.5224 661.325,331.8564 665.4997,336.5643 C669.4933,330.5793 674.6688,330.5642 678.2836,336.9555 C680.6545,332.5263 685.1234,331.1063 688.3263,336.0656 C692.0509,330.8684 697.3659,330.4469 700.5923,336.6039 C704.2647,330.3607 709.7925,330.8622 713.7585,336.2722 C717.8583,331.889 722.1381,331.7812 724.7277,337.8562 C727.7973,332.1322 732.9937,330.2946 737.2764,336.5896 C741.6066,331.3525 745.1797,332.1169 748.0292,338.019 C751.8272,333.157 757.2042,332.2731 760.4267,338.6535 C763.8202,334.8247 768.2084,334.4705 770.5681,339.7985 C781.2318,339.3803 784.5796,346.5599 779.6798,355.2937 C784.3522,362.7887 781.0193,370.227 771.6714,370.1791 C768.0557,375.2151 764.0865,376.0709 759.9005,370.8325 C756.7623,375.5244 753.1092,377.3411 749.0954,371.7528 C745.872,378.4104 740.5715,379.0892 735.7422,373.5043 C733.1693,379.5576 728.5022,378.437 725.148,374.318 C721.1372,380.8312 717.4192,380.1868 713.3414,374.3823 C709.8863,381.1643 705.5999,380.5837 700.8445,375.7855 C697.103,381.0624 692.5161,380.8189 689.3509,375.1787 C684.7915,381.4557 679.6867,379.2314 676.555,373.6395 C673.2161,378.1887 669.2632,378.0402 666.3134,373.2145 C661.4927,378.7771 657.5314,378.7836 653.9971,371.9377 C649.8619,377.6259 645.08,378.074 641.6771,371.2184 C637.347,377.1868 631.8163,374.6233 629.502,369.0853 C620.7667,366.3483 619.609,360.7481 624.7831,353.735 C619.7033,346.7543 622.4757,340.4693 630.8402,339.0242 " fill="#FEFEFE" style="stroke: #000000; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="127" x="636.5" y="357.9951">Container Registry</text><!--MD5=[b4c635a6a19ca87162e694d880c0649c]
+link vecu_download_software to symphony--><path d="M353.74,82 C450.13,82 568.01,82 638.39,82 " fill="none" id="vecu_download_software-&gt;symphony" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="643.8,82,634.8,78,638.8,82,634.8,86,643.8,82" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="254" x="371.75" y="75.0669">1. Request vECU to pull a Docker image</text><!--MD5=[451b53f1584621ca1a1f79f1906ad325]
+link symphony to agent--><path d="M643.88,91.11 C616.11,98.26 584.98,111.71 568,137 C548.69,165.76 579.64,187.88 616.4,202.99 " fill="none" id="symphony-&gt;agent" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="621.39,204.99,614.5193,197.9336,616.7476,203.133,611.5481,205.3614,621.39,204.99" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="216" x="569" y="150.0669">2. Request: pull the Docker image</text><!--MD5=[d0e45c410d327655a07bcbc2deee261f]
+link agent to symphony--><path d="M748.08,204.89 C776.9,188.31 805.24,163.92 790,137 C783.12,124.85 772.31,115.14 760.52,107.5 " fill="none" id="agent-&gt;symphony" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="756.14,104.77,761.6643,112.9236,760.384,107.4136,765.8941,106.1332,756.14,104.77" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="229" x="795" y="150.0669">4. Send the status of the image pull</text><!--MD5=[e2f4034f0f78cf86f6526dc7db1edd39]
+link agent to agent--><path d="M778.51,216.51 C798.5,217.27 813.5,221.1 813.5,228 C813.5,234.31 800.96,238.05 783.54,239.22 " fill="none" id="agent-&gt;agent" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="778.51,239.49,787.7041,243.0211,783.5034,239.2325,787.292,235.0317,778.51,239.49" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="276" x="819.5" y="232.5669">3.a Check if the Docker image exists locally</text><!--MD5=[75e2a3b03cf156e5d596a9aca3ddd943]
+link agent to container_registry--><path d="M700,251.27 C700,271.91 700,302.66 700,324.75 " fill="none" id="agent-&gt;container_registry" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="700,329.89,704,320.89,700,324.89,696,320.89,700,329.89" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="232" x="701" y="296.0669">3.b Pull the image if it does not exist</text><!--MD5=[bcf86d4ba32c7f76f41d223e43f318fb]
+@startuml
+skinparamlocked backgroundColor fefefe
+frame "Deploy vECU Symphony Campaign" {
+    card "Campaign Stage: vecu_download_software" as vecu_download_software {
+    }
+}
+
+frame "Host Machine" {
+    component "Symphony" as symphony {
+    }
+}
+
+frame "vECU VM" {
+    component "Symphony Agent" as agent {
+    }
+}
+
+
+cloud "Container Registry" as container_registry {
+}
+
+vecu_download_software -right-> symphony: 1. Request vECU to pull a Docker image
+symphony -down-> agent: 2. Request: pull the Docker image
+agent -down-> agent: 3.a Check if the Docker image exists locally
+agent .down.> container_registry: 3.b Pull the image if it does not exist
+agent -up-> symphony: 4. Send the status of the image pull
+
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 10:22:07 UTC 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 11.0.22+7
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: null
+--></g></svg>

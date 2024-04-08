@@ -1,0 +1,45 @@
+# Copyright (C) Microsoft Corporation.
+
+config:
+  vecu:
+    # The name of the vECU
+    name: <USER>_vecu_toolchain_demo
+
+  software_stack:
+    os:
+      name: Yocto OS
+      build:
+        repo_owner: the_github_organization_owning_the_repo
+        repo_name: sdv-toolchain
+        workflow_id: sdv_toolchain_yocto_os_build.yml
+        # The Azure Key Vault name that contains the github PAT
+        keyvault_name: toolchaindemo
+
+  virtual_environment:
+    # The Azure-specific configuration
+    location: westeurope
+    subscription_id: <GUID>
+
+    devcenter_name: toolchaindemo
+    devcenter_project_name: toolchain
+    devcenter_catalog_name: Environments
+
+    compute_gallery_resource_group: toolchain-demo
+    compute_gallery_name: toolchaindemo
+    image_definition_name: yocto
+    image_version_number: 0.0.1
+
+    vnet_resource_group: armdevrg
+    vnet_name: armdevrg-vnet
+
+  notification:
+    # The notification configuration
+    # The notification will be sent to the specified email address
+    email:
+      # The Azure Key Vault name that contains the email connection string
+      keyvault_name: toolchaindemo
+      # The sender email address that is defined in your Email Communication Service -> Azure domain -> Mailfrom addresses
+      sender: <SENDER_EMAIL>@<GUID>.azurecomm.net>
+      recepients:
+        - <FIRST>@<YOUR_DOMAIN>.com
+        - <SECOND>@<YOUR_DOMAIN>.com

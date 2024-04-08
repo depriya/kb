@@ -1,0 +1,11 @@
+# Copyright (C) Microsoft Corporation
+
+import os
+
+from development_settings import Development
+
+def provideSettings():
+    environment = "{{ parameters.environment }}"
+
+    if environment == 'DEVELOPMENT':
+        return Development

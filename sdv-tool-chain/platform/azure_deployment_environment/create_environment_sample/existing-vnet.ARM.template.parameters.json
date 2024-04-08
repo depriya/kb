@@ -1,0 +1,16 @@
+{
+    "imageReference": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.Compute/galleries/myComputeGallery/images/myVMImage/versions/0.0.1",
+    "location": "westeurope",
+    "useExistingVNet": "true",
+    "virtualNetworkName": "myTestVM-existing-vnet",
+    "virtualNetworkResourceGroupName": "myTestVM-existing-vnet-rg",
+    "networkInterfaceName":  "myTestNetworkInterface",
+    "networkInterfaceIPConfigurationName": "ipconfig",
+    "networkInterfaceIPConfigurationSubnetName": "default",
+    "virtualMachineName": "myTestVM",
+    "nicDeleteOption": "Delete",
+    "virtualMachineZone": "1",
+    "virtualMachineSize": "Standard_D2ps_v5",
+    "osDiskType": "StandardSSD_LRS",
+    "osDiskDeleteOption": "Delete"
+}

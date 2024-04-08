@@ -1,0 +1,13 @@
+# Copyright (C) Microsoft Corporation.
+
+mock:
+  description: a mock target
+  type: mock
+
+mock_nested:
+  description: a mock target
+  type: mock nested
+  depends_on:
+    - mock
+  parameters:
+    message: {{ config.mock.message }}

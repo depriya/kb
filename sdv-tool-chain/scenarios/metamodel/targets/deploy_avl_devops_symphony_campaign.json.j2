@@ -1,0 +1,43 @@
+{
+    "spec": {
+        "firstStage": "azure_login",
+        "stages": {
+            "azure_login": {
+                "name": "azure_login",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "azure login",
+                    "script": "azure_login.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/azure_login",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/azure_login"
+                },
+                "stageSelector": "execute_avl_devops_ade_creation"
+            },
+            "execute_avl_devops_ade_creation": {
+                "name": "execute_avl_devops_ade_creation",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute ade creation script",
+                    "script": "avl_devops_create_ade.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_script?<<sas_token>>",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_script"
+                },
+                "stageSelector": "execute_avl_devops_artifacts_collection"
+            },
+            "execute_avl_devops_artifacts_collection": {
+                "name": "execute_avl_devops_artifacts_collection",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute artifacts collection script",
+                    "script": "avl_devops_collect_artifacts.ps1",
+                    "scriptEngine": "powershell",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_script?<<sas_token>>",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_script"
+                }
+            }
+        },
+        "selfDriving": true
+    }
+}

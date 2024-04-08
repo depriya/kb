@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Copyright (C) Microsoft Corporation.
+
+# Exit immediately if a command fails
+set -e
+
+# Fail if an unset variable is used
+set -u
+
+# This script is used to start the containers for the Cognata simulation scenario.
+
+# Create a custom user-defined network in Docker to enable DNS aliasing
+# If the network already exists, the line below will return true and the network will not be recreated.
+docker network create --driver bridge {{ parameters.user_docker_defined_network }} || true
+
+# Build the images
+docker build -t {{ parameters.simulation_proxy_alias }} -f {{ parameters.toolchain_output_path }}/cognata_simulation_proxy/Dockerfile.proxy {{ parameters.toolchain_output_path }}
+
+docker build -t {{ parameters.simulation_symphony_alias }} -f {{ parameters.toolchain_output_path }}/cognata_simulation_scripts/Dockerfile.symphony {{ parameters.toolchain_output_path }}
+
+docker build -t {{ parameters.simulation_ui_frontend_alias }} -f {{ parameters.toolchain_output_path }}/cognata_ui_dashboard/Dockerfile.frontend {{ parameters.toolchain_output_path }}/cognata_ui_dashboard/
+
+docker build -t {{ parameters.simulation_ui_backend_alias }} -f {{ parameters.toolchain_output_path }}/cognata_ui_dashboard/Dockerfile.backend {{ parameters.toolchain_output_path }}/cognata_ui_dashboard/
+
+# Start the containers
+docker run --network={{ parameters.user_docker_defined_network }} -p {{ parameters.simulation_proxy_port }}:{{ parameters.simulation_proxy_port }} --name {{ parameters.simulation_proxy_alias }} -d --rm {{ parameters.simulation_proxy_alias }}
+
+docker run --network={{ parameters.user_docker_defined_network }} -p {{ parameters.simulation_symphony_port }}:{{ parameters.simulation_symphony_port }} --name {{ parameters.simulation_symphony_alias }} -d --rm {{ parameters.simulation_symphony_alias }}
+
+docker run --network={{ parameters.user_docker_defined_network }} -p {{ parameters.simulation_ui_frontend_port }}:{{ parameters.simulation_ui_frontend_port }} --name {{ parameters.simulation_ui_frontend_alias }} -d --rm {{ parameters.simulation_ui_frontend_alias }}
+
+docker run --network={{ parameters.user_docker_defined_network }} -p {{ parameters.simulation_ui_backend_port }}:{{ parameters.simulation_ui_backend_port }} --name {{ parameters.simulation_ui_backend_alias }} -d --rm {{ parameters.simulation_ui_backend_alias }}

@@ -1,0 +1,132 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "userPrincipalId": {
+            "type": "string",
+            "metadata": {
+                "description": "The user to be assigned an admin role for the key vault. Use your Principal ID."
+            }
+        },
+        "devCenterName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of your existing dev center."
+            }
+        },
+        "keyVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the key vault to be created. Must be globally unique."
+            }
+        },
+        "catalogName": {
+            "type": "string",
+            "defaultValue": "Environments"
+        },
+        "catalogGithubRepoUri": {
+            "type": "string",
+            "metadata": {
+                "description": "The URI of the GitHub repository containing the catalog. Example: https://github.com/my-org/my-repo.git"
+            }
+        },
+        "catalogGithubRepoBranch": {
+            "type": "string",
+            "defaultValue": "main"
+        },
+        "catalogGithubRepoDirPath": {
+            "type": "string",
+            "defaultValue": "platform/azure_deployment_environment/catalog_setup/catalog_sample/Environments"
+        },
+        "catalogGithubPATSecretName": {
+            "type": "string",
+            "defaultValue": "catalog-github-pat"
+        },
+        "catalogGithubPATSecretValue": {
+            "type": "securestring"
+        },
+        "catalogGithubPatSecretExpiry": {
+            "type": "string",
+            "metadata": {
+                "description": "The expiry date of the GitHub PAT secret in ISO 8601 datetime format. Example: '2023-12-31T00:00:00Z'"
+            }
+        }
+    },
+    "variables": {
+        "keyVaultAdministratorRoleId": "00482a5a-887f-4fb3-b363-3b7fe8e74483",
+        "keyVaultSecretsUserRoleId": "4633458b-17de-408a-b874-0445c86b69e6",
+        "devCenterAPIVersion": "2023-04-01"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2022-07-01",
+            "name": "[parameters('keyVaultName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "standard"
+                },
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [],
+                "enableRbacAuthorization": true
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[guid(concat(parameters('keyVaultName'), parameters('userPrincipalId'), 'KeyVaultAdministratorRole'))]",
+            "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', variables('keyVaultAdministratorRoleId'))]",
+                "principalId": "[parameters('userPrincipalId')]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2022-07-01",
+            "name": "[concat(parameters('keyVaultName'), '/', parameters('catalogGithubPATSecretName'))]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+            ],
+            "properties": {
+                "value": "[parameters('catalogGithubPATSecretValue')]",
+                "attributes": {
+                    "enabled": true,
+                    "exp": "[dateTimeToEpoch(parameters('catalogGithubPatSecretExpiry'))]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[guid(concat(parameters('keyVaultName'), parameters('catalogGithubPATSecretName'), parameters('devCenterName'), 'KeyVaultSecretsUserRole'))]",
+            "scope": "[resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('catalogGithubPATSecretName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('catalogGithubPATSecretName'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', variables('keyVaultSecretsUserRoleId'))]",
+                "principalId": "[reference(resourceId('Microsoft.DevCenter/devcenters', parameters('devCenterName')), variables('devCenterAPIVersion'), 'Full').identity.principalId]"
+            }
+        },
+        {
+            "type": "Microsoft.DevCenter/devcenters/catalogs",
+            "apiVersion": "2023-04-01",
+            "name": "[concat(parameters('devCenterName'), '/', parameters('catalogName'))]",
+            "properties": {
+                "gitHub": {
+                    "uri": "[parameters('catalogGithubRepoUri')]",
+                    "branch": "[parameters('catalogGithubRepoBranch')]",
+                    "secretIdentifier": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('catalogGithubPATSecretName')), '2022-07-01', 'Full').properties.secretUri]",
+                    "path": "[parameters('catalogGithubRepoDirPath')]"
+                }
+            }
+        }
+    ]
+}

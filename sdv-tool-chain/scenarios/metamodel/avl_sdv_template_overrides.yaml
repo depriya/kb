@@ -1,0 +1,39 @@
+# Copyright (C) Microsoft Corporation.
+
+config:
+  version: 0.1.0
+
+  environment_stage_short: d
+
+  project_name: pj2
+  project_description: Project Description
+
+  customer_OEM_suffix: avl
+
+  jfrog:
+    download_url: https://avlartiedgeew1.jfrog.io/artifactory/generic/avl/sms/6.5/5460_137/Install%20AVL%20Smart%20Mobile%20Solutions%20R6.5%20Build%205460_137.exe
+    edge_token: <<jfrog_edge_token_value>> #TODO: Update
+
+  staging_storage_account:
+    name: xmew1dopctstoemdst
+    resource_group: xmew1-dop-c-tstoem-d-rg-001
+    subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
+
+  clone_github_repositories:
+    - repository: model_releases
+      organisation: avl-sdv
+      pat_token: <<github_pat_token_value>> #TODO: Update
+    - repository: xcu_releases
+      organisation: avl-sdv
+      pat_token: <<github_pat_token_value>> #TODO: Update
+    - repository: Projects_Repo
+      organisation: avl-sdv
+      pat_token: <<github_pat_token_value>> #TODO: Update
+
+#region Symphony Configuration
+  symphony:
+    toolchain_output_path: https://xmew1dopctstoemdst.blob.core.windows.net/demo-metamode-output/avl_devops_pilot
+    agent:
+      port: 8098
+    base_url: http://192.168.0.75
+#endregion Symphony Configuration

@@ -1,0 +1,24 @@
+# Copyright (C) Microsoft Corporation.
+
+config:
+  mock:
+    message: hello world
+
+extensions:
+  providers:
+    - provider: local filesystem
+      location: ./extensions
+      staging_directory: ./extensions
+
+targets:
+  mock:
+    description: a mock target
+    type: mock
+
+  mock_nested:
+    description: a mock target
+    type: mock nested
+    depends_on:
+      - mock
+    parameters:
+      message: hello world

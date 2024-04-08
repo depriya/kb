@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Copyright (C) Microsoft Corporation.
+
+# Exit immediately if a command fails
+set -e
+
+# Fail if an unset variable is used
+set -u
+
+source $(dirname $0)/symphony_stage_script_provider.sh
+
+# Run Cognata scenario Details from test plan
+pyScriptScenarioDetails="python3 {{ parameters.toolchain_output_path }}/cognata_simulation_scripts/scenarios_details_from_test_plan.py"
+pyScriptScenarioDetails_output=""
+pyScriptScenarioDetails_status=0
+execute_command_with_status_code "$pyScriptScenarioDetails" pyScriptScenarioDetails_output pyScriptScenarioDetails_status
+
+# Write the updated key-value pairs to the output file
+echo_output_dictionary_to_output_file

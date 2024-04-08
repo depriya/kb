@@ -1,0 +1,71 @@
+{
+  "siteInfo": {
+    "siteId": "hq",
+    "baseUrl": "http://localhost:8098/v1alpha2/"
+  },
+  "api": {
+    "pubsub": {
+      "shared": true,
+      "provider": {
+        "type": "providers.pubsub.memory",
+        "config": {}
+      }
+    },
+    "vendors": [
+      {
+        "type": "vendors.echo",
+        "route": "greetings",
+        "managers": []
+      },
+      {
+        "type": "vendors.solution",
+        "loopInterval": 15,
+        "route": "solution",
+        "managers": [
+          {
+            "name": "solution-manager",
+            "type": "managers.symphony.solution",
+            "properties": {
+              "providers.state": "mem-state",
+              "providers.config": "mock-config",
+              "providers.secret": "mock-secret"
+            },
+            "providers": {
+              "download-software": {
+                "type": "providers.target.script",
+                "config": {
+                  "scriptEngine": "bash",
+                  "scriptFolder": "/usr/local/symphony-agent",
+                  "stagingFolder": "/usr/local/symphony-agent",
+                  "getScript": "get_status_download_software.sh",
+		              "applyScript": "apply_download_software.sh"
+                }
+              },
+              "mem-state": {
+                "type": "providers.state.memory",
+                "config": {}
+              },
+              "mock-config": {
+                "type": "providers.config.mock",
+                "config": {}
+              },
+              "mock-secret": {
+                "type": "providers.secret.mock",
+                "config": {}
+              }
+            }
+          }
+        ]
+      }
+
+    ]
+  },
+  "bindings": [
+    {
+      "type": "bindings.http",
+      "config": {
+        "port": 8098
+      }
+    }
+  ]
+}

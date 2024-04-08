@@ -1,0 +1,13 @@
+# Copyright (C) Microsoft Corporation.
+
+config:
+  mock:
+    message: hello world
+
+extensions:
+  providers:
+    - provider: local filesystem
+      location: ./extensions
+      staging_directory: ./extensions
+
+targets: ./targets.yaml.j2

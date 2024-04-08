@@ -1,0 +1,28 @@
+' Copyright (C) Microsoft Corporation
+
+@startuml
+
+start
+
+:read metamodel;
+if (has override?) then (yes)
+  :read override;
+  :merge metamodel+override;
+endif
+
+if (metamodel is valid?) then (yes)
+  if (metamodel references extensions?) then (yes)
+    :stage extensions;
+  endif
+  repeat
+    :read target from the metamodel;
+    :run extension to process target;
+    :write artifacts;
+  repeat while (more targets?) is (yes)
+else
+  :report error;
+endif
+
+stop
+
+@enduml
