@@ -48,19 +48,19 @@ jobs:
         run: |
           $fileShare = "avldevops"
 
-          $customer_OEM_suffix = yq e '.customer_OEM_suffix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
-          $project_name = yq e '.project_name' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          $customer_OEM_suffix = yq -i '.customer_OEM_suffix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          $project_name = yq -i '.project_name' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
 
-          $resource_name_primary_prefix = yq e '.resource_name_primary_prefix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
-          $resource_name_secondary_prefix = yq e '.resource_name_secondary_prefix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
-          $resource_name_shared_short = yq e '.resource_name_shared_short' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
-          $environment_stage_short = yq e '.environment_stage_short' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          $resource_name_primary_prefix = yq -i '.resource_name_primary_prefix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          $resource_name_secondary_prefix = yq -i '.resource_name_secondary_prefix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          $resource_name_shared_short = yq -i '.resource_name_shared_short' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          $environment_stage_short = yq -i '.environment_stage_short' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
           
 
           $subscription_id = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
           $ResourceGroup =  "$($resource_name_primary_prefix)-$($resource_name_secondary_prefix)-$($resource_name_shared_short)-stamp-$($environment_stage_short)-rg-001"
           $storageAccount = "$($resource_name_primary_prefix)$($resource_name_secondary_prefix)$($resource_name_shared_short)$($environment_stage_short)sa"
-          $destinationPath = "$($customer_OEM_suffix)/$(project_name)/$($fileShare)"
+          $destinationPath = "$($customer_OEM_suffix)/$($project_name)/$($fileShare)"
 
           $storage_key = 
           az storage account keys list `
