@@ -51,13 +51,13 @@ jobs:
       - name: Upload Output Files to file share
         shell: pwsh
         run: |
-          $customer_OEM_suffix = yq '.customer_OEM_suffix' $METAMODEL_OVERRIDES_YAML
-          $project_name = yq '.project_name' $METAMODEL_OVERRIDES_YAML
-          $resource_name_primary_prefix = yq '.resource_name_primary_prefix' "$METAMODEL_OVERRIDES_YAML"
-          $resource_name_secondary_prefix = yq '.resource_name_secondary_prefix' "$METAMODEL_OVERRIDES_YAML"
-          $resource_name_shared_short = yq '.resource_name_shared_short' "$METAMODEL_OVERRIDES_YAML"
-          $environment_stage_short = yq '.environment_stage_short' "$METAMODEL_OVERRIDES_YAML"
-          $meta_model_outputs_file_share_name = yq '.meta_model_outputs_file_share_name' "$METAMODEL_OVERRIDES_YAML"
+          $customer_OEM_suffix = yq '.customer_OEM_suffix' $env:METAMODEL_OVERRIDES_YAML
+          $project_name = yq '.project_name' $env:METAMODEL_OVERRIDES_YAML
+          $resource_name_primary_prefix = yq '.resource_name_primary_prefix' "$env:METAMODEL_OVERRIDES_YAML"
+          $resource_name_secondary_prefix = yq '.resource_name_secondary_prefix' "$env:METAMODEL_OVERRIDES_YAML"
+          $resource_name_shared_short = yq '.resource_name_shared_short' "$env:METAMODEL_OVERRIDES_YAML"
+          $environment_stage_short = yq '.environment_stage_short' "$env:METAMODEL_OVERRIDES_YAML"
+          $meta_model_outputs_file_share_name = yq '.meta_model_outputs_file_share_name' "$env:METAMODEL_OVERRIDES_YAML"
           
 
           $subscription_id = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
@@ -79,7 +79,7 @@ jobs:
             --account-key $storage_key `
             --destination "$meta_model_outputs_file_share_name" `
             --destination-path  "$destinationPath"`
-            --source "$METAMODEL_OUTPUT_DIR"
+            --source "$env:METAMODEL_OUTPUT_DIR"
 
           az storage file list `
             --account-name $storageAccount `
