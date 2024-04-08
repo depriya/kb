@@ -15,12 +15,12 @@
 # }
 
 
-# #data "azapi_resource" "project" {
-#   type      = "Microsoft.DevCenter/projects@2023-04-01"
-#  name      = "xmew1-dop-c-${var.OEM}-p-${var.project}-001"
-# parent_id = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001"
+ data "azapi_resource" "project" {
+   type      = "Microsoft.DevCenter/projects@2023-04-01"
+  name      = "xmew1-dop-c-${var.OEM}-p-${var.project}-001"
+ parent_id = "/subscriptions/${var.target_subscription_id}/resourceGroups/xmew1-dop-c-${var.OEM}-d-rg-001"
 
-# }
+ }
 
 ##############################
 # Environment type definition
@@ -94,20 +94,20 @@
 #   - Identity: each project member define in root main.tf
 #   - Role: Deployment Environments User
 #   - Scope: Project
-##############################
+# ##############################
 resource "azurerm_role_assignment" "devcenter_project_admin" {
-  for_each = toset(var.project_members)
+   for_each = toset(var.project_members)
 
-  #scope                = data.azapi_resource.project.id
-  scope = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+  scope                = data.azapi_resource.project.id
+#   scope = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4"
   role_definition_name = "DevCenter Project Admin"
   principal_id         = each.key
-}
+ }
 
 resource "azurerm_role_assignment" "devcenter_environment_user" {
   for_each = toset(var.project_members)
-  scope = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4"
-  #scope                = data.azapi_resource.project.id
-  role_definition_name = "Owner"
+  #scope = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+  scope                = data.azapi_resource.project.id
+  role_definition_name = "Deployment Environments User"
   principal_id         = each.key
 }
