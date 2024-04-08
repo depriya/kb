@@ -32,7 +32,7 @@ jobs:
 
 
       - name: Run Sdv Tool Chain for Metamodel 
-        run: metamodel execute --from-file  ${{ github.workspace }}/metamodel/avl_sdv_template.yaml --override  ${{ github.workspace }}/scenarios/metamodel/avl_sdv_template_overrides.yaml --output-dir  ${{ github.workspace }}/output/avl_devops_pilot
+        run: python  ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py metamodel execute --from-file  ${{ github.workspace }}/metamodel/avl_sdv_template.yaml --override  ${{ github.workspace }}/scenarios/metamodel/avl_sdv_template_overrides.yaml --output-dir  ${{ github.workspace }}/output/avl_devops_pilot
         working-directory: ${{ github.workspace }}
 
       - name: Zip the output
