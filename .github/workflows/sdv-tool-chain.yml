@@ -51,13 +51,13 @@ jobs:
       - name: Upload Output Files to file share
         shell: pwsh
         run: |
-          $customer_OEM_suffix = yq '.config.customer_OEM_suffix' $env:METAMODEL_OVERRIDES_YAML
-          $project_name = yq '.config.project_name' $env:METAMODEL_OVERRIDES_YAML
-          $resource_name_primary_prefix = yq '.config.resource_name_primary_prefix' "$env:METAMODEL_OVERRIDES_YAML"
-          $resource_name_secondary_prefix = yq '.config.resource_name_secondary_prefix' "$env:METAMODEL_OVERRIDES_YAML"
-          $resource_name_shared_short = yq '.config.resource_name_shared_short' "$env:METAMODEL_OVERRIDES_YAML"
-          $environment_stage_short = yq '.config.environment_stage_short' "$env:METAMODEL_OVERRIDES_YAML"
-          $meta_model_outputs_file_share_name = yq '.config.meta_model_outputs_file_share_name' "$env:METAMODEL_OVERRIDES_YAML"
+          $customer_OEM_suffix = (yq '.config.customer_OEM_suffix' "$env:METAMODEL_OVERRIDES_YAML").Trim('"')
+          $project_name = (yq '.config.project_name' "$env:METAMODEL_OVERRIDES_YAML").Trim('"')
+          $resource_name_primary_prefix = (yq '.config.resource_name_primary_prefix' "$env:METAMODEL_OVERRIDES_YAML").Trim('"')
+          $resource_name_secondary_prefix = (yq '.config.resource_name_secondary_prefix' "$env:METAMODEL_OVERRIDES_YAML").Trim('"')
+          $resource_name_shared_short = (yq '.config.resource_name_shared_short' "$env:METAMODEL_OVERRIDES_YAML").Trim('"')
+          $environment_stage_short = (yq '.config.environment_stage_short' "$env:METAMODEL_OVERRIDES_YAML").Trim('"')
+          $meta_model_outputs_file_share_name = (yq '.config.meta_model_outputs_file_share_name' "$env:METAMODEL_OVERRIDES_YAML").Trim('"')
           
 
           $subscription_id = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
