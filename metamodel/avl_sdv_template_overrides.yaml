@@ -4,6 +4,8 @@ config:
   version: 0.1.0
 
   subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
+
+  meta_model_outputs_file_share_name: avldevops
   
   environment_stage_short: d
 
@@ -21,7 +23,6 @@ config:
   jfrog:
     download_url: https://avlartiedgeew1.jfrog.io/artifactory/generic/avl/sms/6.5/5460_137/Install%20AVL%20Smart%20Mobile%20Solutions%20R6.5%20Build%205460_137.exe\
     token_secret_name: <JFROG_TOKEN_SECRET_NAME> #TODO: Not Implemented yet, should fetch the token from Key Vault using this secret name
-
 
   clone_github_repositories:
     - repository: model_releases
