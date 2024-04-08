@@ -25,7 +25,7 @@ jobs:
     build-and-deploy:
       #runs-on: xmew1-dop-s-stamp-d-vm-002
       runs-on: xmew1-dop-s-stamp-d-vm-003
-      environment: DevOpsPilot_az
+      environment: sub-AVL_DevopsPilot
       steps:
         - name: 'Az CLI login'
           uses: azure/login@v1
