@@ -1,0 +1,73 @@
+name: RunCampaign
+
+on:
+  workflow_dispatch:
+    # inputs:
+    #     ResourceGroup:
+    #         description: "Resource group"
+    #         required: true
+    #         default: 
+    #     storageAccount:
+    #         description: "Storage account"
+    #         required: true
+    #     projectName:
+    #         description: "Project name that maps to ContainerName"
+    #         required: true
+    #     version:
+    #         description: "Version for artifact"
+    #         required: true
+      
+permissions:
+      id-token: write
+      contents: read
+
+jobs:
+    build-and-deploy:
+      #runs-on: xmew1-dop-s-stamp-d-vm-002
+      runs-on: xmew1-dop-s-stamp-d-vm-003
+      environment: DevOpsPilot_az
+      steps:
+        - name: 'Az CLI login'
+          uses: azure/login@v1
+          with:
+            client-id: ${{ secrets.AZURE_CLIENT_ID }}
+            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+            #enable-AzPSSession: true
+
+    
+        - name: Checkout code
+          uses: actions/checkout@v3
+        
+        - name: Check AZ login
+          shell: pwsh
+          run: |
+            echo "${{ github.workspace }}"
+            $subscriptionID = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+            $ResourceGroup = "xmew1-dop-s-stamp-d-rg-001"
+            $storageAccount = "xmew1dopsdst"
+            
+            $storage_key=$(az storage account keys list --subscription "$subscriptionID" -g "$ResourceGroup" -n "$storageAccount" --query "[0].value" -o tsv)
+            $end=(Get-Date).AddMinutes(30).ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm'Z'")
+            $sas=$(az storage account generate-sas --account-key "$storage_key" --account-name "$storageAccount" --expiry $end --https-only --permissions acuw --resource-types sco --services bfqt -o tsv)
+            #az storage fs directory download -f "$containerName" --account-name "$storageAccount" -s "avl_devops_pilot" -d . --account-key "$storage_key" --recursive
+            mkdir avl_devops_pilot
+            cd avl_devops_pilot
+            az storage file download-batch --account-key "$storage_key" --account-name "$storageAccount" --destination . --source avldevops
+            ls -ltr
+            
+            Get-ChildItem -Recurse -Filter "*.ps1" | ForEach-Object {
+              (Get-Content $_.FullName) -replace "<<github_pat_token>>", "${{ secrets.GH_TOKEN }}" | Set-Content $_.FullName
+              (Get-Content $_.FullName) -replace "<<jfrog_token>>", "${{ secrets.JFROG_EDGE_TOKEN }}" | Set-Content $_.FullName
+            }
+            Get-ChildItem -Recurse -Filter "*.json" | ForEach-Object {
+              (Get-Content $_.FullName) -replace "<<sas_token>>", "$sas" | Set-Content $_.FullName
+            }
+            
+        - name: Run Campaign
+          run: |
+            cd avl_devops_pilot/oem/pj2/avl_devops_pilot/deploy_avl_symphony_campaign/
+            ls -ltr
+            token=$(curl -X POST -d '{"username":"admin", "password":""}' http://192.168.0.102:8082/v1alpha2/users/auth | jq -r '.accessToken')
+            curl -X POST -d @deploy_avl_devops_symphony_campaign.json -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/campaigns/deploy_avl_devops_symphony_campaign_test
+            curl -X POST -d @symphony_campaign_activation.json -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/deploy_avl_devops_symphony_campaign_test
