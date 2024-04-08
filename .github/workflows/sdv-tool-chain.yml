@@ -11,6 +11,8 @@ jobs:
   build:
     runs-on: ubuntu-latest #TODO: Discuss and decide on the runner type
     environment: sub-AVL_DevopsPilot
+    env:
+      TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
     
     steps:
       - name: Checkout code
@@ -24,27 +26,15 @@ jobs:
           
       - name: Install dependencies
         run: |
-          pip install -r ./sdv-tool-chain/platform/toolchain/requirements.txt
-          pip install -r ./sdv-tool-chain/platform/toolchain/requirements_test.txt
-        working-directory: ${{ github.workspace }}
+          pip install yq # yq is used to parse yaml files
+          pip install -r $TOOlCHAIN_ROOT_PATH/requirements.txt
+          pip install -r $TOOlCHAIN_ROOT_PATH/requirements_test.txt
 
       - name: Validate Metamodel
-        run: python  ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py metamodel validate --from-file  ${{ github.workspace }}/metamodel/avl_sdv_template.yaml --override  ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
-
+        run: python $TOOlCHAIN_ROOT_PATH/src/toolchain_cli.py metamodel validate --from-file  ${{ github.workspace }}/metamodel/avl_sdv_template.yaml --override  ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
 
       - name: Run Sdv Tool Chain for Metamodel 
-        run: python  ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py metamodel execute --from-file  ${{ github.workspace }}/metamodel/avl_sdv_template.yaml --override  ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml --output-dir  ${{ github.workspace }}/output/avl_devops_pilot
-        working-directory: ${{ github.workspace }}
-
-      - name: Zip the output
-        run: zip -r  ${{ github.workspace }}/output/avl_devops_pilot.zip ${{ github.workspace }}/output/avl_devops_pilot
-        
-
-      - name: Upload the output
-        uses: actions/upload-artifact@v4
-        with:
-          name: avl_devops_pilot
-          path: '${{ github.workspace }}/output/avl_devops_pilot.zip'
+        run: python $TOOlCHAIN_ROOT_PATH/src/toolchain_cli.py metamodel execute --from-file  ${{ github.workspace }}/metamodel/avl_sdv_template.yaml --override  ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml --output-dir  ${{ github.workspace }}/output/metamodel
 
       - name: 'Az CLI login'
         uses: azure/login@v2
@@ -53,13 +43,24 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Upload Zip to file share
+      - name: Upload Output Files to file share
         shell: pwsh
         run: |
-          $subscriptionID = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-          $ResourceGroup = "xmew1-dop-s-stamp-d-rg-001"
-          $storageAccount = "xmew1dopsdst"
           $fileShare = "avldevops"
+
+          $customer_OEM_suffix = yq e '.customer_OEM_suffix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          $project_name = yq e '.project_name' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+
+          $resource_name_primary_prefix = yq e '.resource_name_primary_prefix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          $resource_name_secondary_prefix = yq e '.resource_name_secondary_prefix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          $resource_name_shared_short = yq e '.resource_name_shared_short' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          $environment_stage_short = yq e '.environment_stage_short' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          
+
+          $subscription_id = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          $ResourceGroup =  "$($resource_name_primary_prefix)-$($resource_name_secondary_prefix)-$($resource_name_shared_short)-stamp-$($environment_stage_short)-rg-001"
+          $storageAccount = "$($resource_name_primary_prefix)$($resource_name_secondary_prefix)$($resource_name_shared_short)$($environment_stage_short)sa"
+          $destinationPath = "$($customer_OEM_suffix)/$(project_name)/$($fileShare)"
 
           $storage_key = 
           az storage account keys list `
@@ -74,8 +75,8 @@ jobs:
             --account-name $storageAccount `
             --account-key $storage_key `
             --destination "$fileShare" `
-            --destination-path "avl_devops_pilot" `
-            --source "${{ github.workspace }}/output/avl_devops_pilot"
+            --destination-path  "$destinationPath"`
+            --source "${{ github.workspace }}/output/metamodel"
 
           az storage file list `
             --account-name $storageAccount `
