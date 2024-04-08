@@ -9,8 +9,10 @@ permissions:
 
 jobs:
   build:
-    runs-on: xmew1-dop-s-stamp-d-vm-002
-    environment: DevOpsPilot_az
+    runs-on: ubuntu-latest
+    environment: sub-AVL_DevopsPilot
+    #runs-on: xmew1-dop-s-stamp-d-vm-002 #TODO: Check with team and Change 
+    #environment: DevOpsPilot_az #TODO: Check with team and 
     
     steps:
       - name: Checkout code
