@@ -1,4 +1,4 @@
-name: Deploy.sdv-tool-chain
+name: Build.metamodel
 
 on:
   workflow_dispatch:
