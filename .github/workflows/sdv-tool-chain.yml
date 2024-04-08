@@ -43,13 +43,13 @@ jobs:
         
 
       - name: Upload the output
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: avl_devops_pilot
           path: '${{ github.workspace }}/output/avl_devops_pilot.zip'
 
       - name: 'Az CLI login'
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -63,7 +63,24 @@ jobs:
           $storageAccount = "xmew1dopsdst"
           $fileShare = "demo-metamode-output"
 
-          $storage_key = az storage account keys list --subscription "$subscriptionID" -g "$ResourceGroup" -n "$storageAccount" --query "[0].value" -o tsv --only-show-errors
-          az storage file upload-batch --account-name $storageAccount --account-key $storage_key --destination "$fileShare" --destination-path "avl_devops_pilot" --source ${{ github.workspace }}/output/avl_devops_pilot
-          az storage file list --account-name $storageAccount --account-key $storage_key --share-name "$fileShare" 
+          $storage_key = 
+          az storage account keys list `
+            --subscription "$subscriptionID" `
+            -g "$ResourceGroup" `
+            -n "$storageAccount" `
+            --query "[0].value" `
+            -o tsv `
+            --only-show-errors
+          
+          az storage file upload-batch `
+            --account-name $storageAccount `
+            --account-key $storage_key `
+            --destination "$fileShare" `
+            --destination-path "avl_devops_pilot" `
+            --source "${{ github.workspace }}/output/avl_devops_pilot"
+
+          az storage file list `
+            --account-name $storageAccount `
+            --account-key $storage_key `
+            --share-name "$fileShare" 
         
