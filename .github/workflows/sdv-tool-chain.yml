@@ -28,15 +28,15 @@ jobs:
         working-directory: ${{ github.workspace }}
 
       - name: Validate Metamodel
-        run: python /sdv-tool-chain/platform/toolchain/src/toolchain_cli.py metamodel validate --from-file /metamodel/avl_sdv_template.yaml --override /metamodel/avl_sdv_template_overrides.yaml
-        working-directory: ${{ github.workspace }}
+        run: python  ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py metamodel validate --from-file  ${{ github.workspace }}/metamodel/avl_sdv_template.yaml --override  ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
+
 
       - name: Run Sdv Tool Chain for Metamodel 
-        run: metamodel execute --from-file /metamodel/avl_sdv_template.yaml --override /scenarios/metamodel/avl_sdv_template_overrides.yaml --output-dir /output/avl_devops_pilot
+        run: metamodel execute --from-file  ${{ github.workspace }}/metamodel/avl_sdv_template.yaml --override  ${{ github.workspace }}/scenarios/metamodel/avl_sdv_template_overrides.yaml --output-dir  ${{ github.workspace }}/output/avl_devops_pilot
         working-directory: ${{ github.workspace }}
 
       - name: Zip the output
-        run: zip -r /output/avl_devops_pilot.zip /output/avl_devops_pilot
+        run: zip -r  ./output/avl_devops_pilot.zip /output/avl_devops_pilot
         working-directory: ${{ github.workspace }}
         
 
