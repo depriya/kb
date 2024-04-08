@@ -106,7 +106,7 @@ data "azapi_resource" "keyvault" {
 resource "azurerm_role_assignment" "devcenter_project_admin" {
    for_each = toset(var.project_members)
 
-  scope                = data.azapi_resource.keyvault
+  scope                = data.azapi_resource.keyvault.id
 #scope = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4"
   role_definition_name = "Key Vault Contributor"
   principal_id         = each.key
