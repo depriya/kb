@@ -226,7 +226,7 @@ config:
 extensions:
   providers:
     - provider: local filesystem
-      location: ../common/extensions/
+      location: ../sdv-tool-chain/scenarios/common/extensions/
       staging_directory: ../common/extensions/
     - provider: local filesystem
       location: ./extensions
