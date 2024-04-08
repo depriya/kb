@@ -62,7 +62,6 @@ jobs:
           $ResourceGroup = "xmew1-dop-s-stamp-d-rg-001"
           $storageAccount = "xmew1dopsdst"
           $fileShare = "demo-metamode-output"
-          az storage file upload
 
           $storage_key = az storage account keys list --subscription "$subscriptionID" -g "$ResourceGroup" -n "$storageAccount" --query "[0].value" -o tsv --only-show-errors
           az storage file upload-batch --account-name $storageAccount --account-key $storage_key --destination "$fileShare" ----destination-path "avl_devops_pilot" --source ${{ github.workspace }}/output/avl_devops_pilot
