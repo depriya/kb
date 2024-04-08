@@ -9,8 +9,8 @@
                     "name": "azure login",
                     "script": "azure_login.sh",
                     "scriptEngine": "bash",
-                    "scriptFolder": "{{ parameters.toolchain_output_path_root }}/{{resource_name_primary_prefix}}{{resource_name_secondary_prefix}}{{resource_name_customer_short}}{{customer_OEM_suffix}}{{environment_stage_short}}st/{{ customer_OEM_suffix }}/{{ project_name }}/azure_login",
-                    "stagingFolder": "{{ parameters.toolchain_output_path_root }}/{{resource_name_primary_prefix}}{{resource_name_secondary_prefix}}{{resource_name_customer_short}}{{customer_OEM_suffix}}{{environment_stage_short}}st/azure_login"
+                    "scriptFolder": "{{ parameters.toolchain_output_path_root }}//azure_login",
+                    "stagingFolder": "{{ parameters.toolchain_output_path_root }}/azure_login"
                 },
                 "stageSelector": "execute_avl_devops_ade_creation"
             },
@@ -21,8 +21,8 @@
                     "name": "execute ade creation script",
                     "script": "avl_devops_create_ade.sh",
                     "scriptEngine": "bash",
-                    "scriptFolder": "{{ parameters.toolchain_output_path_root }}/{{resource_name_primary_prefix}}{{resource_name_secondary_prefix}}{{resource_name_customer_short}}{{customer_OEM_suffix}}{{environment_stage_short}}st/avl_devops_custom_script",
-                    "stagingFolder": "{{ parameters.toolchain_output_path_root }}/{{resource_name_primary_prefix}}{{resource_name_secondary_prefix}}{{resource_name_customer_short}}{{customer_OEM_suffix}}{{environment_stage_short}}st/avl_devops_custom_script"
+                    "scriptFolder": "{{ parameters.toolchain_output_path_root }}/avl_devops_custom_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path_root }}/avl_devops_custom_script"
                 },
                 "stageSelector": "execute_avl_devops_devbox_creation"
             },
@@ -33,8 +33,8 @@
                     "name": "execute devbox creation script",
                     "script": "avl_devops_create_devbox.sh",
                     "scriptEngine": "bash",
-                    "scriptFolder": "{{ parameters.toolchain_output_path_root }}/{{resource_name_primary_prefix}}{{resource_name_secondary_prefix}}{{resource_name_customer_short}}{{customer_OEM_suffix}}{{environment_stage_short}}st/avl_devops_custom_script",
-                    "stagingFolder": "{{ parameters.toolchain_output_path_root }}/{{resource_name_primary_prefix}}{{resource_name_secondary_prefix}}{{resource_name_customer_short}}{{customer_OEM_suffix}}{{environment_stage_short}}st/avl_devops_custom_script"
+                    "scriptFolder": "{{ parameters.toolchain_output_path_root }}/avl_devops_custom_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path_root }}/avl_devops_custom_script"
                 },
                 "stageSelector": "execute_avl_devops_artifacts_collection"
             },
@@ -45,8 +45,8 @@
                     "name": "execute artifacts collection script",
                     "script": "avl_devops_collect_artifacts.ps1",
                     "scriptEngine": "powershell",
-                    "scriptFolder": "{{ parameters.toolchain_output_path_root }}/{{resource_name_primary_prefix}}{{resource_name_secondary_prefix}}{{resource_name_customer_short}}{{customer_OEM_suffix}}{{environment_stage_short}}st/avl_devops_custom_script",
-                    "stagingFolder": "{{ parameters.toolchain_output_path_root }}/{{resource_name_primary_prefix}}{{resource_name_secondary_prefix}}{{resource_name_customer_short}}{{customer_OEM_suffix}}{{environment_stage_short}}st/avl_devops_custom_script"
+                    "scriptFolder": "{{ parameters.toolchain_output_path_root }}/avl_devops_custom_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path_root }}/avl_devops_custom_script"
                 }
             }
         },

@@ -6,15 +6,26 @@ on:
 permissions:
   id-token: write
   contents: read
-
+  
 jobs:
   build:
     runs-on: ubuntu-latest #TODO: Discuss and decide on the runner type
     environment: sub-AVL_DevopsPilot
     env:
       TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
+      TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
+      METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
+      METAMODEL_OVERRIDES_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
+      METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel
     
     steps:
+      - name: 'Az CLI login'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -31,36 +42,28 @@ jobs:
           pip install -r $TOOlCHAIN_ROOT_PATH/requirements_test.txt
 
       - name: Validate Metamodel
-        run: python $TOOlCHAIN_ROOT_PATH/src/toolchain_cli.py metamodel validate --from-file  ${{ github.workspace }}/metamodel/avl_sdv_template.yaml --override  ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
+        run: python $TOOlCHAIN_CLI_PATH metamodel validate --from-file  $$METAMODEL_YAML --override  $METAMODEL_OVERRIDES_YAML
 
       - name: Run Sdv Tool Chain for Metamodel 
-        run: python $TOOlCHAIN_ROOT_PATH/src/toolchain_cli.py metamodel execute --from-file  ${{ github.workspace }}/metamodel/avl_sdv_template.yaml --override  ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml --output-dir  ${{ github.workspace }}/output/metamodel
+        run: python $TOOlCHAIN_CLI_PATH metamodel execute --from-file  $$METAMODEL_YAML --override  $METAMODEL_OVERRIDES_YAML --output-dir  $METAMODEL_OUTPUT_DIR
 
-      - name: 'Az CLI login'
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Upload Output Files to file share
         shell: pwsh
         run: |
-          $fileShare = "avldevops"
-
-          $customer_OEM_suffix = yq -i '.customer_OEM_suffix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
-          $project_name = yq -i '.project_name' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
-
-          $resource_name_primary_prefix = yq -i '.resource_name_primary_prefix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
-          $resource_name_secondary_prefix = yq -i '.resource_name_secondary_prefix' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
-          $resource_name_shared_short = yq -i '.resource_name_shared_short' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
-          $environment_stage_short = yq -i '.environment_stage_short' "${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml"
+          $customer_OEM_suffix = yq '.customer_OEM_suffix' $METAMODEL_OVERRIDES_YAML
+          $project_name = yq '.project_name' $METAMODEL_OVERRIDES_YAML
+          $resource_name_primary_prefix = yq '.resource_name_primary_prefix' "$METAMODEL_OVERRIDES_YAML"
+          $resource_name_secondary_prefix = yq '.resource_name_secondary_prefix' "$METAMODEL_OVERRIDES_YAML"
+          $resource_name_shared_short = yq '.resource_name_shared_short' "$METAMODEL_OVERRIDES_YAML"
+          $environment_stage_short = yq '.environment_stage_short' "$METAMODEL_OVERRIDES_YAML"
+          $meta_model_outputs_file_share_name = yq '.meta_model_outputs_file_share_name' "$METAMODEL_OVERRIDES_YAML"
           
 
           $subscription_id = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
           $ResourceGroup =  "$($resource_name_primary_prefix)-$($resource_name_secondary_prefix)-$($resource_name_shared_short)-stamp-$($environment_stage_short)-rg-001"
           $storageAccount = "$($resource_name_primary_prefix)$($resource_name_secondary_prefix)$($resource_name_shared_short)$($environment_stage_short)sa"
-          $destinationPath = "$($customer_OEM_suffix)/$($project_name)/$($fileShare)"
+          $destinationPath = "$($customer_OEM_suffix)/$($project_name)/$($meta_model_outputs_file_share_name)"
 
           $storage_key = 
           az storage account keys list `
@@ -74,12 +77,12 @@ jobs:
           az storage file upload-batch `
             --account-name $storageAccount `
             --account-key $storage_key `
-            --destination "$fileShare" `
+            --destination "$meta_model_outputs_file_share_name" `
             --destination-path  "$destinationPath"`
-            --source "${{ github.workspace }}/output/metamodel"
+            --source "$METAMODEL_OUTPUT_DIR"
 
           az storage file list `
             --account-name $storageAccount `
             --account-key $storage_key `
-            --share-name "$fileShare" 
+            --share-name "$meta_model_outputs_file_share_name" 
         

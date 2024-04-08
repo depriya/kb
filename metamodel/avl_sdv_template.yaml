@@ -4,6 +4,8 @@ config:
   version: <VERSION>
 
   subscription_id: <STORAGE_ACCOUNT_SUBSCRIPTION_ID> #TODO: Discuss how to handle this?
+
+  meta_model_outputs_file_share_name: <FILE_SHARE_NAME used by sdv-tool-chain and symphony> 
   
   environment_stage_short: <ENVIRONMENT_SATGE_SHORT Example. 'd'>
 
