@@ -3,29 +3,33 @@
 config:
   version: <VERSION>
 
+  subscription_id: <STORAGE_ACCOUNT_SUBSCRIPTION_ID> #TODO: Discuss how to handle this?
+  
   environment_stage_short: <ENVIRONMENT_SATGE_SHORT Example. 'd'>
 
   project_name: <PROJECT_NAME>
   project_description: <PROJECT_DESCRIPTION>
 
-  customer_OEM_suffix: <OEM_IDENTIFIER>
+  customer_OEM_suffix: <CUSTOMER_OEM_IDENTIFIER>
+
+  resource_name_primary_prefix: <RESOURCE_NAME_PRIMARY_PREFIX Example. 'xmew1' > 
+  resource_name_secondary_prefix: <RESOURCE_NAME_SECONDARY_PREFIX Example. 'dop'>
+  
+  resource_name_shared_short: <RESOURCE_NAME_SHARED_SHORT Example. 's'>
+  resource_name_customer_short: <RESOURCE_NAME_CUSTOMER_SHORT Example. 'c'>
 
   jfrog:
     download_url: <JFROG_DOWNLOAD_URL> #TODO: Discuss where to get this from
-    edge_token: <JFROG_EDGE_TOKEN> #TODO: Fetch from Key Vault, discuss the secret name
+    token_secret_name: <JFROG_TOKEN_SECRET_NAME> #TODO: Not Implemented yet, should fetch the token from Key Vault using this secret name
 
   clone_github_repositories: #TODO: Discuss how to handle this
     - repository: <REPOSITORY_NAME>
       organisation: <REPOSITORY_ORGANISATION>
       pat_token: <REPOSITORY_TOKEN> #TODO: Fetch from Key Vault, discuss the secret name
 
-  staging_storage_account:
-    name: <STORAGE_ACCOUNT_NAME> #TODO: Can be constructed using prefix, suffix and environment. Update the syntax and remove from config
-    resource_group: <STORAGE_ACCOUNT_RESOURCE_GROUP_NAME> #TODO: Can be constructed using prefix, suffix and environment. Update the syntax and remove from config
-    subscription_id: <STORAGE_ACCOUNT_SUBSCRIPTION_ID> #TODO: Discuss how to handle this?
 
-  #region model_stack configuration
-  model_stack:
+  #region model_stack configuration 
+  model_stack: #!CRITICAL TODO: Discuss the structure of this
     model_repo_owner: <MODEL_REPO_OWNER>
     model_repo_name: <MODEL_REPO_NAME>
     ModulesLibrary:
@@ -211,6 +215,31 @@ config:
             Value: 50
             Unit: temperature~degC
   #endregion model_stack configuration
+
+  #region additional_software_stack configuration
+  additional_software_stack: #!CRITICAL TODO: Discuss the structure of this
+    Exampletool1:
+      name: ExampleTool1
+      version: 1.0
+      path: JFROG://home/ExampleTool1/1.0
+      build_script: JFROG://home/ExampleTool1/1.0/build.sh
+      parameters:
+        - name: param1
+          value: value1
+        - name: param2
+          value: value2
+    Exampletool2: 
+      name: ExampleTool2
+      version: 1.0
+      path: JFROG://home/ExampleTool2/1.0
+      build_script: JFROG://home/ExampleTool2/1.0/build.sh
+      parameters:
+        - name: param1
+          value: value1
+        - name: param2
+          value: value2
+
+  #endregion additional_software_stack configuration
 
 #endregion Configuration
 

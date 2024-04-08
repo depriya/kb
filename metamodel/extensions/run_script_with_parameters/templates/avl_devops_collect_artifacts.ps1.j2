@@ -22,13 +22,14 @@ $config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64Str
 #endregion Getting config from metamodel config yaml
 
 $JFROG_EDGE_TOKEN = "<<jfrog_token>>" #TODO: Replace with actual jfrog token. Change the implementation to get the token from key vault, secret name should be avaialble in the config
-$github_pat_token = "<<github_pat_token>>" #TODO: Replace with actual jfrog token. Change the implementation to get the token from key vault, secret name should be avaialble in the config
+$github_pat_token = "<<github_pat_token>>" #TODO: Replace with actual pat token. Change the implementation to get the token from key vault, secret name should be avaialble in the config
 
 
 #region parameters - get from config
-$STAGING_SA_SUBSCRIPTION_ID = "$($config.staging_storage_account.subscription_id)" #TODO: Discuss. Should this come from the config?
-$STAGING_SA_RESOURCE_GROUP = "$($config.staging_storage_account.resource_group)" #TODO: This should be constructed using prefix, identifier(s) and suffix from the config.
-$STAGING_SA_NAME = "$($config.staging_storage_account.name)" #TODO: This should be constructed using prefix, identifier(s) and suffix from the config.
+$STAGING_SA_SUBSCRIPTION_ID = "$($config.subscription_id)" #TODO: Discuss. Should this come from the config?
+$STAGING_SA_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-$($config.resource_name_customer_short)-$($config.customer_OEM_suffix)-$($config.environment_stage_short)-rg-001" 
+$STAGING_SA_NAME = "$($config.resource_name_primary_prefix)$($config.resource_name_secondary_prefix)$($config.resource_name_customer_short)$($config.customer_OEM_suffix)$($config.environment_stage_short)st" 
+
 $JFROG_DOWNLOAD_URL = "$($config.jfrog.download_url)" #TODO: Discuss. Should this come from config or the Key Vault?
 
 $VERSION = "$($config.version)"
@@ -40,16 +41,17 @@ $ProjectFolderPath = "$($config.project_name)_$($config.version)"
 #region clone github repositories using pat token
 Write-Host "Cloning github repositories using pat token"
 foreach ($repo in $REPOS_TO_CLONE) {
-    $repoCloneUrl = "https://$($github_pat_token)@github.com/$($repo.organisation)/$($repo.repository).git"
+    $repoCloneUrl = "https://$($github_pat_token)@github.com/$($repo.organisation)/$($repo.repository).git" #TODO: Change the implementation to get the token from key vault, secret name should be avaialble in the config for each repo
     $command = "git clone ""$($repoCloneUrl)"" --depth 1 --no-tags"
     $command_output = ""
     $command_status = 0
     Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
     if ($command_status -ne 0) {
+        Write-Host "Failed to clone github repository: $($repo.organisation)/$($repo.repository)"
         Write-OutputDictionaryToOutputFile
     }
 }
-Wait-Host "Completed cloning github repositories."
+Write-Host "Completed cloning github repositories."
 #endregion clone github repositories using pat token
 
 #region download jfrog artifact
@@ -74,6 +76,7 @@ $command_output = ""
 $command_status = 0
 Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
 if ($command_status -ne 0) {
+    Write-Host "Failed to download jfrog artifact"
     Write-OutputDictionaryToOutputFile
 }
 Write-Host "Downloaded jfrog artifact"
@@ -129,7 +132,8 @@ Compress-Archive "$PWD" "$PWD.zip" -Force
 Write-Host "Completed compressing project folder"
 #endregion compress project folder
 
-#region upload to staging storage account
+#region Get Account key for staging storage account
+Write-Host "Getting storage account key for staging storage account"
 $command = @"
 az storage account keys list `
     -s $($STAGING_SA_SUBSCRIPTION_ID) `
@@ -142,9 +146,13 @@ $storage_key = ""
 $command_status = 0
 Invoke-CommandWithStatusCode -c $command -o $storage_key -s $command_status
 if ($command_status -ne 0) {
+    Write-Host "Failed to get storage account key for staging storage account"
     Write-OutputDictionaryToOutputFile
 }
+Write-Host "Got storage account key for staging storage account."
+#endregion Get Account key for staging storage account
 
+#region Creating container in staging storage account and
 Write-Host "Creating container in staging storage account"
 $command = @"
 az storage container create `
@@ -157,11 +165,13 @@ $command_output = ""
 $command_status = 0
 Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
 if ($command_status -ne 0) {
+    Write-Host "Failed to create container in staging storage account"
     Write-OutputDictionaryToOutputFile
 }
-Wait-Host "Completed creating container in staging storage account."
+Write-Host "Completed creating container in staging storage account."
+#endregion Creating container in staging storage account
 
-
+#region upload to staging storage account
 Write-Host "Uploading to compressed zip to staging storage account"
 $command = @"
 az storage blob upload `
@@ -176,7 +186,11 @@ az storage blob upload `
 $command_output = ""
 $command_status = 0
 Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
-Wait-Host "Completed upload to staging storage account."
+if ($command_status -ne 0) {
+    Write-Host "Failed to upload to staging storage account"
+    Write-OutputDictionaryToOutputFile
+}
+Write-Host "Completed upload to staging storage account."
 #endregion upload to staging storage account
 
 Write-OutputDictionaryToOutputFile
