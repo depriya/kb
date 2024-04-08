@@ -231,6 +231,11 @@ commandCreateDevCenter="az devcenter dev environment create --environment-name \
 commandCreateDevCenter_output=""
 commandCreateDevCenter_status=0
 execute_command_with_status_code "$commandCreateDevCenter" commandCreateDevCenter_output commandCreateDevCenter_status
+if [ $commandCreateDevCenter_status -ne 0 ]; then
+  echo "Failed to create Dev Environment."
+  echo_output_dictionary_to_output_file
+  exit 0
+fi
 echo "Created Dev Environment: $ENVIRONMENT_NAME"
 #endregion Create Dev Environment
 

@@ -49,6 +49,7 @@ foreach ($repo in $REPOS_TO_CLONE) {
     if ($command_status -ne 0) {
         Write-Host "Failed to clone github repository: $($repo.organisation)/$($repo.repository)"
         Write-OutputDictionaryToOutputFile
+        exit 0
     }
 }
 Write-Host "Completed cloning github repositories."
@@ -78,6 +79,7 @@ Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
 if ($command_status -ne 0) {
     Write-Host "Failed to download jfrog artifact"
     Write-OutputDictionaryToOutputFile
+    exit 0
 }
 Write-Host "Downloaded jfrog artifact"
 #endregion download jfrog artifact
@@ -148,6 +150,7 @@ Invoke-CommandWithStatusCode -c $command -o $storage_key -s $command_status
 if ($command_status -ne 0) {
     Write-Host "Failed to get storage account key for staging storage account"
     Write-OutputDictionaryToOutputFile
+    exit 0
 }
 Write-Host "Got storage account key for staging storage account."
 #endregion Get Account key for staging storage account
@@ -167,6 +170,7 @@ Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
 if ($command_status -ne 0) {
     Write-Host "Failed to create container in staging storage account"
     Write-OutputDictionaryToOutputFile
+    exit 0
 }
 Write-Host "Completed creating container in staging storage account."
 #endregion Creating container in staging storage account
@@ -189,8 +193,10 @@ Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
 if ($command_status -ne 0) {
     Write-Host "Failed to upload to staging storage account"
     Write-OutputDictionaryToOutputFile
+    exit 0
 }
 Write-Host "Completed upload to staging storage account."
 #endregion upload to staging storage account
 
 Write-OutputDictionaryToOutputFile
+exit 0
