@@ -25,20 +25,24 @@ jobs:
         run: |
           pip install -r ./sdv-tool-chain/platform/toolchain/requirements.txt
           pip install -r ./sdv-tool-chain/platform/toolchain/requirements_test.txt
-        working-directory:
+        working-directory: ${{ github.workspace }}
 
       - name: Validate Metamodel
         run: python ./sdv-tool-chain/platform/toolchain/src/toolchain_cli.py metamodel validate --from-file ./metamodel/avl_sdv_template.yaml --override ./metamodel/avl_sdv_template_overrides.yaml
-        working-directory:
+        working-directory: ${{ github.workspace }}
 
       - name: Run Sdv Tool Chain for Metamodel 
         run: metamodel execute --from-file ./metamodel/avl_sdv_template.yaml --override ./scenarios/metamodel/avl_sdv_template_overrides.yaml --output-dir ./output/avl_devops_pilot
+        working-directory: ${{ github.workspace }}
 
       - name: Zip the output
         run: zip -r ./output/avl_devops_pilot.zip ./output/avl_devops_pilot
+        working-directory: ${{ github.workspace }}
+        
 
       - name: Upload the output
         uses: actions/upload-artifact@v2
         with:
           name: avl_devops_pilot
-          path: ./output/avl_devops_pilot.zip
+          path: '${{ github.workspace }}/output/avl_devops_pilot.zip'
+        
