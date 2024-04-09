@@ -15,9 +15,9 @@ COMPUTE_GALLERY="Computegallery"             #TODO: Discuss. Should this come fr
 DEV_CENTER_CATALOG_NAME="catalog"            #TODO: Discuss. Should this come from the config?
 ENVIRONMENT_DEFINITION_NAME="vmss"           #TODO: Discuss. Should this come from the config?
 ENVIRONMENT_TYPE="sandbox"                   #TODO: Discuss. Should this come from the config?
-ADMIN_USER="admin"                       #TODO: Discuss and change, if needed
+ADMIN_USER="avluser"                       #TODO: Discuss and change, if needed
 admin_password="Password@123"                #TODO: Should get this from the Key Vault or Generate a new password and save it in the Key Vault
-MYOID="08408703-0c5a-47a8-a4d7-d54ceab09f03" #TODO: Discuss. How to get this value? As of now hardcoded objectid of AKS
+MYOID="7cc6c11b-ad9c-43cc-a7d5-2a0a0e4f3648" #TODO: Discuss. How to get this value? As of now hardcoded objectid of AKS
 #endregion Declare Constants
 
 #region Getting config from metamodel config yaml
@@ -183,7 +183,7 @@ fi
 echo "Created Project Environment Type with Object ID: $commandCreateProjectEnvType_output"
 
 echo "Assigning Contributor role to the Project Environment Type Object Id on the subscription"
-commandCreateContributorRole=""az role assignment create --role \"Contributor\" --assignee-object-id $commandCreateProjectEnvType_output --scope \"/subscriptions/$subscription_id\"""
+commandCreateContributorRole="az role assignment create --role \"Contributor\" --assignee-object-id $commandCreateProjectEnvType_output --scope \"/subscriptions/$subscription_id\""
 commandCreateContributorRole_output=""
 commandCreateContributorRole_status=0
 execute_command_with_status_code "$commandCreateContributorRole" commandCreateContributorRole_output commandCreateContributorRole_status
