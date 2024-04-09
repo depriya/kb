@@ -6,26 +6,20 @@ on:
 permissions:
   id-token: write
   contents: read
-  
+
+  env:
+    TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
+    TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
+    METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
+    METAMODEL_OVERRIDES_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
+    METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel  
+
 jobs:
   build:
     runs-on: ubuntu-latest #TODO: Discuss and decide on the runner type
     environment: sub-AVL_DevopsPilot
-    env:
-      TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
-      TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
-      METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
-      METAMODEL_OVERRIDES_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
-      METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel
     
     steps:
-      - name: 'Az CLI login'
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -41,12 +35,36 @@ jobs:
           pip install -r $TOOlCHAIN_ROOT_PATH/requirements.txt
           pip install -r $TOOlCHAIN_ROOT_PATH/requirements_test.txt
 
-      - name: Validate Metamodel
+      - name: Validate Metamodel 
         run: python $TOOlCHAIN_CLI_PATH metamodel validate --from-file  $METAMODEL_YAML --override  $METAMODEL_OVERRIDES_YAML
 
-      - name: Run Sdv Tool Chain for Metamodel 
+      - name: Generate Campaign Data for Metamodel 
         run: python $TOOlCHAIN_CLI_PATH metamodel execute --from-file  $METAMODEL_YAML --override  $METAMODEL_OVERRIDES_YAML --output-dir  $METAMODEL_OUTPUT_DIR
+      
+      - name: Publish Metamodel Output
+        uses: actions/upload-artifact@v2
+        with:
+          name: metamodel-output-${{ github.run_id }}
+          path: $METAMODEL_OUTPUT_DIR
 
+  upload:
+    needs: build
+    runs-on: ubuntu-latest #TODO: Discuss and decide on the runner type
+    environment: sub-AVL_DevopsPilot
+
+    steps:
+      - name: Get Metamodel Output from Build
+        uses: actions/download-artifact@v2
+        with:
+          name: metamodel-output-${{ github.run_id }}
+          path: $METAMODEL_OUTPUT_DIR
+    
+      - name: 'Az CLI login'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Upload Output Files to file share
         shell: pwsh
