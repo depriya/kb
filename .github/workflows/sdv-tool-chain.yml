@@ -13,8 +13,8 @@ env:
   METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
   METAMODEL_OVERRIDES_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
   METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel  
-  METAMODEL_OUTPUT_ZIP_Name: metamodel-output-${{ github.run_id }}
-  METAMODEL_OUTPUT_ZIP:  ${{ github.workspace }}/output/metamodel/metamodel-output-${{ github.run_id }}.zip
+  METAMODEL_OUTPUT_ZIP_Name: metamodel-output
+  METAMODEL_OUTPUT_ZIP:  ${{ github.workspace }}/output/metamodel-output.zip
 
 jobs:
   build:
