@@ -49,13 +49,14 @@ jobs:
       - name: Zip the output 
         run: |
           cp ${{ env.METAMODEL_OVERRIDES_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
+          cd ${{ env.METAMODEL_OUTPUT_DIR }}
           zip -r ${{ env.WORKFLOW_ARTIFACT_NAME }} ${{ env.METAMODEL_OUTPUT_DIR }}
       
       - name: Publish Metamodel Output
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
-          path: ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip
+          path: ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.WORKFLOW_ARTIFACT_NAME }}.zip
 
   upload:
     needs: build
