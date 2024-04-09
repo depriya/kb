@@ -1,4 +1,4 @@
-name: Generate.metamodel.outputs
+name: Generate.Symphony.Campaign
 
 on:
   workflow_dispatch:
