@@ -47,10 +47,10 @@ jobs:
         run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel execute --from-file  ${{ env.METAMODEL_YAML }} --override  ${{ env.METAMODEL_OVERRIDES_YAML}} --output-dir  ${{ env.METAMODEL_OUTPUT_DIR }}
       
       - name: Zip the output 
+        working-directory: ${{ env.METAMODEL_OUTPUT_DIR }}
         run: |
           cp ${{ env.METAMODEL_OVERRIDES_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
-          cd ${{ env.METAMODEL_OUTPUT_DIR }}
-          zip -r ${{ env.WORKFLOW_ARTIFACT_NAME }} ${{ env.METAMODEL_OUTPUT_DIR }}
+          zip -r ${{ env.WORKFLOW_ARTIFACT_NAME }} *
       
       - name: Publish Metamodel Output
         uses: actions/upload-artifact@v4
