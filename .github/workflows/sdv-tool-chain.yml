@@ -1,4 +1,4 @@
-name: Build.metamodel
+name: Generate.metamodel.outputs
 
 on:
   workflow_dispatch:
@@ -13,8 +13,8 @@ env:
   METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
   METAMODEL_OVERRIDES_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
   METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel  
-  METAMODEL_OUTPUT_ZIP_Name: metamodel-output
   METAMODEL_OUTPUT_ZIP:  ${{ github.workspace }}/output/metamodel-output.zip
+  METAMODEL_OUTPUT_ZIP_Name: metamodel-output
 
 jobs:
   build:
@@ -33,24 +33,25 @@ jobs:
           
       - name: Install dependencies
         run: |
+          ls -R
           pip install yq # yq is used to parse yaml files
-          pip install -r $TOOlCHAIN_ROOT_PATH/requirements.txt
-          pip install -r $TOOlCHAIN_ROOT_PATH/requirements_test.txt
+          pip install -r ${{ env.TOOlCHAIN_ROOT_PATH }}/requirements.txt
+          pip install -r ${{ env.TOOlCHAIN_ROOT_PATH }}/requirements_test.txt
 
       - name: Validate Metamodel 
-        run: python $TOOlCHAIN_CLI_PATH metamodel validate --from-file  $METAMODEL_YAML --override  $METAMODEL_OVERRIDES_YAML
+        run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel validate --from-file  ${{ env.METAMODEL_YAML }} --override  ${{ env.METAMODEL_OVERRIDES_YAML}}
 
       - name: Generate Campaign Data for Metamodel 
-        run: python $TOOlCHAIN_CLI_PATH metamodel execute --from-file  $METAMODEL_YAML --override  $METAMODEL_OVERRIDES_YAML --output-dir  $METAMODEL_OUTPUT_DIR
+        run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel execute --from-file  ${{ env.METAMODEL_YAML }} --override  ${{ env.METAMODEL_OVERRIDES_YAML}} --output-dir  ${{ env.METAMODEL_OUTPUT_DIR }}
       
       - name: Zip the output 
-        run: zip -r $METAMODEL_OUTPUT_ZIP $METAMODEL_OUTPUT_DIR
+        run: zip -r ${{ env.METAMODEL_OUTPUT_ZIP }} ${{ env.METAMODEL_OUTPUT_DIR }}
       
       - name: Publish Metamodel Output
         uses: actions/upload-artifact@v4
         with:
-          name: $METAMODEL_OUTPUT_ZIP_Name
-          path: $METAMODEL_OUTPUT_ZIP
+          name: ${{ env.METAMODEL_OUTPUT_ZIP_Name }}
+          path: ${{ env.METAMODEL_OUTPUT_ZIP }}
 
   upload:
     needs: build
@@ -61,12 +62,13 @@ jobs:
       - name: Get Metamodel Output from Build
         uses: actions/download-artifact@v4
         with:
-          name: $METAMODEL_OUTPUT_ZIP_Name
+          name: ${{ env.METAMODEL_OUTPUT_ZIP_Name }}
         
       - name: Unzip the output
         run: |
-          mkdir $METAMODEL_OUTPUT_ZIP_Name
-          unzip $METAMODEL_OUTPUT_ZIP_Name.zip -d ${{ github.workspace }}/$METAMODEL_OUTPUT_ZIP_Name          
+          mkdir ${{ github.workspace }}/${{ env.METAMODEL_OUTPUT_ZIP_Name }}
+          unzip ${{ env.METAMODEL_OUTPUT_ZIP_Name }}.zip -d ${{ github.workspace }}/${{ env.METAMODEL_OUTPUT_ZIP_Name }}          
+          ls -R ${{ github.workspace }}/${{ env.METAMODEL_OUTPUT_ZIP_Name }}
     
       - name: 'Az CLI login'
         uses: azure/login@v2
