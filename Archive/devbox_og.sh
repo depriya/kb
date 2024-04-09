@@ -42,7 +42,7 @@ az devcenter admin network-connection create \
     --resource-group $RESOURCE_GROUP \
     --subnet-id "$subnet_id" \
     --location "$location" \
-    --networking-resource-group-name "xmew1-dop-c-${customerOEMsuffix}-d-rg-networkconnection-001"
+    --networking-resource-group-name "xmew1--dop-c-${customerOEMsuffix}-d-rg-networkconnection-001"
 
 # Fetch network connection ID
 network_connection_id=$(az devcenter admin network-connection show --name "xmew1-dop-c-${customerOEMsuffix}-ntwkcon-001" --resource-group "$RESOURCE_GROUP" --query id --output tsv)
