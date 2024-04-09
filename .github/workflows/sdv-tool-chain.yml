@@ -8,19 +8,21 @@ permissions:
   contents: read
 
 env:
-  TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
-  TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
-  METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
-  METAMODEL_OVERRIDES_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
-  METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel  
-  METAMODEL_OUTPUT_ZIP:  ${{ github.workspace }}/output/metamodel-output.zip
-  METAMODEL_OUTPUT_ZIP_Name: metamodel-output
+  WORKFLOW_ARTIFACT_NAME: metamodel-output-${{ github.run_id }}
+  CONFIG_FILE_YAML: metamodel-config-${{ github.run_id }}.yaml
 
 jobs:
   build:
     runs-on: ubuntu-latest #TODO: Discuss and decide on the runner type
     environment: sub-AVL_DevopsPilot
     
+    env:
+      TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
+      TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
+      METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
+      METAMODEL_OVERRIDES_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
+      METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel 
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -45,13 +47,15 @@ jobs:
         run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel execute --from-file  ${{ env.METAMODEL_YAML }} --override  ${{ env.METAMODEL_OVERRIDES_YAML}} --output-dir  ${{ env.METAMODEL_OUTPUT_DIR }}
       
       - name: Zip the output 
-        run: zip -r ${{ env.METAMODEL_OUTPUT_ZIP }} ${{ env.METAMODEL_OUTPUT_DIR }}
+        run: |
+          cp ${{ env.METAMODEL_OVERRIDES_YAML }} ${{ env.CONFIG_FILE_YAML }}
+          zip -r ${{ env.WORKFLOW_ARTIFACT_NAME }} ${{ env.METAMODEL_OUTPUT_DIR }}
       
       - name: Publish Metamodel Output
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.METAMODEL_OUTPUT_ZIP_Name }}
-          path: ${{ env.METAMODEL_OUTPUT_ZIP }}
+          name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          path: ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip
 
   upload:
     needs: build
@@ -62,13 +66,12 @@ jobs:
       - name: Get Metamodel Output from Build
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.METAMODEL_OUTPUT_ZIP_Name }}
+          name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
         
       - name: Unzip the output
         run: |
-          mkdir ${{ github.workspace }}/${{ env.METAMODEL_OUTPUT_ZIP_Name }}
-          unzip ${{ env.METAMODEL_OUTPUT_ZIP_Name }}.zip -d ${{ github.workspace }}/${{ env.METAMODEL_OUTPUT_ZIP_Name }}          
-          ls -R ${{ github.workspace }}/${{ env.METAMODEL_OUTPUT_ZIP_Name }}
+          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          unzip ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -d ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}          
     
       - name: 'Az CLI login'
         uses: azure/login@v2
@@ -80,13 +83,14 @@ jobs:
       - name: Upload Output Files to file share
         shell: pwsh
         run: |
-          $customer_OEM_suffix = (yq '.config.customer_OEM_suffix' "${{ env:METAMODEL_OVERRIDES_YAML }}").Trim('"')
-          $project_name = (yq '.config.project_name' "${{ env:METAMODEL_OVERRIDES_YAML }}").Trim('"')
-          $resource_name_primary_prefix = (yq '.config.resource_name_primary_prefix' "${{ env:METAMODEL_OVERRIDES_YAML }}").Trim('"')
-          $resource_name_secondary_prefix = (yq '.config.resource_name_secondary_prefix' "${{ env:METAMODEL_OVERRIDES_YAML }}").Trim('"')
-          $resource_name_shared_short = (yq '.config.resource_name_shared_short' "${{ env:METAMODEL_OVERRIDES_YAML }}").Trim('"')
-          $environment_stage_short = (yq '.config.environment_stage_short' "${{ env:METAMODEL_OVERRIDES_YAML }}").Trim('"')
-          $meta_model_outputs_file_share_name = (yq '.config.meta_model_outputs_file_share_name' "${{ env:METAMODEL_OVERRIDES_YAML }}").Trim('"')
+          cd ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          $customer_OEM_suffix = (yq '.config.customer_OEM_suffix' "${{ env:CONFIG_FILE_YAML }}").Trim('"')
+          $project_name = (yq '.config.project_name' "${{ env:CONFIG_FILE_YAML }}").Trim('"')
+          $resource_name_primary_prefix = (yq '.config.resource_name_primary_prefix' "${{ env:CONFIG_FILE_YAML }}").Trim('"')
+          $resource_name_secondary_prefix = (yq '.config.resource_name_secondary_prefix' "${{ env:CONFIG_FILE_YAML }}").Trim('"')
+          $resource_name_shared_short = (yq '.config.resource_name_shared_short' "${{ env:CONFIG_FILE_YAML }}").Trim('"')
+          $environment_stage_short = (yq '.config.environment_stage_short' "${{ env:CONFIG_FILE_YAML }}").Trim('"')
+          $meta_model_outputs_file_share_name = (yq '.config.meta_model_outputs_file_share_name' "${{ env:CONFIG_FILE_YAML }}").Trim('"')
           
 
           $subscription_id = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
@@ -108,7 +112,7 @@ jobs:
             --account-key $storage_key `
             --destination "$meta_model_outputs_file_share_name" `
             --destination-path  "$destinationPath"`
-            --source "${{ github.workspace }}//${{ env.METAMODEL_OUTPUT_ZIP_Name }}"
+            --source "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}"
 
           az storage file list `
             --account-name $storageAccount `
