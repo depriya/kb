@@ -48,7 +48,7 @@ jobs:
       
       - name: Zip the output 
         run: |
-          cp ${{ env.METAMODEL_OVERRIDES_YAML }} ${{ env.CONFIG_FILE_YAML }}
+          cp ${{ env.METAMODEL_OVERRIDES_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
           zip -r ${{ env.WORKFLOW_ARTIFACT_NAME }} ${{ env.METAMODEL_OUTPUT_DIR }}
       
       - name: Publish Metamodel Output
