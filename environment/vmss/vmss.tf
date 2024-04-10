@@ -16,17 +16,17 @@ provider "azurerm" {
 }
 
 variable "customerOEMsuffix" {
-  default = "avl"
+  //default = "avl"
 }
 variable "projectname" {
-  default = "pj2"
+  //default = "pj2"
 }
 variable "admin_username" {
-  default = "avluser"
+  //default = "avluser"
 }
 variable "admin_password" {
   sensitive = true
-  default = "Password@123"
+  //default = "Password@123"
 }
 
 variable "location" {
@@ -34,7 +34,7 @@ variable "location" {
 }
 
 variable "environmentStage"{
-  default = "d"
+  //default = "d"
 }
 data "azurerm_resource_group" "example" {
   name = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-rg-001"
