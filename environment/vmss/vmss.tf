@@ -47,11 +47,11 @@ data "azurerm_subnet" "internal" {
   virtual_network_name = data.azurerm_virtual_network.example.name
 }
 
-resource "azurerm_network_security_group" "example" {
-  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nsg"
-  location            = data.azurerm_resource_group.example.location
-  resource_group_name = data.azurerm_resource_group.example.name
-}
+# #resource "azurerm_network_security_group" "example" {
+#   name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nsg"
+#   location            = data.azurerm_resource_group.example.location
+#   resource_group_name = data.azurerm_resource_group.example.name
+# }
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
   name                 = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-001"
@@ -85,6 +85,6 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
       subnet_id = data.azurerm_subnet.internal.id
     }
 # Attach the NSG to the VMSS
-    network_security_group_id = azurerm_network_security_group.example.id    
+    #network_security_group_id = azurerm_network_security_group.example.id    
   }
 }

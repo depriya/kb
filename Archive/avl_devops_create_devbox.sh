@@ -12,9 +12,9 @@ source $(dirname $0)/symphony_stage_script_provider.sh
 
 #region Declare Constants
 echo "variable declation"
-LOCATION="westeurope"  #TODO: Discuss. Should this come from the config?
-IMAGE="microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os" #TODO: Discuss. Should this come from the config?
-OEM_Subnet="OEMSubnet"  #TODO: Discuss. Should this come from the config?
+LOCATION="westeurope"  
+IMAGE="microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os" 
+OEM_Subnet="OEMSubnet"  
 echo "declare a SKU"
 #endregion Declare Constants
 echo "SKU Details"
