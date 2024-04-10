@@ -33,7 +33,7 @@ class RunPwshScriptInBashExtension(BaseMetamodelExtension):
 
     @property
     def aliases(self) -> list[str]:
-        return self.EXTENSION_NAME
+        return [self.EXTENSION_NAME]
 
     @property
     def description(self) -> str:
