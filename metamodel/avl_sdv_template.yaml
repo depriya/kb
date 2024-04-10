@@ -21,17 +21,17 @@ config:
   resource_name_customer_short: <RESOURCE_NAME_CUSTOMER_SHORT Example. 'c'>
 
   jfrog:
-    download_url: <JFROG_DOWNLOAD_URL> #TODO: Discuss where to get this from
-    token_secret_name: <JFROG_TOKEN_SECRET_NAME> #TODO: Not Implemented yet, should fetch the token from Key Vault using this secret name
+    download_url: <JFROG_DOWNLOAD_URL> 
+    token_secret_name: <JFROG_TOKEN_SECRET_NAME> 
 
-  clone_github_repositories: #TODO: Discuss how to handle this
+  clone_github_repositories:
     - repository: <REPOSITORY_NAME>
-      organisation: <REPOSITORY_ORGANISATION>
-      pat_token: <REPOSITORY_TOKEN> #TODO: Fetch from Key Vault, discuss the secret name
+      organization: <REPOSITORY_ORGANIZATION>
+      pat_token_secret_name: <REPOSITORY_TOKEN>
 
 
   #region model_stack configuration 
-  model_stack: #!CRITICAL TODO: Discuss the structure of this
+  model_stack: #TODO: Discuss the structure of this
     model_repo_owner: <MODEL_REPO_OWNER>
     model_repo_name: <MODEL_REPO_NAME>
     ModulesLibrary:
@@ -219,7 +219,7 @@ config:
   #endregion model_stack configuration
 
   #region additional_software_stack configuration
-  additional_software_stack: #!CRITICAL TODO: Discuss the structure of this
+  additional_software_stack: #TODO: Discuss the structure of this
     Exampletool1:
       name: ExampleTool1
       version: 1.0

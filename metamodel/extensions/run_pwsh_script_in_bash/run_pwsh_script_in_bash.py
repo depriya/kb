@@ -10,7 +10,7 @@ from typing import Any
 from extension import BaseMetamodelExtension
 
 
-class RunScriptWithParamsExtension(BaseMetamodelExtension):
+class RunPwshScriptInBashExtension(BaseMetamodelExtension):
     @dataclass
     class Parameters(BaseMetamodelExtension.Parameters):
         input_parameter: dict[str, Any]
@@ -25,7 +25,7 @@ class RunScriptWithParamsExtension(BaseMetamodelExtension):
     def _depends_on(self) -> list[str]:
         return ["symphony campaign"]
 
-    EXTENSION_NAME = "avl devops custom extension run script with parameters"
+    EXTENSION_NAME = "avl devops custom extension run pwsh script in bash"
 
     @property
     def name(self) -> str:
@@ -37,7 +37,7 @@ class RunScriptWithParamsExtension(BaseMetamodelExtension):
 
     @property
     def description(self) -> str:
-        return "This extension runs a script with parameters"
+        return "This extension runs a powershell script through bash"
 
     @property
     def config_name(self) -> str:

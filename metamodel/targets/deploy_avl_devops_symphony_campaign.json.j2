@@ -43,10 +43,13 @@
                 "provider": "providers.stage.script",
                 "config": {
                     "name": "execute artifacts collection script",
-                    "script": "avl_devops_collect_artifacts.ps1",
-                    "scriptEngine": "powershell",
-                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_script",
-                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_script"
+                    "script": "run_pwsh_script_in_bash.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
+                },
+                 "inputs": {
+                    "ps_script_path":"./avl_devops_collect_artifacts.ps1"
                 }
             }
         },
