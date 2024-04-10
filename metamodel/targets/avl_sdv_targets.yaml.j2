@@ -12,12 +12,21 @@ avl_devops_custom_script:
   parameters:
     input_parameter: {{ config }}
 
+avl_devops_custom_powershell_script:
+  description: Execute the AVL DevOps custom powershell script in bash
+  type: avl devops custom extension run pwsh script in bash
+  depends_on:
+    - azure_login
+  parameters:
+    input_parameter: {{ config }}
+
 deploy_avl_symphony_campaign:
   description: The Symphony campaign to execute the AVL DevOps scripts
   type: symphony campaign
   depends_on:
     - azure_login
     - avl_devops_custom_script
+    - avl_devops_custom_powershell_script
   parameters:
     campaign_name: deploy_avl_devops_symphony_campaign
     campaign_activation_name: deploy_avl_devops_symphony_campaign_activation

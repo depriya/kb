@@ -8,7 +8,9 @@ $ErrorActionPreference = "Stop"
 # Fail if an unset variable is used
 Set-StrictMode -Version Latest
 
-. ./symphony_stage_script_provider.ps1
+Set-Location $args[0]
+
+. ./symphony_stage_script_provider.ps1 $args[1]
 
 #region Declare Constants
 $DOWNLOAD_REQUEST_TIMEOUT_SECONDS = 600
@@ -21,36 +23,35 @@ $configEncoded = "{{ parameters.input_parameter_to_script }}"
 $config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($configEncoded)) | ConvertFrom-Json
 #endregion Getting config from metamodel config yaml
 
-$JFROG_EDGE_TOKEN = "<<jfrog_token>>" #TODO: Replace with actual jfrog token. Change the implementation to get the token from key vault, secret name should be avaialble in the config
-$github_pat_token = "<<github_pat_token>>" #TODO: Replace with actual pat token. Change the implementation to get the token from key vault, secret name should be avaialble in the config
-
-
 #region parameters - get from config
 $STAGING_SA_SUBSCRIPTION_ID = "$($config.subscription_id)" #TODO: Discuss. Should this come from the config?
 $STAGING_SA_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-$($config.resource_name_customer_short)-$($config.customer_OEM_suffix)-$($config.environment_stage_short)-rg-001" 
 $STAGING_SA_NAME = "$($config.resource_name_primary_prefix)$($config.resource_name_secondary_prefix)$($config.resource_name_customer_short)$($config.customer_OEM_suffix)$($config.environment_stage_short)st" 
-
-$JFROG_DOWNLOAD_URL = "$($config.jfrog.download_url)" #TODO: Discuss. Should this come from config or the Key Vault?
-
+$STAGING_KV_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-$($config.resource_name_shared_short)-$($config.environment_stage_short)-kv-001" 
+$JFROG_DOWNLOAD_URL = "$($config.jfrog.download_url)"
+$JFROG_TOKEN_SECRET_NAME = "$($config.jfrog.token_secret_name)"
 $VERSION = "$($config.version)"
-$MODEL_STACK = $config.model_stack #!CRITICAL-TODO: Validate the Structure.
+$MODEL_STACK = $config.model_stack 
 $REPOS_TO_CLONE = $config.clone_github_repositories
-$ProjectFolderPath = "$($config.project_name)_$($config.version)"
+$PROJECT_NAME = "$($config.project_name)".ToLower()
+$PROJECT_FOLDER_PATH = "$($config.project_name)_$($config.version)"
 #endregion parameters - get from config
+
+az login --identity
 
 #region clone github repositories using pat token
 Write-Host "Cloning github repositories using pat token"
 foreach ($repo in $REPOS_TO_CLONE) {
-    $repoCloneUrl = "https://$($github_pat_token)@github.com/$($repo.organisation)/$($repo.repository).git" #TODO: Change the implementation to get the token from key vault, secret name should be avaialble in the config for each repo
+    $command = "az keyvault secret show --vault-name $STAGING_KV_NAME --name $($repo.pat_token_secret_name) --query value -o tsv "
+    $github_pat_token = ""
+    $command_status = 0
+    Invoke-Command-ExitOnFailure -c $command -o $github_pat_token -s $command_status
+
+    $repoCloneUrl = "https://$($github_pat_token)@github.com/$($repo.organisation)/$($repo.repository).git"
     $command = "git clone ""$($repoCloneUrl)"" --depth 1 --no-tags"
     $command_output = ""
     $command_status = 0
-    Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
-    if ($command_status -ne 0) {
-        Write-Host "Failed to clone github repository: $($repo.organisation)/$($repo.repository)"
-        Write-OutputDictionaryToOutputFile
-        exit 0
-    }
+    Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
 }
 Write-Host "Completed cloning github repositories."
 #endregion clone github repositories using pat token
@@ -58,9 +59,12 @@ Write-Host "Completed cloning github repositories."
 #region download jfrog artifact
 Write-Host "Downloading jfrog artifact"
 New-Item -Path $PWD -Name $ProjectFolderPath -ItemType Directory -Force
-Set-Location "$PWD/$ProjectFolderPath"
-$headers = @{ "Authorization" = "Basic $([System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes("$($JFROG_EDGE_TOKEN)")))" }
+$command = "az keyvault secret show --vault-name $STAGING_KV_NAME --name $($JFROG_TOKEN_SECRET_NAME) --query value -o tsv"
+$jfrog_edge_token = ""
+$command_status = 0
+Invoke-Command-ExitOnFailure -c $command -o $jfrog_edge_token -s $command_status
 
+$headers = @{ "Authorization" = "Basic $([System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes("$($jfrog_edge_token)")))" }
 $command = @"
 Invoke-WebRequest `
     -Method GET `
@@ -75,12 +79,7 @@ Invoke-WebRequest `
 "@
 $command_output = ""
 $command_status = 0
-Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
-if ($command_status -ne 0) {
-    Write-Host "Failed to download jfrog artifact"
-    Write-OutputDictionaryToOutputFile
-    exit 0
-}
+Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
 Write-Host "Downloaded jfrog artifact"
 #endregion download jfrog artifact
 
@@ -116,7 +115,7 @@ foreach ($item in $ARRAY_TO_PROCESS) {
                         foreach ($subSysParam in $subSys.SubSysParam) {
                             if ($subSysParam.GetType().BaseType.Name -eq "Object" -and $subSysParam.PSObject.Properties.Name -contains "ParamFilePath" -and $null -ne $subSysParam.ParamFilePath) {
                                 Write-Host "Copying from ParamFilePath - $PWD/$($subSysParam.ParamFilePath)"
-                                Copy-Item "$PWD/$($subSysParam.ParamFilePath)" "$PWD" -Recurse -Force
+                                Copy-Item "$PWD/$($subSysParam.ParamFilePath)" "$PROJECT_FOLDER_PATH" -Recurse -Force
                             }
                         }
                     }
@@ -130,7 +129,8 @@ Write-Host "Completed copying model stack files"
 
 #region compress project folder
 Write-Host "Compressing project folder"
-Compress-Archive "$PWD" "$PWD.zip" -Force
+Set-Location $PROJECT_FOLDER_PATH
+Compress-Archive -Path . -DestinationPath "$($PROJECT_FOLDER_PATH).zip" -Force
 Write-Host "Completed compressing project folder"
 #endregion compress project folder
 
@@ -146,12 +146,8 @@ az storage account keys list `
 "@
 $storage_key = ""
 $command_status = 0
-Invoke-CommandWithStatusCode -c $command -o $storage_key -s $command_status
-if ($command_status -ne 0) {
-    Write-Host "Failed to get storage account key for staging storage account"
-    Write-OutputDictionaryToOutputFile
-    exit 0
-}
+Invoke-Command-ExitOnFailure -c $command -o $storage_key -s $command_status
+
 Write-Host "Got storage account key for staging storage account."
 #endregion Get Account key for staging storage account
 
@@ -161,17 +157,13 @@ $command = @"
 az storage container create `
     --account-name $($STAGING_SA_NAME) `
     --account-key "$($storage_key)" `
-    -n $($ProjectFolderPath) `
+    -n $($PROJECT_NAME) `
     --only-show-errors
 "@
 $command_output = ""
 $command_status = 0
-Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
-if ($command_status -ne 0) {
-    Write-Host "Failed to create container in staging storage account"
-    Write-OutputDictionaryToOutputFile
-    exit 0
-}
+Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
+
 Write-Host "Completed creating container in staging storage account."
 #endregion Creating container in staging storage account
 
@@ -181,20 +173,16 @@ $command = @"
 az storage blob upload `
     --account-name $($STAGING_SA_NAME) `
     --account-key "$($storage_key)" `
-    -c $($ProjectFolderPath) `
+    -c $($PROJECT_NAME) `
     -n $($VERSION) `
-    -f "$($PWD).zip" `
+    -f "$($PROJECT_FOLDER_PATH).zip" `
     --overwrite `
     --only-show-errors
 "@
 $command_output = ""
 $command_status = 0
-Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
-if ($command_status -ne 0) {
-    Write-Host "Failed to upload to staging storage account"
-    Write-OutputDictionaryToOutputFile
-    exit 0
-}
+Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
+
 Write-Host "Completed upload to staging storage account."
 #endregion upload to staging storage account
 

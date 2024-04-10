@@ -135,7 +135,7 @@ function Write-OutputDictionaryToOutputFile {
     .EXAMPLE
     Write-OutputDictionaryToOutputFile
     #>
-    $outputs | Out-File -FilePath $output_file_path
+    $outputs | Out-File -FilePath $output_file_path -Force 
 }
 
 function Invoke-CommandWithStatusCode {
