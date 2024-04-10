@@ -16,13 +16,17 @@ provider "azurerm" {
 }
 
 variable "customerOEMsuffix" {
+  default = "avl"
 }
 variable "projectname" {
+  default = "pj2"
 }
 variable "admin_username" {
+  default = "avluser"
 }
 variable "admin_password" {
   sensitive = true
+  default = "Password@123"
 }
 
 variable "location" {
@@ -30,7 +34,7 @@ variable "location" {
 }
 
 variable "environmentStage"{
-  
+  default = "d"
 }
 data "azurerm_resource_group" "example" {
   name = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-rg-001"
@@ -47,17 +51,17 @@ data "azurerm_subnet" "internal" {
   virtual_network_name = data.azurerm_virtual_network.example.name
 }
 
-# #resource "azurerm_network_security_group" "example" {
-#   name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nsg"
-#   location            = data.azurerm_resource_group.example.location
-#   resource_group_name = data.azurerm_resource_group.example.name
-# }
+ resource "azurerm_network_security_group" "example" {
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nsg"
+   location            = data.azurerm_resource_group.example.location
+   resource_group_name = data.azurerm_resource_group.example.name
+ }
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
   name                 = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-001"
   resource_group_name  = data.azurerm_resource_group.example.name
   location             = data.azurerm_resource_group.example.location
-  sku                  = "Standard_F2"
+  sku                  = "Standard_B2als_v2"
   instances            = 1
   admin_password       = var.admin_password
   admin_username       = var.admin_username
@@ -66,7 +70,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   source_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
+    sku       = "2022-datacenter-azure-edition"
     version   = "latest"
   }
 
@@ -85,6 +89,6 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
       subnet_id = data.azurerm_subnet.internal.id
     }
 # Attach the NSG to the VMSS
-    #network_security_group_id = azurerm_network_security_group.example.id    
+    network_security_group_id = azurerm_network_security_group.example.id    
   }
 }
