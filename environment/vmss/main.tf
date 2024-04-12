@@ -41,7 +41,7 @@ data "azurerm_subnet" "internal" {
 
 data "azurerm_gallery" "example" {
   name                = "xmew1dopsstampdcomputegallery001"  # Replace with your gallery name
-  resource_group_name = data.azurerm_resource_group.example.name
+  resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 
 data "azurerm_gallery_image" "example" {
