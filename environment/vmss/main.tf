@@ -67,9 +67,9 @@ data "azurerm_shared_image_gallery" "example" {
 data "azurerm_shared_image" "example" {
   for_each = data.azurerm_shared_image_gallery.example
 
-  name                = each.value.name
+  name                = each.key
   gallery_name        = data.azurerm_shared_image_gallery.example.name
-  resource_group_name = "xmew1-dop-c-avl-d-rg-001"  # Use the correct resource group name
+  resource_group_name = "xmew1-dop-s-stamp-d-rg-001"  # Use the correct resource group name
 }
 
 locals {
