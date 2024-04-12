@@ -1,3 +1,15 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "=2.82.0"  # Replace with the version that supports azurerm_gallery
+    }
+    random = {
+      source = "hashicorp/random"
+      version = ">= 3.0.0"
+    }
+  }
+}
 
 provider "azurerm" {
   features {}
@@ -8,19 +20,24 @@ provider "random" {}
 variable "customerOEMsuffix" {
     default = "avl"
 }
+
 variable "projectname" {
     default = "pj9"
 }
+
 variable "admin_username" {
     default = "avluser"
 }
+
 variable "admin_password_length" {
   description = "The length of the generated admin password"
   default     = 20
 }
+
 variable "location" {
   default = "west europe"
 }
+
 variable "environmentStage" {
     default = "d"
 }
@@ -50,7 +67,7 @@ data "azurerm_shared_image" "example" {
 
   name                = each.value.name
   gallery_name        = data.azurerm_shared_image_gallery.example.name
-  resource_group_name = data.azurerm_resource_group.example.name
+  resource_group_name = "xmew1-dop-c-avl-d-rg-001"  # Use the correct resource group name
 }
 
 locals {
