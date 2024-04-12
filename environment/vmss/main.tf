@@ -57,7 +57,7 @@ data "azurerm_shared_image_gallery" "example" {
 }
 
 data "azurerm_shared_image" "example" {
-  for_each = data.azurerm_shared_image_gallery.example.images
+  for_each = data.azurerm_shared_image_gallery.example
 
   name                = each.value.name
   gallery_name        = data.azurerm_shared_image_gallery.example.name
