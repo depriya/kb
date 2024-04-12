@@ -61,13 +61,39 @@ data "azurerm_subnet" "internal" {
   virtual_network_name = data.azurerm_virtual_network.example.name
 }
 
-
-data "azurerm_shared_image" "example" {
-name = var.gallery_name
-  gallery_name                = var.gallery_name
+data "azurerm_shared_image_gallery" "example" {
+  name                = var.gallery_name
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 
+data "azurerm_shared_image" "example" {
+    for_each = data.azurerm_shared_image_gallery.example
+
+  name                = each.value.name
+  gallery_name        = each.value.name
+  resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
+
+}
+
+locals {
+  sms_images = [for name, img in data.azurerm_shared_image.example : img.name if contains(upper(name), "SMS")]
+}
+
+# Ensure we have at least one image with SMS in its name
+# If not, the Terraform apply will fail
+resource "null_resource" "validate_sms_images" {
+  count = length(local.sms_images) > 0 ? 0 : 1
+
+  triggers = {
+    error_message = "No images containing 'SMS' found in the gallery."
+  }
+
+  provisioner "local-exec" {
+    command = "echo ${null_resource.validate_sms_images.triggers.error_message} && exit 1"
+  }
+}
+
+# Extract the image ID containing the SMS string
 locals {
   matching_images = [
     for name, img in data.azurerm_shared_image.example :
@@ -83,6 +109,7 @@ locals {
   sku       = length(local.matching_images) > 0 ? local.image_info[10] : null
   version   = length(local.matching_images) > 0 ? local.image_info[12] : null
 }
+
 
 resource "random_password" "vmss_password" {
   length  = var.admin_password_length
