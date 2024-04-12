@@ -56,17 +56,17 @@ data "azurerm_shared_image_gallery" "example" {
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 
-data "azurerm_gallery_image" "example" {
-  for_each = data.azurerm_gallery.example.images
+data "azurerm_shared_image" "example" {
+  for_each = data.azurerm_shared_image_gallery.example.images
 
   name                = each.value.name
-  gallery_name        = data.azurerm_gallery.example.name
+  gallery_name        = data.azurerm_shared_image_gallery.example.name
   resource_group_name = data.azurerm_resource_group.example.name
 }
 
 locals {
   matching_images = [
-    for name, img in data.azurerm_gallery_image.example :
+    for name, img in data.azurerm_shared_image.example :
     img.id if contains(upper(name), "sms")
   ]
 
