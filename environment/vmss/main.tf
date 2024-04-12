@@ -1,15 +1,4 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "=2.82.0"  # Replace with the version that supports azurerm_gallery
-    }
-    random = {
-      source = "hashicorp/random"
-      version = ">= 3.0.0"
-    }
-  }
-}
+
 provider "azurerm" {
   features {}
 }
