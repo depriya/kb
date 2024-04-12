@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.0.0"  # Replace with the version that supports azurerm_gallery
+      version = ">= 3.0.0"  
     }
     random = {
       source = "hashicorp/random"
@@ -13,22 +13,20 @@ terraform {
 
 provider "azurerm" {
   features {}
-
-  skip_provider_registration = true
 }
 
 provider "random" {}
 
 variable "customerOEMsuffix" {
-    default = "avl"
+  default = "avl"
 }
 
 variable "projectname" {
-    default = "pj9"
+  default = "pj9"
 }
 
 variable "admin_username" {
-    default = "avluser"
+  default = "avluser"
 }
 
 variable "admin_password_length" {
@@ -37,11 +35,11 @@ variable "admin_password_length" {
 }
 
 variable "location" {
-  default = "west europe"
+  default = "westeurope"
 }
 
 variable "environmentStage" {
-    default = "d"
+  default = "d"
 }
 
 data "azurerm_resource_group" "example" {
@@ -60,22 +58,22 @@ data "azurerm_subnet" "internal" {
 }
 
 data "azurerm_shared_image_gallery" "example" {
-  name                = "xmew1dopsstampdcomputegallery001"  # Replace with your gallery name
+  name                = "xmew1dopsstampdcomputegallery001"
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 
 data "azurerm_shared_image" "example" {
   for_each = data.azurerm_shared_image_gallery.example
 
-  name                = each.key
+  name                = each.value.name
   gallery_name        = data.azurerm_shared_image_gallery.example.name
-  resource_group_name = "xmew1-dop-s-stamp-d-rg-001"  # Use the correct resource group name
+  resource_group_name = data.azurerm_shared_image_gallery.example.resource_group_name
 }
 
 locals {
   matching_images = [
     for name, img in data.azurerm_shared_image.example :
-    img.id if contains(upper(name), "sms")
+    img.id if contains(upper(name), "SMS")
   ]
 
   selected_image = length(local.matching_images) > 0 ? local.matching_images[0] : null
