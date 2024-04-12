@@ -93,7 +93,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   instances           = 1
   admin_username      = var.admin_username
   admin_password      = random_password.vmss_password.result
-  computer_name_prefix = "vm-"
+  computer_name_prefix = "vm"
 
   source_image_reference {
     publisher = local.publisher
