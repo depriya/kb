@@ -20,7 +20,9 @@ variable "admin_password_length" {
 variable "location" {
   default = "west europe"
 }
-variable "environmentStage" {}
+variable "environmentStage" {
+    default = "d"
+}
 
 data "azurerm_resource_group" "example" {
   name = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-rg-001"
