@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=2.82.0"  # Replace with the version that supports azurerm_gallery
+      version = ">= 3.0.0"  # Replace with the version that supports azurerm_gallery
     }
     random = {
       source = "hashicorp/random"
@@ -13,6 +13,8 @@ terraform {
 
 provider "azurerm" {
   features {}
+
+  skip_provider_registration = true
 }
 
 provider "random" {}
