@@ -42,6 +42,10 @@ variable "environmentStage" {
   default = "d"
 }
 
+variable "gallery_name" {
+  default = "xmew1dopsstampdcomputegallery001"
+}
+
 data "azurerm_resource_group" "example" {
   name = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-rg-001"
 }
@@ -57,17 +61,11 @@ data "azurerm_subnet" "internal" {
   virtual_network_name = data.azurerm_virtual_network.example.name
 }
 
-data "azurerm_shared_image_gallery" "example" {
-  name                = "xmew1dopsstampdcomputegallery001"
-  resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
-}
 
 data "azurerm_shared_image" "example" {
-  for_each = data.azurerm_shared_image_gallery.example
-
-  name                = each.value.name
-  gallery_name        = data.azurerm_shared_image_gallery.example.name
-  resource_group_name = data.azurerm_shared_image_gallery.example.resource_group_name
+name = var.gallery_name
+  gallery_name                = var.gallery_name
+  resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 
 locals {
