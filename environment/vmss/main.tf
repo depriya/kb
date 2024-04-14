@@ -46,6 +46,21 @@ variable "gallery_name" {
   default = "xmew1dopsstampdcomputegallery001"
 }
 
+variable "identifier_publisher" {
+  description = "Publisher."
+  default     = "VMBuildPipeline"
+}
+
+variable "identifier_offer" {
+  description = "Offer."
+  default     = "ccoe"
+}
+
+variable "identifier_sku" {
+  description = "Standard."
+  default     = "Standard"
+}
+
 data "azurerm_resource_group" "example" {
   name = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-rg-001"
 }
@@ -66,10 +81,15 @@ data "azurerm_shared_image_gallery" "example" {
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 # Define the data source to list all shared images
-data "azurerm_shared_image" "all" {
-  resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
-  gallery_name        = var.gallery_name
-  name = "*sms*"
+data "azurerm_shared_image" "filtered" {
+  count               = length(data.azurerm_shared_image_gallery.example.images)
+  name                = data.azurerm_shared_image_gallery.example.images[count.index].name
+  resource_group_name = data.azurerm_shared_image_gallery.example.resource_group_name
+  gallery_name        = data.azurerm_shared_image_gallery.example.name
+}
+
+locals {
+  filtered_images = [for image in data.azurerm_shared_image.filtered : image if contains(image.name, "sms")]
 }
 
 resource "random_password" "vmss_password" {
