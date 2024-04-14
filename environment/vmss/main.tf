@@ -80,7 +80,7 @@ data "azurerm_gallery_image" "jfrog_image" {
   filter {
     contains {
       subject = each.value.name
-      search  = "jfrog"
+      search  = "sms"
     }
   }
 }
