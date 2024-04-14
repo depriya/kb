@@ -92,8 +92,12 @@ data "azurerm_shared_image" "all" {
   //filtered_images = [for image in values(data.azurerm_shared_image.all) : image if regex("sms", image.name)]
 //}
 
+//locals {
+  //filtered_images = [for name, image in data.azurerm_shared_image.all : image if contains(name, "sms")]
+//}
+
 locals {
-  filtered_images = [for name, image in data.azurerm_shared_image.all : image if regex(".*sms.*", name)]
+  filtered_images = [for name, image in data.azurerm_shared_image.all : image if contains(name, "sms")]
 }
 
 resource "random_password" "vmss_password" {
