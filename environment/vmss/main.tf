@@ -88,10 +88,13 @@ data "azurerm_shared_image" "all" {
 }
 
 
-locals {
-  filtered_images = [for image in values(data.azurerm_shared_image.all) : image if regex("sms", image.name)]
-}
+//locals {
+  //filtered_images = [for image in values(data.azurerm_shared_image.all) : image if regex("sms", image.name)]
+//}
 
+locals {
+  filtered_images = [for name, image in data.azurerm_shared_image.all : image if regex(".*sms.*", name)]
+}
 
 resource "random_password" "vmss_password" {
   length  = var.admin_password_length
