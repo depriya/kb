@@ -65,11 +65,40 @@ data "azurerm_shared_image_gallery" "example" {
   name                = var.gallery_name
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
-
-# Now you can use local filtering to find images containing "jfrog" in their name
-locals {
-  filtered_images = [for image in data.azurerm_shared_image_gallery.example.gallery_images : image if contains(image.name, "jfrog")]
+# Define the data source to list all shared images
+data "azurerm_shared_images" "all" {
+  resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
+  gallery_name        = var.gallery_name
 }
+
+# Use local-exec to filter the images by name pattern
+resource "null_resource" "filter_images" {
+  triggers = {
+    filter = jsonencode({
+      images = data.azurerm_shared_images.all.names
+    })
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      filtered_images=()
+      for image in $(echo '${jsonencode(data.azurerm_shared_images.all.names)}' | jq -r '.[]'); do
+        if [[ $image == *"sms"* ]]; then
+          filtered_images+=("$image")
+        fi
+      done
+    EOT
+  
+    interpreter = ["bash", "-c"]
+  }
+}
+
+# Extract the filtered image names from the local-exec output
+locals {
+  filtered_image_names = jsondecode(null_resource.filter_images.result)["filtered_images"]
+}
+
+
 resource "random_password" "vmss_password" {
   length  = var.admin_password_length
   special = true
