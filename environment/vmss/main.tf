@@ -66,50 +66,24 @@ data "azurerm_shared_image_gallery" "example" {
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 
-data "azurerm_shared_image" "example" {
-    for_each = data.azurerm_shared_image_gallery.example
-
+# Data block to fetch the image from the Compute Gallery that contains the word "jfrog" in its name
+data "azurerm_gallery_image" "jfrog_image" {
+  for_each            = toset(data.azurerm_gallery.gallery.images)
   name                = each.value.name
-  gallery_name        = each.value.name
-  resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
+  publisher           = each.value.publisher
+  offer               = each.value.offer
+  sku                 = each.value.sku
+  gallery_name        = data.azurerm_gallery.gallery.name
+  subscription_id     = data.azurerm_gallery.gallery.subscription_id
+  resource_group_name = data.azurerm_gallery.gallery.resource_group_name
 
-}
-# Extract the image names containing the SMS string
-locals {
-  sms_images = [for name, img in data.azurerm_shared_image.example : img.name if contains(upper(name), "SMS")]
-}
-
-# Ensure we have at least one image with SMS in its name
-# If not, the Terraform apply will fail
-resource "null_resource" "validate_sms_images" {
-  count = length(local.sms_images) > 0 ? 0 : 1
-
-  triggers = {
-    error_message = "No images containing 'SMS' found in the gallery."
-  }
-
-  provisioner "local-exec" {
-    command = "echo ${null_resource.validate_sms_images[0].triggers.error_message} && exit 1"
+  filter {
+    contains {
+      subject = each.value.name
+      search  = "jfrog"
+    }
   }
 }
-
-# Extract the image ID containing the SMS string
-locals {
-  matching_images = [
-    for name, img in data.azurerm_shared_image.example :
-    img.id if contains(upper(name), "SMS")
-  ]
-
-  selected_image = length(local.matching_images) > 0 ? local.matching_images[0] : null
-
-  image_info = length(local.matching_images) > 0 ? split("/", local.selected_image) : null
-
-  publisher = length(local.matching_images) > 0 ? local.image_info[6] : null
-  offer     = length(local.matching_images) > 0 ? local.image_info[8] : null
-  sku       = length(local.matching_images) > 0 ? local.image_info[10] : null
-  version   = length(local.matching_images) > 0 ? local.image_info[12] : null
-}
-
 resource "random_password" "vmss_password" {
   length  = var.admin_password_length
   special = true
@@ -125,12 +99,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   admin_password      = random_password.vmss_password.result
   computer_name_prefix = "vm"
 
-  source_image_reference {
-    publisher = local.publisher
-    offer     = local.offer
-    sku       = local.sku
-    version   = local.version
-  }
+ source_image_id = data.azurerm_gallery_image.jfrog_image[0].id
 
   os_disk {
     storage_account_type = "Standard_LRS"
