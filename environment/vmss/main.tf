@@ -80,7 +80,7 @@ data "azurerm_shared_image_gallery" "example"{
       name        = var.gallery_name
 }
 data "azurerm_shared_image" "all" {
-  for_each = toset(data.azurerm_shared_image_gallery.example.images_names)
+  for_each = toset(data.azurerm_shared_image_gallery.example.image_names)
 
   name                = each.value
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
