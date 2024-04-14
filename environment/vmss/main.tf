@@ -76,20 +76,16 @@ data "azurerm_subnet" "internal" {
   virtual_network_name = data.azurerm_virtual_network.example.name
 }
 
-data "azurerm_shared_image_gallery" "example" {
-  name                = var.gallery_name
+data "azurerm_shared_image" "all" {
+  for_each = toset(data.azurerm_shared_image_gallery.example.images_names)
+
+  name                = each.value
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
-}
-# Define the data source to list all shared images
-data "azurerm_shared_image" "filtered" {
-  count               = length(data.azurerm_shared_image_gallery.example.images)
-  name                = data.azurerm_shared_image_gallery.example.images[count.index].name
-  resource_group_name = data.azurerm_shared_image_gallery.example.resource_group_name
-  gallery_name        = data.azurerm_shared_image_gallery.example.name
+  gallery_name        = var.gallery_name
 }
 
 locals {
-  filtered_images = [for image in data.azurerm_shared_image.filtered : image if contains(image.name, "sms")]
+  filtered_images = [for image in values(data.azurerm_shared_image.all) : image if contains(image.name, "sms")]
 }
 
 resource "random_password" "vmss_password" {
