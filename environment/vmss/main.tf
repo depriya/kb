@@ -74,7 +74,7 @@ data "azurerm_shared_image" "example" {
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 
 }
-
+# Extract the image names containing the SMS string
 locals {
   sms_images = [for name, img in data.azurerm_shared_image.example : img.name if contains(upper(name), "SMS")]
 }
@@ -89,7 +89,7 @@ resource "null_resource" "validate_sms_images" {
   }
 
   provisioner "local-exec" {
-    command = "echo ${null_resource.validate_sms_images.triggers.error_message} && exit 1"
+    command = "echo ${null_resource.validate_sms_images[0].triggers.error_message} && exit 1"
   }
 }
 
@@ -109,7 +109,6 @@ locals {
   sku       = length(local.matching_images) > 0 ? local.image_info[10] : null
   version   = length(local.matching_images) > 0 ? local.image_info[12] : null
 }
-
 
 resource "random_password" "vmss_password" {
   length  = var.admin_password_length
