@@ -68,7 +68,7 @@ data "azurerm_shared_image_gallery" "example" {
 
 # Now you can use local filtering to find images containing "jfrog" in their name
 locals {
-  filtered_images = [for image in data.azurerm_shared_image_gallery.example.images : image if contains(image.name, "jfrog")]
+  filtered_images = [for image in data.azurerm_shared_image_gallery.example.shared_images : image if contains(image.name, "jfrog")]
 }
 resource "random_password" "vmss_password" {
   length  = var.admin_password_length
