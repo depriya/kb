@@ -66,23 +66,9 @@ data "azurerm_shared_image_gallery" "example" {
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
 }
 
-# Data block to fetch the image from the Compute Gallery that contains the word "jfrog" in its name
-data "azurerm_gallery_image" "jfrog_image" {
-  for_each            = toset(data.azurerm_gallery.gallery.images)
-  name                = each.value.name
-  publisher           = each.value.publisher
-  offer               = each.value.offer
-  sku                 = each.value.sku
-  gallery_name        = data.azurerm_gallery.gallery.name
-  subscription_id     = data.azurerm_gallery.gallery.subscription_id
-  resource_group_name = data.azurerm_gallery.gallery.resource_group_name
-
-  filter {
-    contains {
-      subject = each.value.name
-      search  = "sms"
-    }
-  }
+# Now you can use local filtering to find images containing "jfrog" in their name
+locals {
+  filtered_images = [for image in azurerm_gallery.gallery.images : image if contains(image.name, "jfrog")]
 }
 resource "random_password" "vmss_password" {
   length  = var.admin_password_length
@@ -99,7 +85,13 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   admin_password      = random_password.vmss_password.result
   computer_name_prefix = "vm"
 
- source_image_id = data.azurerm_gallery_image.jfrog_image[0].id
+ //source_image_id = data.azurerm_gallery_image.jfrog_image[0].id
+  source_image_reference {
+    publisher = local.filtered_images[0].publisher
+    offer     = local.filtered_images[0].offer
+    sku       = local.filtered_images[0].sku
+    version   = local.filtered_images[0].version
+  }
 
   os_disk {
     storage_account_type = "Standard_LRS"
