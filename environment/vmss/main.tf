@@ -75,7 +75,10 @@ data "azurerm_subnet" "internal" {
   resource_group_name  = data.azurerm_resource_group.example.name
   virtual_network_name = data.azurerm_virtual_network.example.name
 }
-
+data "azurerm_shared_image_gallery" "example"{
+      resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
+      name        = var.gallery_name
+}
 data "azurerm_shared_image" "all" {
   for_each = toset(data.azurerm_shared_image_gallery.example.images_names)
 
