@@ -69,36 +69,8 @@ data "azurerm_shared_image_gallery" "example" {
 data "azurerm_shared_image" "all" {
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
   gallery_name        = var.gallery_name
-  name                = ""
+  name = "*sms*"
 }
-
-# Use local-exec to filter the images by name pattern
-resource "null_resource" "filter_images" {
-  triggers = {
-    filter = jsonencode({
-      images = data.azurerm_shared_image.all.names
-    })
-  }
-
-  provisioner "local-exec" {
-    command = <<-EOT
-      filtered_images=()
-      for image in $(echo '${jsonencode(data.azurerm_shared_image.all.names)}' | jq -r '.[]'); do
-        if [[ $image == *"sms"* ]]; then
-          filtered_images+=("$image")
-        fi
-      done
-    EOT
-  
-    interpreter = ["bash", "-c"]
-  }
-}
-
-# Extract the filtered image names from the local-exec output
-locals {
-  filtered_image_names = jsondecode(null_resource.filter_images.result)["filtered_images"]
-}
-
 
 resource "random_password" "vmss_password" {
   length  = var.admin_password_length
@@ -116,11 +88,11 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   computer_name_prefix = "vm"
 
  //source_image_id = data.azurerm_gallery_image.jfrog_image[0].id
-  dynamic "storage_image_reference" {
-    for_each = [local.filtered_image_names[count.index]]
-    content {
-      id = data.azurerm_shared_image.selected[count.index].id
-    }
+  source_image_reference {
+    publisher = local.filtered_images[0].publisher
+    offer     = local.filtered_images[0].offer
+    sku       = local.filtered_images[0].sku
+    version   = local.filtered_images[0].version
   }
 
   os_disk {
