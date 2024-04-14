@@ -100,7 +100,7 @@ locals {
 filtered_images = [
   for image in values(data.azurerm_shared_image.all) : 
   image 
-  if image.name != null && contains(image.name, "sms") && regex("sms", image.name)
+  if image.name != null && regex("sms", image.name)
 ]
 }
 
