@@ -141,14 +141,15 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
     }
   }
 
-  extension {
-    name                 = "CustomScriptExtension"
-    publisher            = "Microsoft.Compute"
-    type                 = "CustomScriptExtension"
-    type_handler_version = "1.10"
+ extension {
+  name                 = "CustomScriptExtension"
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.10"
 
-    settings = jsonencode({
-      script = "net user localuser Password123 /add && net localgroup administrators localuser /add && powershell -Command \"Set-LocalUser -Name localuser -PasswordNeverExpires 0\""
-    })
-  }
+  settings = jsonencode({
+    "commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"net user localuser Password123 /add; net localgroup administrators localuser /add; Set-LocalUser -Name localuser -PasswordNeverExpires 0\""
+  })
+}
+
 }
