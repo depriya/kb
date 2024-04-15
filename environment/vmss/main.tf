@@ -58,6 +58,21 @@ variable "gallery_name" {
   default = "xmew1dopsstampdcomputegallery001"
 }
 
+variable "existing_key_vault_name" {
+  description = "Name of the existing Azure Key Vault"
+  default     = "xmew1-dop-s-d-k-v001"
+}
+
+variable "existing_key_vault_resource_group_name" {
+  description = "Resource Group name of the existing Azure Key Vault"
+  default     = "xmew1-dop-s-stamp-d-rg-001"
+}
+
+data "azurerm_key_vault" "example" {
+  name                = var.existing_key_vault_name
+  resource_group_name = var.existing_key_vault_resource_group_name
+}
+
 data "azurerm_resource_group" "example" {
   name = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-rg-001"
 }
@@ -100,6 +115,12 @@ resource "random_password" "vmss_password" {
   special = true
 }
 
+resource "azurerm_key_vault_secret" "admin_password_secret" {
+  name         = "admin-password"
+  value        = random_password.vmss_password.result
+  key_vault_id = data.azurerm_key_vault.example.id
+}
+
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
   name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-001"
   resource_group_name = data.azurerm_resource_group.example.name
@@ -107,7 +128,8 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   sku                 = "Standard_B2als_v2"
   instances           = 1
   admin_username      = var.admin_username
-  admin_password      = random_password.vmss_password.result
+  //admin_password      = random_password.vmss_password.result  
+  admin_password      = azurerm_key_vault_secret.admin_password_secret.value
   computer_name_prefix = "vm"
   secure_boot_enabled = true
   vtpm_enabled = true
