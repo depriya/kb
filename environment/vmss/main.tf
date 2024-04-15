@@ -116,7 +116,7 @@ resource "random_password" "vmss_password" {
 }
 
 resource "azurerm_key_vault_secret" "admin_password_secret" {
-  name         = "admin-password"
+  name         = "vmss-admin-password"
   value        = random_password.vmss_password.result
   key_vault_id = data.azurerm_key_vault.example.id
 }
