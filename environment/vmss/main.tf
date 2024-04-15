@@ -94,7 +94,9 @@ locals {
     if image.name != null && can(regex("sms", image.name))
   ]
 }
-
+output "filtered_images" {
+  value = local.filtered_images
+}
 
 resource "random_password" "vmss_password" {
   length  = var.admin_password_length
