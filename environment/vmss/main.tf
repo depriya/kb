@@ -17,6 +17,7 @@ provider "azurerm" {
 
 provider "random" {}
 
+
 variable "customerOEMsuffix" {
   default = "avl"
 }
@@ -59,6 +60,19 @@ variable "identifier_offer" {
 variable "identifier_sku" {
   description = "Standard."
   default     = "Standard"
+}
+
+
+data "azurerm_storage_account" "tfstate" {
+    name = "xmew1dopc${var.customerOEMsuffix}${var.environmentStage}st"
+    resource_group_name = data.azurerm_resource_group.example.name
+
+}
+
+resource "azurerm_storage_container" "tfstate" {
+  name                  = "tfstate"
+  storage_account_name  = data.azurerm_storage_account.tfstate.name
+  container_access_type = "private"
 }
 
 data "azurerm_resource_group" "example" {
