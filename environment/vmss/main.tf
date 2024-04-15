@@ -114,12 +114,13 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   computer_name_prefix = "vm"
 
  //source_image_id = data.azurerm_gallery_image.jfrog_image[0].id
-  source_image_reference {
-    publisher = local.filtered_images[0].publisher
-    offer     = local.filtered_images[0].offer
-    sku       = local.filtered_images[0].sku
+source_image_reference {
+    publisher = local.filtered_images[0].identifier[0].publisher
+    offer     = local.filtered_images[0].identifier[0].offer
+    sku       = local.filtered_images[0].identifier[0].sku
     version   = local.filtered_images[0].version
-  }
+}
+
 
   os_disk {
     storage_account_type = "Standard_LRS"
