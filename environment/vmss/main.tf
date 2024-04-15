@@ -118,7 +118,7 @@ source_image_reference {
     publisher = local.filtered_images[0].identifier[0].publisher
     offer     = local.filtered_images[0].identifier[0].offer
     sku       = local.filtered_images[0].identifier[0].sku
-    version   = local.filtered_images[0].version
+    version   = "latest"
 }
 
 
