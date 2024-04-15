@@ -87,15 +87,14 @@ data "azurerm_shared_image" "all" {
   gallery_name        = var.gallery_name
 }
 
-
 locals {
   filtered_images = [
     for image in values(data.azurerm_shared_image.all) :
     image
-  if image.name != null && can(regex("sms", image.name))
-
+    if image.name != null && can(regex("sms", image.name))
   ]
 }
+
 
 resource "random_password" "vmss_password" {
   length  = var.admin_password_length
