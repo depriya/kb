@@ -112,7 +112,8 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   admin_username      = var.admin_username
   admin_password      = random_password.vmss_password.result
   computer_name_prefix = "vm"
-
+  secure_boot_enabled = true
+  vtpm_enabled = true
 
   source_image_id = local.filtered_images[0].id
 
@@ -123,9 +124,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
 #     offer     = local.filtered_images[0].identifier[0].offer
 #     sku       = local.filtered_images[0].identifier[0].sku
 #     version   = "latest"
-# }
-
-
+//}
   os_disk {
     storage_account_type = "Standard_LRS"
     caching              = "ReadWrite"
