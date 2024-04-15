@@ -88,19 +88,12 @@ data "azurerm_shared_image" "all" {
 }
 
 
-//locals {
-  //filtered_images = [for image in values(data.azurerm_shared_image.all) : image if regex("sms", image.name)]
-  ////filtered_images = [for image in values(data.azurerm_shared_image.all) : image if contains("${image.name}", "sms")]
-//}
-////locals {
-  ////filtered_images = [for name, image in data.azurerm_shared_image.all : image if contains(name, "sms")]
-////}
-
 locals {
   filtered_images = [
     for image in values(data.azurerm_shared_image.all) :
     image
-    if image.name != null && can(regex("sms", image.name)) && regex("sms", image.name) != null
+  if image.name != null && can(regex("sms", image.name))
+
   ]
 }
 
