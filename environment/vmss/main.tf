@@ -6,7 +6,7 @@ terraform {
     }
     random = {
       source = "hashicorp/random"
-      version = ">= 3.0.0"
+      version = "=3.7.0"
     }
   }
 
@@ -20,6 +20,7 @@ terraform {
 
 
 provider "azurerm" {
+  use_oidc = true
   features {}
 }
 
