@@ -113,7 +113,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   admin_password      = random_password.vmss_password.result
   computer_name_prefix = "vm"
 
-  source_image_id     = data.azurerm_shared_image.filtered_images[0].id
+source_image_id = local.filtered_images[0]
 
 #  //source_image_id = data.azurerm_gallery_image.jfrog_image[0].id
 # source_image_reference {
