@@ -180,7 +180,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   type_handler_version = "1.10"
 
   settings = jsonencode({
-    "commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-LocalUser -Name Test_Engineer -Password (ConvertTo-SecureString -AsPlainText '${azurerm_key_vault_secret.local_user_password_secret.value}' -Force) -PasswordNeverExpires:$false; Add-LocalGroupMember -Group 'Remote Desktop Users' -Member TestEngineer\""
+    "commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-LocalUser -Name Devops_Engineer -Password (ConvertTo-SecureString -AsPlainText '${azurerm_key_vault_secret.local_user_password_secret.value}' -Force) -PasswordNeverExpires:$false; Add-LocalGroupMember -Group 'Remote Desktop Users' -Member Devops_Engineer\""
   //"commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-LocalUser -Name TestEngineer -Password (ConvertTo-SecureString -AsPlainText 'Password123' -Force) -PasswordNeverExpires:$false -UserMayChangePassword:$true\""
   })
 }
