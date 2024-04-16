@@ -98,12 +98,12 @@ data "azurerm_shared_image" "all" {
   resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
   gallery_name        = var.gallery_name
 }
-
+// make it variable - sms
 locals {
   filtered_images = [
     for image in values(data.azurerm_shared_image.all) :
     image
-    if image.name != null && can(regex("sms", image.name))
+    if image.name != null && can(regex("sms", image.name))    
   ]
 }
 output "filtered_images" {
@@ -120,6 +120,19 @@ resource "azurerm_key_vault_secret" "admin_password_secret" {
   value        = random_password.vmss_password.result
   key_vault_id = data.azurerm_key_vault.example.id
 }
+
+
+resource "random_password" "local_user_password" {
+  length  = var.admin_password_length
+  special = true
+}
+
+resource "azurerm_key_vault_secret" "local_user_password_secret" {
+  name         = "local-user-password"
+  value        = random_password.local_user_password.result
+  key_vault_id = data.azurerm_key_vault.example.id
+}
+
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
   name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-001"
@@ -167,10 +180,8 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   type_handler_version = "1.10"
 
   settings = jsonencode({
-
-       "commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-LocalUser -Name 'DevboxEngineer' -NoPassword | Set-LocalUser -PasswordNeverExpires:$true\""
-    // "commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-LocalUser -Name TestEngineer -Password (ConvertTo-SecureString -AsPlainText 'Password123' -Force) -PasswordNeverExpires:$false -UserMayChangePassword:$true\""
-    //"commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"net user localuser Password123 /add; net localgroup administrators localuser /add; Set-LocalUser -Name localuser -PasswordNeverExpires 0\""
+    "commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-LocalUser -Name TestEngineer -Password (ConvertTo-SecureString -AsPlainText '${azurerm_key_vault_secret.local_user_password_secret.value}' -Force) -PasswordNeverExpires:$false -UserMayChangePassword:$true; Add-LocalGroupMember -Group 'Remote Desktop Users' -Member TestEngineer\""
+  //"commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-LocalUser -Name TestEngineer -Password (ConvertTo-SecureString -AsPlainText 'Password123' -Force) -PasswordNeverExpires:$false -UserMayChangePassword:$true\""
   })
 }
 
