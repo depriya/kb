@@ -31,9 +31,9 @@ variable "project_description" {
 variable "project_members" {
   type        = list(string)
   description = "The members of the Dev Center project."
-  default = [  "f572bcfa-fa8e-4624-ae2f-a31177a929aa", "e7b48204-dac0-43a3-8f54-ed628b0d62d5"]  //Alex's objectid
+  default = [ "08408703-0c5a-47a8-a4d7-d54ceab09f03","70608667-2dc3-4b2a-a433-30d6ca41e377"]  //Alex's objectid
 }#"70608667-2dc3-4b2a-a433-30d6ca41e377",
-#e7b48204-dac0-43a3-8f54-ed628b0d62d5", "08408703-0c5a-47a8-a4d7-d54ceab09f03"
+#e7b48204-dac0-43a3-8f54-ed628b0d62d5", "08408703-0c5a-47a8-a4d7-d54ceab09f03"  "f572bcfa-fa8e-4624-ae2f-a31177a929aa", 
 
 # #variable "environment_types" {
 #   type = map(object({
