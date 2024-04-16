@@ -168,7 +168,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
 
   settings = jsonencode({
 
-       "commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-LocalUser -Name 'TestEngineer' -Description 'devbox user.' -NoPassword\""
+       "commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-LocalUser -Name 'DevboxEngineer' -NoPassword | Set-LocalUser -PasswordNeverExpires:$true\""
     // "commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-LocalUser -Name TestEngineer -Password (ConvertTo-SecureString -AsPlainText 'Password123' -Force) -PasswordNeverExpires:$false -UserMayChangePassword:$true\""
     //"commandToExecute" : "powershell.exe -ExecutionPolicy Unrestricted -Command \"net user localuser Password123 /add; net localgroup administrators localuser /add; Set-LocalUser -Name localuser -PasswordNeverExpires 0\""
   })
