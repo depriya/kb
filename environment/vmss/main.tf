@@ -34,7 +34,7 @@ variable "customerOEMsuffix" {
 }
 
 variable "projectname" {
-  default = "pj9"
+  default = "pj2"
 }
 
 variable "admin_username" {
@@ -137,7 +137,7 @@ resource "azurerm_key_vault_secret" "local_user_password_secret" {
 
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-001"
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss"
   resource_group_name = data.azurerm_resource_group.example.name
   location            = var.location
   sku                 = "Standard_B2als_v2"
