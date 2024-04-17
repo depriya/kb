@@ -60,14 +60,14 @@ variable "gallery_name" {
 
 variable "existing_key_vault_name" {
   description = "Name of the existing Azure Key Vault"
-  default     = "xmew1-dop-s-d-k-v001" 
+  default     = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-kv" 
   #xmew1-dop-c-avl-d-kv
 
 }
 
 variable "existing_key_vault_resource_group_name" {
   description = "Resource Group name of the existing Azure Key Vault"
-  default     = "xmew1-dop-s-stamp-d-rg-001"
+  default     = data.azurerm_resource_group.example.name
 }
 
 data "azurerm_key_vault" "example" {
