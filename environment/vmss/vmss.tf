@@ -137,7 +137,7 @@ resource "azurerm_key_vault_secret" "local_user_password_secret" {
 
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss"
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-002"
   resource_group_name = data.azurerm_resource_group.example.name
   location            = var.location
   sku                 = "Standard_B2als_v2"
@@ -165,11 +165,11 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   }
 
   network_interface {
-    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nic"
+    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nic002"
     primary = true
 
     ip_configuration {
-      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip"
+      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip002"
       primary   = true
       subnet_id = data.azurerm_subnet.internal.id
     }
