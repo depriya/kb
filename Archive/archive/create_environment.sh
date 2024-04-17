@@ -34,6 +34,8 @@ MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261" #comes from metamodel
 
 DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
 
+KEY_VAULT_NAME="xmew1-dop-c-${customerOEMsuffix}-d-kv"
+
 # The name to use for the new environment to be created.
 ENVIRONMENT_NAME="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-vmss"
 
@@ -165,6 +167,11 @@ az role assignment create \
     --scope /subscriptions/$SUBID
     #----assignee-principal-type "ServicePrincipal" \
 echo "role sucessfully added"
+
+az role assignment create \
+    --role "Key Vault Secrets Officer" \
+    --assignee-object-id $objectId \
+    --scope "/subscriptions/$SUBID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.KeyVault/vaults/$KEY_VAULT_NAME"
 
 # Assign environment access
 
