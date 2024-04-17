@@ -3,7 +3,7 @@ summary: Creates a vmss
 description: Deploys an environment using Terraform containing a vmss
 runner: Terraform
 templatePath: vmss.tf
- parameters:
+parameters:
   - id: "projectname"
     name: "Project Name"
     required: true
