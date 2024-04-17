@@ -22,7 +22,7 @@ cd "$(dirname "$0")"
 # The name of your Azure dev center.
 customerOEMsuffix="avl" #comes from metamodel
 
-projectname="pjn" #comes from metamodel
+projectname="pj2" #comes from metamodel
 
 projectdescription="testproject" #comes from metamodel
 
@@ -35,7 +35,7 @@ MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261" #comes from metamodel
 DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
 
 # The name to use for the new environment to be created.
-ENVIRONMENT_NAME="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-vmss-001"
+ENVIRONMENT_NAME="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-vmss"
 
 # The environment type to use for this environment.
 ENVIRONMENT_TYPE="sandbox"
@@ -48,8 +48,8 @@ DEV_CENTER_CATALOG_NAME="catalog"
 
 # The name of the ARM template to deploy (specified in the evironment.yaml).
 ENVIRONMENT_DEFINITION_NAME="vmss"
-admin_username="Azureuser"
-admin_password="Azure@123456"
+#admin_username="Azureuser"
+#admin_password="Azure@123456"
 # The name of the ARM template parameters file to use for the deployment.
 #PARAMETERS_FILE="vmssparameters.json"
 
@@ -99,9 +99,9 @@ USER_ASSIGNED_IDENTITY_OBJ_ID=$(az resource show --ids $IDENTITY_RESOURCE_ID --q
 echo "User Assigned Identity Object ID: $USER_ASSIGNED_IDENTITY_OBJ_ID"
 
 # Create project in dev center
-az devcenter admin project create -n $project \
---description $projectdescription \
---dev-center-id $DEVCID
+#az devcenter admin project create -n $project \
+#--description $projectdescription \
+#--dev-center-id $DEVCID
 
 # Confirm project creation
 az devcenter admin project show -n $project
@@ -208,7 +208,7 @@ az role assignment create --assignee $MYOID \
      --project-name $project \
      --catalog-name $DEV_CENTER_CATALOG_NAME \
      --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
-     --parameters "{\"customerOEMsuffix\":\"$customerOEMsuffix\",\"admin_username\":\"$admin_username\",\"admin_password\":\"$admin_password\",\"environmentStage\":\"$environment_stage_short\",\"projectname\":\"$project\"}"
+     #--parameters "{\"customerOEMsuffix\":\"$customerOEMsuffix\",\"admin_username\":\"$admin_username\",\"admin_password\":\"$admin_password\",\"environmentStage\":\"$environment_stage_short\",\"projectname\":\"$project\"}"
      #--debug
      #--parameters $PARAMETERS_FILE || handle_error "Failed to create environment." \
 
