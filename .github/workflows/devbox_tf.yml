@@ -37,15 +37,16 @@ jobs:
 
       - name: Initialize Terraform
         run: |
-          cd environment/devbox
+          cd Archive/devbox
           terraform init
 
       - name: Plan Terraform changes
         run: |
-          cd environment/devbox
-          terraform plan -out=tfplan -var="customerOEMsuffix=${{ github.event.inputs.customerOEMsuffix }}" -var="projectname=${{ github.event.inputs.projectname }}"
+          cd Archive/devbox
+          terraform plan -out=tfplan
+          #terraform plan -out=tfplan -var="customerOEMsuffix=${{ github.event.inputs.customerOEMsuffix }}" -var="projectname=${{ github.event.inputs.projectname }}"
 
       - name: Apply Terraform changes
         run: |
-          cd environment/devbox
+          cd Archive/devbox
           terraform apply -auto-approve tfplan
