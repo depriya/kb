@@ -58,25 +58,13 @@ variable "gallery_name" {
   default = "xmew1dopsstampdcomputegallery001"
 }
 
-variable "existing_key_vault_name" {
-  description = "Name of the existing Azure Key Vault"
-  default     = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-kv" 
-  #xmew1-dop-c-avl-d-kv
-
-}
-
-variable "existing_key_vault_resource_group_name" {
-  description = "Resource Group name of the existing Azure Key Vault"
-  default     = data.azurerm_resource_group.example.name
+data "azurerm_resource_group" "example" {
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-rg-001"
 }
 
 data "azurerm_key_vault" "example" {
-  name                = var.existing_key_vault_name
-  resource_group_name = var.existing_key_vault_resource_group_name
-}
-
-data "azurerm_resource_group" "example" {
-  name = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-rg-001"
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-kv" 
+  resource_group_name = data.azurerm_resource_group.example.name
 }
 
 data "azurerm_virtual_network" "example" {
