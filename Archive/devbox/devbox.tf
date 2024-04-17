@@ -38,7 +38,7 @@ variable "vnet" {
 }
 
 variable "projectname"{
-  default = "pjdb"
+  default = "pj2"
 }
 
 variable "subnet"{
@@ -88,7 +88,7 @@ data "azapi_resource" "existing_project" {
 # Define devbox definitions
 resource "azapi_resource" "devbox_definition" {
   type = "Microsoft.DevCenter/devcenters/devboxdefinitions@2023-04-01"
-  name = "xmew1-dop-c-${var.customerOEMsuffix}-devboxdef"
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-devboxdef-pj2"
   parent_id = data.azapi_resource.existing_devcenter.id
   body = jsonencode({
     location = "${var.location}"
@@ -114,15 +114,15 @@ resource "azapi_resource" "devbox_definition" {
 # Define pools
 resource "azapi_resource" "pool" {
   type = "Microsoft.DevCenter/projects/pools@2023-04-01"
-  name = "xmew1-dop-c-${var.customerOEMsuffix}-pools-001"
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-pools-pj9"
   parent_id = data.azapi_resource.existing_project.id
   body = jsonencode({
     location = "${var.location}"
     properties = {
-      devBoxDefinitionName = "xmew1-dop-c-${var.customerOEMsuffix}-devboxdef"
+      devBoxDefinitionName = "xmew1-dop-c-${var.customerOEMsuffix}-devboxdef-pj2"
       licenseType = "Windows_Client"
       localAdministrator = "Enabled"
-      networkConnectionName = "xmew1-dop-c-${var.customerOEMsuffix}-ntwk-001"
+      networkConnectionName = "xmew1-dop-c-${var.customerOEMsuffix}-ntwk-pj2"
       
     }
   })
@@ -132,7 +132,7 @@ resource "azapi_resource" "pool" {
 # Define attached network
 resource "azapi_resource" "networkConnection" {
   type = "Microsoft.DevCenter/networkConnections@2023-01-01-preview"
-  name = "xmew1-dop-c-${var.customerOEMsuffix}-ntwkcon-001"
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-ntwkcon-pj2"
   parent_id = data.azapi_resource.existing_rg.id
   body = jsonencode({
     location = "${var.location}"
@@ -140,14 +140,14 @@ resource "azapi_resource" "networkConnection" {
       domainJoinType = "AzureADJoin"
       subnetId = "${data.azapi_resource.existing_subnet.id}"
       //subnetId = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-abc-d-rg-001/providers/Microsoft.Network/virtualNetworks/xmew1-dop-c-oem-vnet-001/subnets/OEMSubnet"
-      networkingResourceGroupName = "xmew1-dop-c-${var.customerOEMsuffix}-d-rg-networkconnection-001"
+      networkingResourceGroupName = "xmew1-dop-c-${var.customerOEMsuffix}-d-rg-networkconnection-pj2"
     }
   })
 }
 
 resource "azapi_resource" "attachedNetworks" {
   type = "Microsoft.DevCenter/devcenters/attachednetworks@2023-01-01-preview"
-  name = "xmew1-dop-c-${var.customerOEMsuffix}-ntwk-001"
+  name = "xmew1-dop-c-${var.customerOEMsuffix}-ntwk-pj2"
   parent_id = data.azapi_resource.existing_devcenter.id
   body = jsonencode({
     properties = {
