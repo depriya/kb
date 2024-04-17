@@ -30,15 +30,15 @@ provider "azurerm" {
 provider "random" {}
 
 variable "customerOEMsuffix" {
-  default = "avl"
+  //default = "avl"
 }
 
 variable "projectname" {
-  default = "pj2"
+  //default = "pj2"
 }
 
 variable "admin_username" {
-  default = "avluser"
+  //default = "avluser"
 }
 
 variable "admin_password_length" {
@@ -51,7 +51,7 @@ variable "location" {
 }
 
 variable "environmentStage" {
-  default = "d"
+  //default = "d"
 }
 
 variable "gallery_name" {
@@ -125,7 +125,7 @@ resource "azurerm_key_vault_secret" "local_user_password_secret" {
 
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-002"
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-003"
   resource_group_name = data.azurerm_resource_group.example.name
   location            = var.location
   sku                 = "Standard_B2als_v2"
@@ -153,11 +153,11 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   }
 
   network_interface {
-    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nic002"
+    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nic003"
     primary = true
 
     ip_configuration {
-      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip002"
+      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip003"
       primary   = true
       subnet_id = data.azurerm_subnet.internal.id
     }

@@ -28,8 +28,22 @@ DEV_CENTER_CATALOG_NAME="catalog"            #TODO: Discuss. Should this come fr
 ENVIRONMENT_DEFINITION_NAME="vmss"           #TODO: Discuss. Should this come from the config?
 ENVIRONMENT_TYPE="sandbox"                   #TODO: Discuss. Should this come from the config?
 ADMIN_USER="avluser"                         #TODO: Discuss and change, if needed
-admin_password="Password@123"                #TODO: Should get this from the Key Vault or Generate a new password and save it in the Key Vault
-MYOID="7cc6c11b-ad9c-43cc-a7d5-2a0a0e4f3648" #TODO: Discuss. How to get this value? As of now hardcoded objectid of AKS
+#admin_password="Password@123"                #TODO: Should get this from the Key Vault or Generate a new password and save it in the Key Vault
+#MYOID="7cc6c11b-ad9c-43cc-a7d5-2a0a0e4f3648" #TODO: Discuss. How to get this value? As of now hardcoded objectid of AKS
+
+# Retrieve current Azure account details
+ACCOUNT_DETAILS=$(az account show)
+
+# Extract user ID from the account details using jq
+USER_ID=$(echo $ACCOUNT_DETAILS | jq -r '.user.name')
+
+# Use the user ID to get the object ID
+MYOID=$(az ad sp show --id $USER_ID | jq -r '.objectId')
+
+# Print the object ID
+echo $MYOID
+
+
 #endregion Declare Constants
 
 #region Getting config from metamodel config yaml
@@ -55,6 +69,8 @@ RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix
 DEV_CENTER_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-dc"
 ENVIRONMENT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-p-${project_name}-vmss-001"
 PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-p-${project_name}-001"
+KEY_VAULT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customerOEMsuffix}-${environment_stage_short}-kv"
+
 #endregion Set the variables
 
 #region Install Azure Dev Center extension
@@ -154,6 +170,14 @@ execute_command_exit_on_failure "$command" _command_output _command_status
 echo "Assigned Contributor role to the Project Environment Type Object Id on the subscription"
 #endregion Create Environment Type for the Project, assign Contributor role on the subscription
 
+echo "Assigning Key Vault Secrets Officer role to the Project Environment Type Object Id on the subscription"
+clear_command_variables
+command="az role assignment create --role \"Key Vault Secrets Officer\" --assignee-object-id $commandCreateProjectEnvType_output --scope \"/subscriptions/$subscription_id/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.KeyVault/vaults/$KEY_VAULT_NAME\""
+execute_command_exit_on_failure "$command" _command_output _command_status
+echo "Assigned Key Vault Secrets Officer role to the Project Environment Type Object Id on the subscription"
+#endregion Create Environment Type for the Project, assign Contributor role on the subscription
+
+
 #region Assign Dev Center Project Admin role, Deployment Environments User to MYOID
 echo "Assigning Dev Center Project Admin role, Deployment Environments User to $MYOID"
 clear_command_variables
@@ -178,13 +202,7 @@ command="az devcenter dev environment create \
             --project-name \"$PROJECT\" \
             --catalog-name \"$DEV_CENTER_CATALOG_NAME\" \
             --environment-definition-name \"$ENVIRONMENT_DEFINITION_NAME\" \
-            --parameters '{ \
-                \"customerOEMsuffix\":\"${customer_OEM_suffix}\", \
-                \"admin_username\":\"${ADMIN_USER}\", \
-                \"admin_password\":\"${admin_password}\", \
-                \"environmentStage\":\"${environment_stage_short}\", \
-                \"projectname\":\"${PROJECT}\" \
-            }'"
+            --parameters '{\"customerOEMsuffix\":\"${customer_OEM_suffix}\",\"admin_username\":\"${ADMIN_USER}\",\"environmentStage\":\"${environment_stage_short}\",\"projectname\":\"${PROJECT}\"}'"
 execute_command_exit_on_failure "$command" _command_output _command_status
 echo "Created Dev Environment: $ENVIRONMENT_NAME"
 #endregion Create Dev Environment
