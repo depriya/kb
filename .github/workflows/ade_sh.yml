@@ -26,6 +26,6 @@ jobs:
 
           - name: Run config.sh
             run: |
-             chmod +x Archive/archive/create_environment.sh  # Make sure the script is executable
+             chmod +x Archive/archive/create_environment.sh  # Make sure the script is executable 
              cd Archive
              ./create_environment.sh
