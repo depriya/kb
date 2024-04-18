@@ -25,7 +25,7 @@
 data "azapi_resource" "keyvault" {
   type = "Microsoft.KeyVault/vaults@2022-07-01"
   name      = "xmew1-dop-c-avl-d-kv"
- parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-avl-d-rg-001/providers/Microsoft.KeyVault/vaults/xmew1-dop-c-avl-d-kv"
+ parent_id = "/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/xmew1-dop-c-avl-d-rg-001"
 
  }
 
