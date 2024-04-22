@@ -108,7 +108,7 @@ resource "random_password" "vmss_password" {
 }
 
 resource "azurerm_key_vault_secret" "admin_password_secret" {
-  name         = "vmss-admin-password"
+  name         = "vmss-admin-password-value"
   value        = random_password.vmss_password.result
   key_vault_id = data.azurerm_key_vault.example.id
 }
@@ -120,7 +120,7 @@ resource "random_password" "local_user_password" {
 }
 
 resource "azurerm_key_vault_secret" "local_user_password_secret" {
-  name         = "local-user-password"
+  name         = "local-user-password-value"
   value        = random_password.local_user_password.result
   key_vault_id = data.azurerm_key_vault.example.id
 }
