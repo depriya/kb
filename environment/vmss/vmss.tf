@@ -59,6 +59,9 @@ variable "environmentStage" {
 variable "gallery_name" {
   default = "xmew1dopsstampdcomputegallery001"
 }
+variable "image"{
+  default = "mc-concerto"
+}
 
 data "azurerm_resource_group" "example" {
   name = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-rg-001"
@@ -95,7 +98,7 @@ locals {
   filtered_images = [
     for image in values(data.azurerm_shared_image.all) :
     image
-    if image.name != null && can(regex("sms", image.name))    
+    if image.name != null && can(regex("${var.image}", image.name))    
   ]
 }
 output "filtered_images" {
@@ -125,6 +128,11 @@ resource "azurerm_key_vault_secret" "local_user_password_secret" {
   key_vault_id = data.azurerm_key_vault.example.id
 }
 
+ resource "azurerm_network_security_group" "example" {
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmssnsg-${var.vmss_uniquesuffix}"
+   location            = data.azurerm_resource_group.example.location
+   resource_group_name = data.azurerm_resource_group.example.name
+ }
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
   name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-${var.vmss_uniquesuffix}"
@@ -163,6 +171,8 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
       primary   = true
       subnet_id = data.azurerm_subnet.internal.id
     }
+    # Attach the NSG to the VMSS
+    network_security_group_id = azurerm_network_security_group.example.id
   }
 
  extension {
