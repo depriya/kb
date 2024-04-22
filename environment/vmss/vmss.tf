@@ -40,7 +40,9 @@ variable "projectname" {
 variable "admin_username" {
   //default = "avluser"
 }
-
+variable "vmss_uniquesuffix" {
+  //default = "001"
+}
 variable "admin_password_length" {
   description = "The length of the generated admin password"
   default     = 20
@@ -125,7 +127,7 @@ resource "azurerm_key_vault_secret" "local_user_password_secret" {
 
 
 resource "azurerm_windows_virtual_machine_scale_set" "example" {
-  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-003"
+  name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-${var.vmss_uniquesuffix}"
   resource_group_name = data.azurerm_resource_group.example.name
   location            = var.location
   sku                 = "Standard_B2als_v2"
@@ -153,11 +155,11 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   }
 
   network_interface {
-    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-nic003"
+    name    = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmssnic-${var.vmss_uniquesuffix}"
     primary = true
 
     ip_configuration {
-      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip003"
+      name      = "${var.customerOEMsuffix}${var.projectname}${var.environmentStage}ip${var.vmss_uniquesuffix}"
       primary   = true
       subnet_id = data.azurerm_subnet.internal.id
     }
