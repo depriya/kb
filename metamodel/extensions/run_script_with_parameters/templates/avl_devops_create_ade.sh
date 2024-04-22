@@ -31,19 +31,8 @@ ADMIN_USER="avluser"                         #TODO: Discuss and change, if neede
 #admin_password="Password@123"                #TODO: Should get this from the Key Vault or Generate a new password and save it in the Key Vault
 #MYOID="7cc6c11b-ad9c-43cc-a7d5-2a0a0e4f3648" #TODO: Discuss. How to get this value? As of now hardcoded objectid of AKS
 
-# Retrieve current Azure account details
-ACCOUNT_DETAILS=$(az account show)
-
-# Extract user ID from the account details using jq
-USER_ID=$(echo $ACCOUNT_DETAILS | jq -r '.user.name')
-
-# Use the user ID to get the object ID
-MYOID=$(az ad sp show --id $USER_ID | jq -r '.objectId')
-
-# Print the object ID
-echo $MYOID
-
-
+MYOID=$(az account get-access-token --query "accessToken" -o tsv | jq -R -r 'split(".") | .[1] | @base64d | fromjson | .oid')
+echo "Object ID of the service principal or managed identity: $MYOID"
 #endregion Declare Constants
 
 #region Getting config from metamodel config yaml
@@ -52,6 +41,7 @@ config=$(echo $configEncoded | base64 -d)
 #endregion Getting config from metamodel config yaml
 
 #region parameters - get from config
+echo "getting parameters from config"
 resource_name_primary_prefix=$(echo $config | jq -r '.resource_name_primary_prefix')
 resource_name_secondary_prefix=$(echo $config | jq -r '.resource_name_secondary_prefix')
 resource_name_shared_short=$(echo $config | jq -r '.resource_name_shared_short')
@@ -60,17 +50,24 @@ customer_OEM_suffix=$(echo $config | jq -r '.customer_OEM_suffix')
 project_name=$(echo $config | jq -r '.project_name')
 environment_stage_short=$(echo $config | jq -r '.environment_stage_short')
 project_description=$(echo $config | jq -r '.project_description')
+vmss_suffix=$(echo $config | jq -r '.vmss_suffix')
 subscription_id=$(echo $config | jq -r '.subscription_id')
 #endregion parameters - get from config
 
 #region Set the variables
+echo "setting the variables"
 SHARED_RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_shared_short}-stamp-${environment_stage_short}-rg-001"
+echo "setting shared resource group $SHARED_RESOURCE_GROUP"
 RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-rg-001"
+echo "setting resource group $RESOURCE_GROUP"
 DEV_CENTER_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-dc"
-ENVIRONMENT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-p-${project_name}-vmss-001"
+echo "setting dev center $DEV_CENTER_NAME"
+ENVIRONMENT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-p-${project_name}-${environment_stage_short}-vmss-${vmss_suffix}"
+echo "setting vmss name $ENVIRONMENT_NAME"
 PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-p-${project_name}-001"
-KEY_VAULT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customerOEMsuffix}-${environment_stage_short}-kv"
-
+echo "setting project name $PROJECT"
+KEY_VAULT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-kv"
+echo "setting key vault name $KEY_VAULT_NAME"
 #endregion Set the variables
 
 #region Install Azure Dev Center extension
@@ -102,13 +99,6 @@ commandGetDevCenterId_output=""
 execute_command_exit_on_failure "$command" commandGetDevCenterId_output _command_status
 echo "Got Azure Dev Center Resource ID: $commandGetDevCenterId_output"
 
-echo "Getting Azure Dev Center Object ID"
-clear_command_variables
-commandGetDevCenterObjId_output=""
-command="az devcenter admin devcenter show -n \"$DEV_CENTER_NAME\" --query identity.principalId -o tsv"
-execute_command_exit_on_failure "$command" commandGetDevCenterObjId_output _command_status
-echo "Got Azure Dev Center Object ID: $commandGetDevCenterObjId_output"
-#endregion Get Dev Center ID, Object ID
 
 #region Get Managed Identity ID, Object ID
 echo "Getting Managed Identity Resource ID"
@@ -133,12 +123,6 @@ command="az devcenter admin project create -n \"$PROJECT\" --description \"$proj
 execute_command_exit_on_failure "$command" _command_output _command_status
 #endregion Create Project in Dev Center
 
-#region Assign Owner role to the Dev Center and Managed Identity, on the subscription
-echo "Assigning Owner role to the Dev Center Object Id on the subscription"
-clear_command_variables
-command="az role assignment create --role \"Owner\" --assignee-object-id \"$commandGetDevCenterObjId_output\" --scope \"/subscriptions/$subscription_id\""
-execute_command_exit_on_failure "$command" _command_output _command_status
-echo "Assigned Owner role to the Dev Center Object Id on the subscription"
 
 echo "Assigning Owner role to the Managed Identity Object Id on the subscription"
 clear_command_variables
@@ -202,7 +186,7 @@ command="az devcenter dev environment create \
             --project-name \"$PROJECT\" \
             --catalog-name \"$DEV_CENTER_CATALOG_NAME\" \
             --environment-definition-name \"$ENVIRONMENT_DEFINITION_NAME\" \
-            --parameters '{\"customerOEMsuffix\":\"${customer_OEM_suffix}\",\"admin_username\":\"${ADMIN_USER}\",\"environmentStage\":\"${environment_stage_short}\",\"projectname\":\"${PROJECT}\"}'"
+            --parameters '{\"customerOEMsuffix\":\"${customer_OEM_suffix}\",\"admin_username\":\"${ADMIN_USER}\",\"environmentStage\":\"${environment_stage_short}\",\"vmss_uniquesuffix\":\"${vmss_suffix}\",\"projectname\":\"${project_name}\"}'"
 execute_command_exit_on_failure "$command" _command_output _command_status
 echo "Created Dev Environment: $ENVIRONMENT_NAME"
 #endregion Create Dev Environment
