@@ -12,7 +12,7 @@ terraform {
    backend "azurerm" {
      resource_group_name  = "xmew1-dop-c-avl-d-rg-001"
      storage_account_name = "xmew1dopcavldst"
-     container_name       = "tfstate"
+     container_name       = "tfstatetf"
      key                  = "terraform.tfstate"
      #use_oidc             = true
   #   client_id = "13b095e6-55df-4d76-9c6d-b59404e4d506"
