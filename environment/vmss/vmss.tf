@@ -9,16 +9,16 @@ terraform {
     }
   }
 
-  # #backend "azurerm" {
-  #   resource_group_name  = "xmew1-dop-c-avl-d-rg-001"
-  #   storage_account_name = "xmew1dopcavldst"
-  #   container_name       = "tfstate"
-  #   key                  = "terraform.tfstate"
+   backend "azurerm" {
+     resource_group_name  = "xmew1-dop-c-avl-d-rg-001"
+     storage_account_name = "xmew1dopcavldst"
+     container_name       = "tfstate"
+     key                  = "terraform.tfstate"
   #   use_oidc             = true
   #   client_id = "13b095e6-55df-4d76-9c6d-b59404e4d506"
   #   tenant_id = "b4bc7e59-9a34-4622-ab54-d7a1a680f47a"
   #   subscription_id = "db401b47-f622-4eb4-a99b-e0cebc0ebad4"
-  # }
+   }
 }
 
 
@@ -30,18 +30,18 @@ provider "azurerm" {
 provider "random" {}
 
 variable "customerOEMsuffix" {
-  //default = "avl"
+  default = "avl"
 }
 
 variable "projectname" {
-  //default = "pj2"
+  default = "pj2"
 }
 
 variable "admin_username" {
-  //default = "avluser"
+  default = "avluser"
 }
 variable "vmss_uniquesuffix" {
-  //default = "001"
+  default = "010"
 }
 variable "admin_password_length" {
   description = "The length of the generated admin password"
@@ -53,7 +53,7 @@ variable "location" {
 }
 
 variable "environmentStage" {
-  //default = "d"
+  default = "d"
 }
 
 variable "gallery_name" {
