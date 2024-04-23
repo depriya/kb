@@ -50,6 +50,36 @@
                 },
                  "inputs": {
                     "ps_script_path":"./avl_devops_collect_artifacts.ps1"
+                },
+                "stageSelector": "execute_avl_devops_copy_artifacts"
+            },
+            "execute_avl_devops_copy_artifacts": {
+                "name": "execute_avl_devops_copy_artifacts",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute copy artifacts script",
+                    "script": "run_pwsh_script_in_bash.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
+                },
+                 "inputs": {
+                    "ps_script_path":"./avl_devops_copy_artifacts.ps1" //TODO: Change this to copy script
+                },
+                "stageSelector": "execute_avl_devops_local_installer"
+            },
+            "execute_avl_devops_local_installer": {
+                "name": "execute_avl_devops_local_installer",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute local installer script",
+                    "script": "run_pwsh_script_in_bash.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
+                },
+                 "inputs": {
+                    "ps_script_path":"./avl_devops_run_local_scripts.ps1"
                 }
             }
         },

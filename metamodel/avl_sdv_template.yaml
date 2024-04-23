@@ -220,26 +220,23 @@ config:
 
   #region additional_software_stack configuration
   additional_software_stack: #TODO: Discuss the structure of this
-    Exampletool1:
-      name: ExampleTool1
-      version: 1.0
-      path: JFROG://home/ExampleTool1/1.0
-      build_script: JFROG://home/ExampleTool1/1.0/build.sh
-      parameters:
-        - name: param1
-          value: value1
-        - name: param2
-          value: value2
-    Exampletool2: 
-      name: ExampleTool2
-      version: 1.0
-      path: JFROG://home/ExampleTool2/1.0
-      build_script: JFROG://home/ExampleTool2/1.0/build.sh
-      parameters:
-        - name: param1
-          value: value1
-        - name: param2
-          value: value2
+    - name: ModelConnect.py
+      version: 1.1
+      DownloadSource:
+        # the type of the source 
+        # currently supported is GitHub or JFrog
+        Type: <SOURCE_TYPE>
+        Secret: <UNIQUE_SECRET_NAME>
+        LocationURL: <LOCATION_URL>
+        # e.g. JFrog://home/ModelConnect/2021.1
+      
+      
+      # the path to the FMU file, must be relative to the LocationURL
+      FilePath: <FILE_PATH>
+      # e.g. /python/ModelConnect.py
+      
+      # build_script can be left empty if the tool runs out of the box without any installation/building required
+      BuildScriptPath: <BUILD_SCRIPT_PATH>
 
   #endregion additional_software_stack configuration
 
