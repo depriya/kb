@@ -101,7 +101,7 @@ jobs:
             
             cd ${{ github.workspace }}/.github
             # #Copy scripts from Storage account required for SoftwareInstallation
-            Start-Sleep -Seconds 240
+            # Start-Sleep -Seconds 240
             az vm run-command invoke --resource-group $virtualMachineRGName --name $virtualMachineName --command-id $command_id --scripts "@scriptcopy.ps1" --parameters "StorageAccountName=$storageAccount" "ContainerName=$containerName" "AccountKey=$storage_key" "JfrogToken=$JfrogToken" "MCBaseVersion=$MCBaseVersion" "MCVersion=$MCVersion" "ConcertoVersion=$ConcertoVersion" "ConcertoVersionR=$ConcertoVersionR" "LicenseServer=$LicenseServer" "LicenceServerPort=$LicenceServerPort"
             # Model Connect Installation
             # az vm run-command invoke --resource-group $virtualMachineRGName --name $virtualMachineName --command-id $command_id --scripts "cmd.exe /c C:\Temp\ModelConnectInstall.cmd"
