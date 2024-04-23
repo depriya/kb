@@ -26,6 +26,8 @@ jobs:
       #runs-on: xmew1-dop-s-stamp-d-vm-002
       runs-on: xmew1-dop-s-stamp-d-vm-003
       environment: sub-AVL_DevopsPilot
+      env:
+        METAMODEL_OVERRIDES_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
       steps:
         - name: 'Az CLI login'
           uses: azure/login@v1
@@ -43,14 +45,22 @@ jobs:
           shell: pwsh
           run: |
             echo "${{ github.workspace }}"
+            $customer_OEM_suffix = (yq '.config.customer_OEM_suffix' "${{ env.METAMODEL_OVERRIDES_YAML }}").Trim('"')
+            $project_name = (yq '.config.project_name' "${{ env.METAMODEL_OVERRIDES_YAML }}").Trim('"')
+            $resource_name_primary_prefix = (yq '.config.resource_name_primary_prefix' "${{ env.METAMODEL_OVERRIDES_YAML }}").Trim('"')
+            $resource_name_secondary_prefix = (yq '.config.resource_name_secondary_prefix' "${{ env.METAMODEL_OVERRIDES_YAML }}").Trim('"')
+            $resource_name_shared_short = (yq '.config.resource_name_shared_short' "${{ env.METAMODEL_OVERRIDES_YAML }}").Trim('"')
+            $environment_stage_short = (yq '.config.environment_stage_short' "${{ env.METAMODEL_OVERRIDES_YAML }}").Trim('"')
+            $meta_model_outputs_file_share_name = (yq '.config.meta_model_outputs_file_share_name' "${{ env.METAMODEL_OVERRIDES_YAML }}").Trim('"')
+          
+            $ResourceGroup =  "$($resource_name_primary_prefix)-$($resource_name_secondary_prefix)-$($resource_name_shared_short)-stamp-$($environment_stage_short)-rg-001"
+            $storageAccount = "$($resource_name_primary_prefix)$($resource_name_secondary_prefix)$($resource_name_shared_short)$($environment_stage_short)st"
+            $sourcePath = "$($meta_model_outputs_file_share_name)/$($customer_OEM_suffix)/$($project_name)/$($meta_model_outputs_file_share_name)"
+
             $subscriptionID = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-            $ResourceGroup = "xmew1-dop-s-stamp-d-rg-001"
-            $storageAccount = "xmew1dopsdst"
             
             $storage_key=$(az storage account keys list --subscription "$subscriptionID" -g "$ResourceGroup" -n "$storageAccount" --query "[0].value" -o tsv)
-            $end=(Get-Date).AddMinutes(30).ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm'Z'")
-            $sas=$(az storage account generate-sas --account-key "$storage_key" --account-name "$storageAccount" --expiry $end --https-only --permissions acuw --resource-types sco --services bfqt -o tsv)
-            #az storage fs directory download -f "$containerName" --account-name "$storageAccount" -s "avl_devops_pilot" -d . --account-key "$storage_key" --recursive
+  
             mkdir avl_devops_pilot
             cd avl_devops_pilot
             az storage file download-batch --account-key "$storage_key" --account-name "$storageAccount" --destination . --source avldevops
@@ -59,9 +69,6 @@ jobs:
             Get-ChildItem -Recurse -Filter "*.ps1" | ForEach-Object {
               (Get-Content $_.FullName) -replace "<<github_pat_token>>", "${{ secrets.GH_TOKEN }}" | Set-Content $_.FullName
               (Get-Content $_.FullName) -replace "<<jfrog_token>>", "${{ secrets.JFROG_EDGE_TOKEN }}" | Set-Content $_.FullName
-            }
-            Get-ChildItem -Recurse -Filter "*.json" | ForEach-Object {
-              (Get-Content $_.FullName) -replace "<<sas_token>>", "$sas" | Set-Content $_.FullName
             }
             
         - name: Run Campaign
