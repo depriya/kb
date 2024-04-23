@@ -22,7 +22,7 @@ cd "$(dirname "$0")"
 # The name of your Azure dev center.
 customerOEMsuffix="avl" #comes from metamodel
 
-projectname="pjdb" #comes from metamodel
+projectname="pj2" #comes from metamodel
 
 projectdescription="mydevboxproj" #comes from metamodel
 

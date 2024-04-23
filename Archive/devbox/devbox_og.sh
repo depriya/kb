@@ -3,12 +3,12 @@
 # Set variables
 customerOEMsuffix="avl"
 location="westeurope"
-projectname="pjdb"
+projectname="pj2"
 project="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
-image="microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os"
+image="Test001"
 DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
 RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
-devbox_definition_name="xmew1-dop-c-${customerOEMsuffix}-devboxdef"
+devbox_definition_name="xmew1-dop-c-${customerOEMsuffix}-devboxdef-002"
 ##SKU details##
 capacity=1
 family="Standard"
@@ -25,11 +25,12 @@ echo "Extension installation complete!"
 az devcenter admin devbox-definition create \
     --dev-center $DEV_CENTER_NAME \
     --devbox-definition-name $devbox_definition_name \
+    --image-reference \"{\\\"id\\\": \\\"/subscriptions/$subscription_id/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/devcenters/$DEV_CENTER_NAME/galleries/xmew1dopsstampdcomputegallery001/images/$IMAGE\\\"}\" \
     --image-reference "{\"id\": \"/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/devcenters/$DEV_CENTER_NAME/galleries/default/images/$image\"}" \
     --os-storage-type $osstoragetype \
     --resource-group $RESOURCE_GROUP \
     --sku "{\"capacity\": $capacity, \"family\": \"$family\", \"name\": \"$compute\", \"size\": \"$size\", \"tier\": \"$tier\"}" \
-    --hibernate-support "Enabled" \
+    --hibernate-support "Diasabled" \
     --location "$location"
 
 # Fetch subnet ID
