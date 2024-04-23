@@ -63,7 +63,7 @@ jobs:
   
             mkdir avl_devops_pilot
             cd avl_devops_pilot
-            az storage file download-batch --account-key "$storage_key" --account-name "$storageAccount" --destination . --source avldevops
+            az storage file download-batch --account-key "$storage_key" --account-name "$storageAccount" --destination . --source $sourcePath
             ls -ltr
             
             Get-ChildItem -Recurse -Filter "*.ps1" | ForEach-Object {
@@ -75,7 +75,8 @@ jobs:
           run: |
             pwd
             ls -ltr
-            cd avl_devops_pilot/deploy_avl_symphony_campaign/
+            cd "${{ github.workspace }}"/avl_devops_pilot/deploy_avl_symphony_campaign/
+            ls -ltr
             # cd avl_devops_pilot/oem/pj2/avl_devops_pilot/deploy_avl_symphony_campaign/
             # ls -ltr
             # token=$(curl -X POST -d '{"username":"admin", "password":""}' http://192.168.0.102:8082/v1alpha2/users/auth | jq -r '.accessToken')
