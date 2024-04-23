@@ -73,8 +73,11 @@ jobs:
             
         - name: Run Campaign
           run: |
-            cd avl_devops_pilot/oem/pj2/avl_devops_pilot/deploy_avl_symphony_campaign/
+            pwd
             ls -ltr
-            token=$(curl -X POST -d '{"username":"admin", "password":""}' http://192.168.0.102:8082/v1alpha2/users/auth | jq -r '.accessToken')
-            curl -X POST -d @deploy_avl_devops_symphony_campaign.json -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/campaigns/deploy_avl_devops_symphony_campaign_test
-            curl -X POST -d @symphony_campaign_activation.json -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/deploy_avl_devops_symphony_campaign_test
+            cd ${{ github.workspace }}/avl_devops_pilot/deploy_avl_symphony_campaign/
+            # cd avl_devops_pilot/oem/pj2/avl_devops_pilot/deploy_avl_symphony_campaign/
+            # ls -ltr
+            # token=$(curl -X POST -d '{"username":"admin", "password":""}' http://192.168.0.102:8082/v1alpha2/users/auth | jq -r '.accessToken')
+            # curl -X POST -d @deploy_avl_devops_symphony_campaign.json -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/campaigns/deploy_avl_devops_symphony_campaign_test
+            # curl -X POST -d @symphony_campaign_activation.json -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/deploy_avl_devops_symphony_campaign_test
