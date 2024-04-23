@@ -108,14 +108,16 @@ jobs:
             # #Restart Virtual Machine after Model Connect Installation
             # az vm restart -n $virtualMachineName -g $virtualMachineRGName --verbose
             # Start-Sleep -Seconds 60
+            
 
             # Install Model Connect Patch
             # az vm run-command invoke --resource-group $virtualMachineRGName --name $virtualMachineName --command-id $command_id --scripts "cmd.exe /c C:\Temp\ModelConnectUpdate.cmd"
 
+            az login --service-principal "${{ secrets.AZURE_CLIENT_ID }}" --tenant "${{ secrets.AZURE_TENANT_ID }}"
             # Install Concerto
             az vm run-command invoke --resource-group $virtualMachineRGName --name $virtualMachineName --command-id $command_id --scripts "cmd.exe /c C:\Temp\concertoInstall.cmd"
 
-
+            az login --service-principal "${{ secrets.AZURE_CLIENT_ID }}" --tenant "${{ secrets.AZURE_TENANT_ID }}"
             # Run Sysprep on the virtual machine
             az vm run-command invoke --resource-group $virtualMachineRGName --name $virtualMachineName --command-id $command_id --scripts "@sysprep.ps1"
 
