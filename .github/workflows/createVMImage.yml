@@ -48,7 +48,7 @@ permissions:
 
 jobs:
     build-and-deploy:
-      runs-on: xmew1-dop-s-stamp-d-vm-002
+      runs-on: xmew1-dop-s-stamp-d-vm-003
       environment: DevOpsPilot_az
       steps:
         - name: 'Az CLI login'
@@ -120,7 +120,7 @@ jobs:
 
             Start-Sleep -Seconds 60
             
-            Create Image
+            # Create Image
             $vm_states=$(az vm get-instance-view -g $virtualMachineRGName -n $virtualMachineName --query "instanceView.statuses[].displayStatus" -o tsv);
             $deallocateresult=$(az vm deallocate -g $virtualMachineRGName -n $virtualMachineName)
             $generalizeresult=$(az vm generalize -g $virtualMachineRGName -n $virtualMachineName)
