@@ -41,7 +41,7 @@ variable "admin_username" {
   //default = "avluser"
 }
 variable "vmss_uniquesuffix" {
-  //default = "010"
+  default = "012"
 }
 variable "admin_password_length" {
   description = "The length of the generated admin password"
