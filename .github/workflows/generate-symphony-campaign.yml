@@ -85,18 +85,18 @@ jobs:
         shell: pwsh
         run: |
           cd ${{ env.WORKFLOW_ARTIFACT_NAME }}
-          $customer_OEM_suffix = (yq '.config.customer_OEM_suffix' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
-          $project_name = (yq '.config.project_name' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $customer_OEM_suffix = (yq '.config.project_config.oem_identifier' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $project_name = (yq '.config.project_config.project_name' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
           $resource_name_primary_prefix = (yq '.config.resource_name_primary_prefix' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
           $resource_name_secondary_prefix = (yq '.config.resource_name_secondary_prefix' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
-          $resource_name_shared_short = (yq '.config.resource_name_shared_short' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
-          $environment_stage_short = (yq '.config.environment_stage_short' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
-          $meta_model_outputs_file_share_name = (yq '.config.meta_model_outputs_file_share_name' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $resource_name_shared_short = "s"
+          $environment_stage = (yq '.config.project_config.environment_stage' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $meta_model_outputs_file_share_name = (yq '.config.shared_stamp_config.meta_model_outputs_file_share_name' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
           
 
           $subscription_id = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-          $ResourceGroup =  "$($resource_name_primary_prefix)-$($resource_name_secondary_prefix)-$($resource_name_shared_short)-stamp-$($environment_stage_short)-rg-001"
-          $storageAccount = "$($resource_name_primary_prefix)$($resource_name_secondary_prefix)$($resource_name_shared_short)$($environment_stage_short)st"
+          $ResourceGroup =  "$($resource_name_primary_prefix)-$($resource_name_secondary_prefix)-$($resource_name_shared_short)-stamp-$($environment_stage[0])-rg-001"
+          $storageAccount = "$($resource_name_primary_prefix)$($resource_name_secondary_prefix)$($resource_name_shared_short)$($environment_stage[0])st"
           $destinationPath = "$($customer_OEM_suffix)/$($project_name)/$($meta_model_outputs_file_share_name)"
 
           $storage_key = 
