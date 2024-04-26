@@ -24,14 +24,14 @@ $config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64Str
 #endregion Getting config from metamodel config yaml
 
 #region parameters - get from config
-$STAGING_SA_SUBSCRIPTION_ID = "$($config.subscription_id)" #TODO: Discuss. Should this come from the config?
-$STAGING_SA_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-$($config.resource_name_customer_short)-$($config.customer_OEM_suffix)-$($config.environment_stage_short)-rg-001" 
-$STAGING_SA_NAME = "$($config.resource_name_primary_prefix)$($config.resource_name_secondary_prefix)$($config.resource_name_customer_short)$($config.customer_OEM_suffix)$($config.environment_stage_short)st" 
-$CONTAINER_NAME = "$($config.project_name)".ToLower()
-$BLOB_NAME = "$($config.version)"
+$STAGING_SA_SUBSCRIPTION_ID = "$($config.customer_stamp_config.target_subscription_id)" 
+$STAGING_SA_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-rg-001" 
+$STAGING_SA_NAME = "$($config.resource_name_primary_prefix)$($config.resource_name_secondary_prefix)c$($config.project_config.oem_identifier)$($config.project_config.environment_stage[0])st" 
+$CONTAINER_NAME = "$($config.project_config.project_name)".ToLower()
+$BLOB_NAME = "$($config.project_config.version)"
 
-$VMSS_RESOURCE_GROUP = #TODO: Construct name from config.
-$VMSS_NAME = #TODO: Construct name from config.
+$VMSS_RESOURCE_GROUP = "$($config.customer_stamp_config.vmss_resource_group)"
+$VMSS_NAME = "$($config.customer_stamp_config.vmss_name)"
 #endregion parameters - get from config
 
 #region Get Account key for staging storage account

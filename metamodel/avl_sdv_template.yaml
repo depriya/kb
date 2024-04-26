@@ -30,7 +30,13 @@ config:
     
     devbox_image_definition_name: <SHARED_IMAGE_DEFINITION_NAME_DevBox>
     devbox_image_version: <SHARED_IMAGE_VERSION_DevBox> # if this is not specified, az vm create will default to latest version #TODO: Discuss if this default behavior is implemented?
-    
+    devbox_sku:
+      capacity: 1
+      family: <DEVBOX_SKU_FAMILY>
+      compute: <DEVBOX_SKU_COMPUTE>
+      size: <DEVBOX_SKU_SIZE>
+      tier: <DEVBOX_SKU_TIER>
+      osstoragetype: <DEVBOX_SKU_OS_STORAGE_TYPE>
   #endregion customer stamp configuration
 
   #region shared stamp configuration
@@ -80,8 +86,8 @@ config:
 
   #region additional software stack configuration
   additional_software_stack:
-    ModelConnect.py:
-      name: ModelConnect.py
+    # ModelConnect.py: #TODO: Discuss. Any rationale behind using a object instead of an Array? Can we have this as an array? 
+    - name: ModelConnect.py
       version: 1.1
       DownloadSource:
         Type: <SOURCE_TYPE> # currently supported is GitHub or JFrog
@@ -91,6 +97,7 @@ config:
 
       # build_script can be left empty if the tool runs out of the box without any installation/building required
       BuildScriptPath: <BUILD_SCRIPT_PATH>
+      BuildScriptType: <BUILD_SCRIPT_TYPE> # ex. Powershell (or) Bash 
   #endregion additional software stack configuration
 
   #region model stack configuration 

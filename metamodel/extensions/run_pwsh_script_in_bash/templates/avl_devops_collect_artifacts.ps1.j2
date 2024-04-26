@@ -24,21 +24,26 @@ $config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64Str
 #endregion Getting config from metamodel config yaml
 
 #region parameters - get from config
-$STAGING_SA_SUBSCRIPTION_ID = "$($config.subscription_id)" #TODO: Discuss. Should this come from the config?
-$STAGING_SA_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-$($config.resource_name_customer_short)-$($config.customer_OEM_suffix)-$($config.environment_stage_short)-rg-001" 
-$STAGING_SA_NAME = "$($config.resource_name_primary_prefix)$($config.resource_name_secondary_prefix)$($config.resource_name_customer_short)$($config.customer_OEM_suffix)$($config.environment_stage_short)st" 
-$STAGING_KV_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-$($config.resource_name_shared_short)-$($config.environment_stage_short)-kv-001" 
+$STAGING_SA_SUBSCRIPTION_ID = "$($config.customer_stamp_config.target_subscription_id)" 
+$STAGING_SA_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-rg-001" 
+$STAGING_SA_NAME = "$($config.resource_name_primary_prefix)$($config.resource_name_secondary_prefix)c$($config.project_config.oem_identifier)$($config.project_config.environment_stage[0])st" 
+$STAGING_KV_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-s-$($config.project_config.environment_stage[0])-kv-001" 
+
+$VERSION = "$($config.project_config.version)"
+$PROJECT_NAME = "$($config.project_config.project_name)".ToLower()
+$PROJECT_FOLDER_PATH = "$($config.project_config.project_name)_$($config.project_config.version)"
+
+$MODEL_STACK = $config.model_stack 
+
+#TODO: Discuss, are these parameters now obselete?
 $JFROG_DOWNLOAD_URL = "$($config.jfrog.download_url)"
 $JFROG_TOKEN_SECRET_NAME = "$($config.jfrog.token_secret_name)"
-$VERSION = "$($config.version)"
-$MODEL_STACK = $config.model_stack 
 $REPOS_TO_CLONE = $config.clone_github_repositories
-$PROJECT_NAME = "$($config.project_name)".ToLower()
-$PROJECT_FOLDER_PATH = "$($config.project_name)_$($config.version)"
 #endregion parameters - get from config
 
 az login --identity
 
+#TODO: Discuss, Is this region now obselete?
 #region clone github repositories using pat token
 Write-Host "Cloning github repositories using pat token"
 foreach ($repo in $REPOS_TO_CLONE) {
@@ -56,6 +61,7 @@ foreach ($repo in $REPOS_TO_CLONE) {
 Write-Host "Completed cloning github repositories."
 #endregion clone github repositories using pat token
 
+#TODO: Discuss, Is this region now obselete?
 #region download jfrog artifact
 Write-Host "Downloading jfrog artifact"
 New-Item -Path $PWD -Name $ProjectFolderPath -ItemType Directory -Force
@@ -83,6 +89,9 @@ Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
 Write-Host "Downloaded jfrog artifact"
 #endregion download jfrog artifact
 
+#TODO: This should be rewritten to use the updated template for the path. Check if a single file can be downloaded using the secret without cloning the entire repo.
+#TODO: Should this section collect additionl artifacts? What sections should it collect?
+#TODO: Create a "Module_Library.yml", confirm the structure of this file.
 #region collect model stack files
 Write-Host "Collecting model stack files"
 $MODEL_STACK_PROPERTIES = $MODEL_STACK | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name

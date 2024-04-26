@@ -19,19 +19,17 @@ $config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64Str
 
 #region parameters - get from config
 $ADDITIONAL_SOFTWARE_STACK = $config.additional_software_stack
-$VMSS_RESOURCE_GROUP = #TODO: Construct name from config.
-$VMSS_NAME = #TODO: Construct name from config.
+$VMSS_RESOURCE_GROUP = "$($config.customer_stamp_config.vmss_resource_group)"
+$VMSS_NAME = "$($config.customer_stamp_config.vmss_name)"
 #endregion parameters - get from config
 
 #region run each tool
 foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
   Write-Host "Running $($software.name)"
 
-  #TODO: Navigate to the correct directory where the zip is extracted.
-  cd "C:\Temp"
-
+  Set-Location "C:\Temp" 
   $scriptContent = Get-Content "$($software.BuildScriptPath)" -Raw 
-  $command_id = "Run$($software.BuildScriptType)Script"
+  $command_id = "Run$($software.BuildScriptType)Script" #TODO: Discuss, how this is used and what are the set of supported values?
 
   Write-Host "Get all instances of VMSS: $($VMSS_NAME) in resource group: $($VMSS_RESOURCE_GROUP)."
   $command = "az vmss list-instances --resource-group ""$($VMSS_RESOURCE_GROUP)"" --name ""$($VMSS_NAME)"" --query ""[].instanceId"" -o tsv"

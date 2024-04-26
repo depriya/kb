@@ -7,9 +7,9 @@ config:
   #region project configuration
   project_config:
     project_name: pj2
-    description: <PROJECT_DESCRIPTION>
+    description: pj2 description
     version: 0.1.0
-    author: <PROJECT_AUTHOR>
+    author: pj2 author
 
     environment_stage: development
     oem_identifier: tstoem
@@ -19,7 +19,7 @@ config:
 
   #region customer stamp configuration
   customer_stamp_config:
-    azure_region: <AZURE_REGION>
+    azure_region: westeurope
     target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
 
     vmss_resource_group: <VMSS_RESOURCE_GROUP>
@@ -27,14 +27,21 @@ config:
 
     customer_key_vault_name: <CUSTOMER_KEY_VAULT_NAME>
 
-    devbox_image_definition_name: <SHARED_IMAGE_DEFINITION_NAME_DevBox>
+    devbox_image_definition_name: microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os
     devbox_image_version: <SHARED_IMAGE_VERSION_DevBox> # if this is not specified, az vm create will default to latest version #TODO: Discuss if this default behavior is implemented?
+    devbox_sku:
+      capacity: 1
+      family: Standard
+      compute: general_i_8c32gb256ssd_v2
+      size: Standard_DS1_v2
+      tier: Standard
+      osstoragetype: ssd_256gb
 
   #endregion customer stamp configuration
 
   #region shared stamp configuration
   shared_stamp_config:
-    compute_gallery_name: <SHARED_COMPUTE_GALLERY_NAME>
+    compute_gallery_name: Computegalleryid
     shared_key_vault_name: <SHARED_KEY_VAULT_NAME>
 
     meta_model_outputs_file_share_name: avldevops
@@ -54,17 +61,17 @@ config:
     base_url: http://192.168.0.75
   #endregion Symphony Configuration
 
-  jfrog:
-    download_url: https://avlartiedgeew1.jfrog.io/artifactory/generic/avl/sms/6.5/5460_137/Install%20AVL%20Smart%20Mobile%20Solutions%20R6.5%20Build%205460_137.exe\
-    token_secret_name: JfrogEdgeToken
+  # jfrog:
+  #   download_url: https://avlartiedgeew1.jfrog.io/artifactory/generic/avl/sms/6.5/5460_137/Install%20AVL%20Smart%20Mobile%20Solutions%20R6.5%20Build%205460_137.exe\
+  #   token_secret_name: JfrogEdgeToken
 
-  clone_github_repositories:
-    - repository: model_releases
-      organization: avl-sdv
-      pat_token_secret_name: GithubPatToken
-    - repository: xcu_releases
-      organization: avl-sdv
-      pat_token_secret_name: GithubPatToken
-    - repository: Projects_Repo
-      organization: avl-sdv
-      pat_token_secret_name: GithubPatToken
+  # clone_github_repositories:
+  #   - repository: model_releases
+  #     organization: avl-sdv
+  #     pat_token_secret_name: GithubPatToken
+  #   - repository: xcu_releases
+  #     organization: avl-sdv
+  #     pat_token_secret_name: GithubPatToken
+  #   - repository: Projects_Repo
+  #     organization: avl-sdv
+  #     pat_token_secret_name: GithubPatToken
