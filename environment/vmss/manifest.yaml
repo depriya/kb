@@ -20,7 +20,3 @@ parameters:
     name: "username"
     required: true
     type: "string"
-  - id: "vmss_uniquesuffix"
-    name: "unique suffix for vmss eg:- 001"
-    required: true
-    type: "string"
