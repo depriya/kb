@@ -25,6 +25,7 @@ config:
   customer_stamp_config:
     azure_region: westeurope
     target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
+    # @Suresh: can we derive the d/p from project_config.environment_stage?
     environment_stage_short: d
   
   ade_config:
@@ -113,6 +114,11 @@ config:
               ModuleFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/FMU/BEV_Truck_1Spd.fmu # the path to the FMU file, must be relative to the LocationURL
               TimeStepSize: #TODO: Discuss, Currently this is not used.
               # XCP parameters to get defined in a separate XCP section below
+              # as per today's discussion with Markus, we are not using XCPSettings section.
+              XCPSettings:
+                XCPSlave:
+                HostIP:
+                Port:
               SubSysParam:
                 - Param: BEV_Truck_1Spd_default
                   ParamFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/param/BEV_Truck_1Spd_default.dcm # the path to the parameter file, must be relative to the LocationURL
@@ -377,12 +383,13 @@ config:
 
   #region XCP monitor configuration
   #TODO: Currently not used. Discuss if this has any significance.
-  XCP_monitor_config:
-    - module_name: BEV_Truck_1Spd
-      XCPSettings:
-        XCPSlave:
-        HostIP:
-        Port: 0
+   # as per today's discussion with Markus, we are not using XCPSettings section.
+#  XCP_monitor_config:
+#    - module_name: BEV_Truck_1Spd
+#      XCPSettings:
+#        XCPSlave:
+#        HostIP:
+#        Port: 0
   #endregion XCP monitor configuration
 
   #region Symphony Configuration
