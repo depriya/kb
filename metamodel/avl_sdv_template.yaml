@@ -24,20 +24,23 @@ config:
   customer_stamp_config:
     azure_region: westeurope
     target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
+    environment_stage_short: d
 
-    devbox_image_definition_name: microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os
-    devbox_sku:
-      capacity: 1
-      family: Standard
-      compute: general_i_8c32gb256ssd_v2
-      size: Standard_DS1_v2
-      tier: Standard
-      osstoragetype: ssd_256gb
+  devbox_sku:  
+    suffix: 006
+    devbox_image_name: Test001
+    capacity: 1
+    family: Standard
+    compute: general_i_8c32gb256ssd_v2
+    size: Standard_DS1_v2
+    tier: Standard
+    osstoragetype: ssd_256gb
   #endregion customer stamp configuration
 
   #region shared stamp configuration
   shared_stamp_config:
-    compute_gallery_name: Computegalleryid
+    compute_gallery_name: xmew1dopsstampdcomputegallery001
+    compute_gallery_managedid: Computegalleryid
     meta_model_outputs_file_share_name: avldevops
   #endregion shared stamp configuration
 
