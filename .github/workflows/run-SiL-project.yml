@@ -120,7 +120,7 @@ jobs:
             --share-name "$meta_model_outputs_file_share_name" 
         
   Create_and_Activate_Symphony_Campaign:
-    needs: Generate_Campaign_from_Metamodel
+    needs: Upload_Campaign_and_Scripts_to_File_Share
     runs-on: ubuntu-latest #TODO: Change the Runner Type
     environment: sub-AVL_DevopsPilot
     
@@ -139,7 +139,6 @@ jobs:
         run: |
           cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign"
           echo "Running Symphony Campaign"
-          ls -l
-          # ./symphony_api_calls.sh
+          ./symphony_api_calls.sh
           echo "Symphony Campaign Activated"
           
