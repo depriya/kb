@@ -1,4 +1,4 @@
-name: Creare and Activate Symphony Campaign
+name: Create and Activate Symphony Campaign
 
 on:
   workflow_dispatch:

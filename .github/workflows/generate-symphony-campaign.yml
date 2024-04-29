@@ -1,4 +1,4 @@
-name: Generate.Symphony.Campaign
+name: Generate Symphony Campaign
 
 on:
   workflow_dispatch:
