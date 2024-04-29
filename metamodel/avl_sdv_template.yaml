@@ -14,11 +14,12 @@ config:
 
     environment_stage: development
     oem_identifier: tstoem
+  #endregion project configuration
 
+  workflow_run_config:
     job_id:
     build_id:
     interactive_execution: false
-  #endregion project configuration
 
   #region customer stamp configuration
   customer_stamp_config:
