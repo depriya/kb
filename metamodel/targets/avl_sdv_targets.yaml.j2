@@ -36,5 +36,5 @@ deploy_avl_symphony_campaign:
     symphony_campaign_parameters_file_input:
       # Empty stage will use the default stage as defined in symphony-campaign.json
       campaign_start_stage:
-      toolchain_output_path: "{{ config.symphony.toolchain_output_path }}/{{ config.resource_name_primary_prefix }}{{ config.resource_name_secondary_prefix }}s{{ config.project_config.environment_stage|slice(0, 1) }}st/{{ config.project_config.oem_identifier }}/{{ config.project_config.project_name }}"
+      toolchain_output_path: "{{ config.symphony.toolchain_output_path }}/{{ config.resource_name_primary_prefix }}{{ config.resource_name_secondary_prefix }}s{{ config.project_config.environment_stage[0] }}st/{{ config.project_config.oem_identifier }}/{{ config.project_config.project_name }}"
     symphony_base_url: {{ config.symphony.base_url }}
