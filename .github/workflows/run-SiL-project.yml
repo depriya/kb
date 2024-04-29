@@ -139,6 +139,6 @@ jobs:
         run: |
           cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign"
           echo "Running Symphony Campaign"
-          ./symphony_api_calls.sh
+          symphony_api_calls.sh
           echo "Symphony Campaign Activated"
           
