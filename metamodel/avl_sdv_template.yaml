@@ -7,10 +7,10 @@ config:
 
   #region project configuration
   project_config:
-    project_name: pj2
-    description: pj2 description
+    project_name: pj3
+    description: pj3 description
     version: 0.1.0
-    author: pj2 author
+    author: pj3 author
 
     environment_stage: development
     oem_identifier: tstoem
