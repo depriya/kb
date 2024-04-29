@@ -107,9 +107,9 @@ config:
       PlantModelLibrary:
         - BlockName: BEV_Truck_Mdl
           DownloadSource:
-            Type: <SOURCE_TYPE> # currently supported is GitHub or JFrog
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub # currently supported is GitHub or JFrog
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/model_releases.git
           SubSys:
             - Name: BEV_Truck_1Spd
               ModuleFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/FMU/BEV_Truck_1Spd.fmu # the path to the FMU file, must be relative to the LocationURL
