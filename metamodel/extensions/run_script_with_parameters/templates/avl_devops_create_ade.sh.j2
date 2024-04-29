@@ -23,7 +23,8 @@ function clear_command_variables() {
 #endregion declare command variables & functions
 
 #region Declare Constants
-COMPUTE_GALLERY="Computegalleryid"           #TODO: Discuss. Should this come from the config?
+resource_name_shared_short="s"
+resource_name_customer_short="c"
 DEV_CENTER_CATALOG_NAME="catalog"            #TODO: Discuss. Should this come from the config?
 ENVIRONMENT_DEFINITION_NAME="vmss"           #TODO: Discuss. Should this come from the config?
 ENVIRONMENT_TYPE="sandbox"                   #TODO: Discuss. Should this come from the config?
@@ -38,13 +39,12 @@ config=$(echo $configEncoded | base64 -d)
 #region parameters - get from config
 resource_name_primary_prefix=$(echo $config | jq -r '.resource_name_primary_prefix')
 resource_name_secondary_prefix=$(echo $config | jq -r '.resource_name_secondary_prefix')
-resource_name_shared_short=$(echo $config | jq -r '.resource_name_shared_short')
-resource_name_customer_short=$(echo $config | jq -r '.resource_name_customer_short')
-customer_OEM_suffix=$(echo $config | jq -r '.customer_OEM_suffix')
-project_name=$(echo $config | jq -r '.project_name')
-environment_stage_short=$(echo $config | jq -r '.environment_stage_short')
-project_description=$(echo $config | jq -r '.project_description')
-subscription_id=$(echo $config | jq -r '.subscription_id')
+customer_OEM_suffix=$(echo $config | jq -r '.project_config.oem_identifier')
+project_name=$(echo $config | jq -r '.project_config.project_name')
+environment_stage_short=$(echo $config | jq -r '.project_config.environment_stage' | cut -c1 )
+project_description=$(echo $config | jq -r '.project_config.project_description')
+subscription_id=$(echo $config | jq -r '.customer_stamp_config.target_subscription_id')
+COMPUTE_GALLERY=$(echo $config | jq -r '.shared_stamp_config.compute_gallery_name')
 #endregion parameters - get from config
 
 #region Set the variables
@@ -53,7 +53,7 @@ RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix
 DEV_CENTER_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-dc"
 ENVIRONMENT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-p-${project_name}-vmss-001"
 PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-p-${project_name}-001"
-KEY_VAULT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customerOEMsuffix}-${environment_stage_short}-kv"
+KEY_VAULT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-kv"
 USER_ID=$(az account show| jq -r '.user.name')
 MYOID=$(az ad sp show --id $USER_ID | jq -r '.objectId')
 #endregion Set the variables

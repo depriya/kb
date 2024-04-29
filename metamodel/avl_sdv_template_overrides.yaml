@@ -1,44 +1,77 @@
 # Copyright (C) Microsoft Corporation.
 
-config:
-  version: 0.1.0
-
-  subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
-
-  meta_model_outputs_file_share_name: avldevops
-  
-  environment_stage_short: d
-
-  project_name: pj2
-  project_description: Project Description
-
-  customer_OEM_suffix: tstoem
-  
+config:  
   resource_name_primary_prefix: xmew1
   resource_name_secondary_prefix: dop
   
-  resource_name_shared_short: s
-  resource_name_customer_short: c
+  #region project configuration
+  project_config:
+    project_name: pj2
+    description: pj2 description
+    version: 0.1.0
+    author: pj2 author
 
-  jfrog:
-    download_url: https://avlartiedgeew1.jfrog.io/artifactory/generic/avl/sms/6.5/5460_137/Install%20AVL%20Smart%20Mobile%20Solutions%20R6.5%20Build%205460_137.exe\
-    token_secret_name: JfrogEdgeToken
+    environment_stage: development
+    oem_identifier: tstoem
 
-  clone_github_repositories:
-    - repository: model_releases
-      organization: avl-sdv
-      pat_token_secret_name: GithubPatToken
-    - repository: xcu_releases
-      organization: avl-sdv
-      pat_token_secret_name: GithubPatToken
-    - repository: Projects_Repo
-      organization: avl-sdv
-      pat_token_secret_name: GithubPatToken
+    interactive_execution: true
+  #endregion project configuration
 
-#region Symphony Configuration
+  #region customer stamp configuration
+  customer_stamp_config:
+    azure_region: westeurope
+    target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
+
+    vmss_resource_group: <VMSS_RESOURCE_GROUP>
+    vmss_name: <VMSS_NAME>
+
+    customer_key_vault_name: <CUSTOMER_KEY_VAULT_NAME>
+
+    devbox_image_definition_name: microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os
+    devbox_image_version: <SHARED_IMAGE_VERSION_DevBox> # if this is not specified, az vm create will default to latest version #TODO: Discuss if this default behavior is implemented?
+    devbox_sku:
+      capacity: 1
+      family: Standard
+      compute: general_i_8c32gb256ssd_v2
+      size: Standard_DS1_v2
+      tier: Standard
+      osstoragetype: ssd_256gb
+
+  #endregion customer stamp configuration
+
+  #region shared stamp configuration
+  shared_stamp_config:
+    compute_gallery_name: Computegalleryid
+    shared_key_vault_name: <SHARED_KEY_VAULT_NAME>
+
+    meta_model_outputs_file_share_name: avldevops
+    
+    ade_repository: #TODO: Discuss what is the motivation for this section?
+      name: <ADE_REPO_NAME>
+      owner: <ADE_REPO_OWNER>
+      branch: <ADE_REPO_BRANCH>
+      path: <ADE_REPO_PATH>
+  #endregion shared stamp configuration
+
+  #region Symphony Configuration
   symphony:
     toolchain_output_path: /app/mnt
     agent:
       port: 8098
     base_url: http://192.168.0.75
-#endregion Symphony Configuration
+  #endregion Symphony Configuration
+
+  # jfrog:
+  #   download_url: https://avlartiedgeew1.jfrog.io/artifactory/generic/avl/sms/6.5/5460_137/Install%20AVL%20Smart%20Mobile%20Solutions%20R6.5%20Build%205460_137.exe\
+  #   token_secret_name: JfrogEdgeToken
+
+  # clone_github_repositories:
+  #   - repository: model_releases
+  #     organization: avl-sdv
+  #     pat_token_secret_name: GithubPatToken
+  #   - repository: xcu_releases
+  #     organization: avl-sdv
+  #     pat_token_secret_name: GithubPatToken
+  #   - repository: Projects_Repo
+  #     organization: avl-sdv
+  #     pat_token_secret_name: GithubPatToken

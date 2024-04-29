@@ -23,20 +23,9 @@ function clear_command_variables() {
 #endregion declare command variables & functions
 
 #region Declare Constants
-LOCATION="westeurope"                                                 #TODO: Discuss. Should this come from the config?
-IMAGE="microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os" #TODO: Discuss. Should this come from the config?
-OEM_Subnet="OEMSubnet"                                                #TODO: Discuss. Should this come from the config?
+resource_name_customer_short="c"
+OEM_Subnet="OEMSubnet" #TODO: Discuss. Should this come from the config?
 #endregion Declare Constants
-
-#region Declare SKU Constants
-#TODO: Discuss. Should these come from the config?
-capacity=1
-family="Standard"
-compute="general_i_8c32gb256ssd_v2"
-size="Standard_DS1_v2"
-tier="Standard"
-osstoragetype="ssd_256gb"
-#endregion Declare SKU Constants
 
 #region Getting config from metamodel config yaml
 configEncoded="{{ parameters.input_parameter_to_script }}"
@@ -46,12 +35,22 @@ config=$(echo $configEncoded | base64 -d)
 #region parameters - get from config
 resource_name_primary_prefix=$(echo $config | jq -r '.resource_name_primary_prefix')
 resource_name_secondary_prefix=$(echo $config | jq -r '.resource_name_secondary_prefix')
-resource_name_customer_short=$(echo $config | jq -r '.resource_name_customer_short')
-customer_OEM_suffix=$(echo $config | jq -r '.customer_OEM_suffix')
-project_name=$(echo $config | jq -r '.project_name')
-environment_stage_short=$(echo $config | jq -r '.environment_stage_short')
-subscription_id=$(echo $config | jq -r '.subscription_id')
+customer_OEM_suffix=$(echo $config | jq -r '.project_config.oem_identifier')
+project_name=$(echo $config | jq -r '.project_config.project_name')
+environment_stage_short=$(echo $config | jq -r '.project_config.environment_stage' | cut -c1)
+subscription_id=$(echo $config | jq -r '.customer_stamp_config.target_subscription_id')
+LOCATION=$(echo $config | jq -r '.customer_stamp_config.azure_region')
+IMAGE=$(echo $config | jq -r '.customer_stamp_config.devbox_image_definition_name')
 #endregion parameters - get from config
+
+#region Devbox SKU
+capacity=$(echo $config | jq -r '.customer_stamp_config.devbox_sku.capacity')
+family=$(echo $config | jq -r '.customer_stamp_config.devbox_sku.family')
+compute=$(echo $config | jq -r '.customer_stamp_config.devbox_sku.compute')
+size=$(echo $config | jq -r '.customer_stamp_config.devbox_sku.size')
+tier=$(echo $config | jq -r '.customer_stamp_config.devbox_sku.tier')
+osstoragetype=$(echo $config | jq -r '.customer_stamp_config.devbox_sku.osstoragetype')
+#endregion Devbox SKU
 
 #region Set the variables
 RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-rg-001"
@@ -124,12 +123,13 @@ echo "Got Network Connection ID is $commandGetNetworkConnectionId_output"
 echo "Creating Azure Dev Center attached network"
 clear_command_variables
 command="az devcenter admin attached-network create \
-    --attached-network-connection-name \"xmew1-dop-c-${customer_OEM_suffix}-${project_name}-ntwk-001\" \ #TODO: Check if this is correct, there is another -ntwkcon-001 also in the script
+    --attached-network-connection-name \"xmew1-dop-c-${customer_OEM_suffix}-${project_name}-ntwk-001\" \ 
     --network-connection-id \"/subscriptions/$subscription_id/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/networkConnections/$DEV_CENTER_NETWORK_CONNECTION_NAME\" \
     --resource-group $RESOURCE_GROUP \
     --dev-center $DEV_CENTER_NAME"
 execute_command_exit_on_failure "$command" _command_output _command_status
 echo "Created Azure Dev Center Attached network successfully."
+#TODO: Check if this is correct, there is another -ntwkcon-001 also in the script
 #endregion Create Dev Center Attached Network
 
 #region Create Dev center pool
@@ -142,9 +142,10 @@ command="az devcenter admin pool create \
     --project \"$PROJECT\" \
     --resource-group \"$RESOURCE_GROUP\" \
     --location \"$LOCATION\" \
-    --network-connection-name \"xmew1-dop-c-${customer_OEM_suffix}-${project_name}-ntwk-001\"" #TODO: Check if this is correct, there is another -ntwkcon-001 also in the script
+    --network-connection-name \"xmew1-dop-c-${customer_OEM_suffix}-${project_name}-ntwk-001\""
 execute_command_exit_on_failure "$command" _command_output _command_status
 echo "Azure Dev Center Pool created successfully."
+#TODO: Check if this is correct, there is another -ntwkcon-001 also in the script
 #endregion Create Dev center pool
 
 echo_output_dictionary_to_output_file

@@ -30,18 +30,18 @@ provider "azurerm" {
 provider "random" {}
 
 variable "customerOEMsuffix" {
-  default = "avl"
+  //default = "avl"
 }
 
 variable "projectname" {
-  default = "pj2"
+  //default = "pj2"
 }
 
 variable "admin_username" {
-  default = "avluser"
+  //default = "avluser"
 }
 variable "vmss_uniquesuffix" {
-  default = "010"
+  default = "012"
 }
 variable "admin_password_length" {
   description = "The length of the generated admin password"
@@ -53,7 +53,7 @@ variable "location" {
 }
 
 variable "environmentStage" {
-  default = "d"
+  //default = "d"
 }
 
 variable "gallery_name" {

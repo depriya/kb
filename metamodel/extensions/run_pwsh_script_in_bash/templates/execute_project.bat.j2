@@ -1,0 +1,59 @@
+@echo off
+setlocal enabledelayedexpansion
+rmdir %cd%\simulation /s /q
+
+"%MODELCONNECT%\user_python\python3\python.exe" ModelConnect.py ^
+--executeSilProject ^
+--targetProjectName {{ parameters.input_parameter.project_config.project_name }}.proj ^
+--SimStartTime 0 ^
+--SimEndTime 100 ^
+--SimTimeStep 0.005
+
+for /r ".\simulation" %%i in (*.mf4) do (
+	set "recorderfile=%%i"
+)
+
+:: set "clyPath=%cd%\Projects_Repo\Next-E-Truck\Reporting_Layouts\Cycle_and_EnergySummary\Next-E-Truck_v5.cly"
+:: #TODO: Discuss, currently set to as single file. How to handle if it is an array?
+set "clyPath=%cd%\{{ parameters.input_parameter.reporting_stack.TestReportTemplateLibrary[0].SubSys[0].ModuleFilePath}}"
+
+set "found=false"
+
+:search
+for /r "%clyPath%\.." %%j in (*.dxv) do (
+    set "dxvPath=%%j"
+    set "found=true"
+    goto found
+)
+
+set "clyPath=%clyPath%\.."
+if not "!clyPath:~-1!"==":" goto search
+
+echo No ".dxv" file found in or above the directory of the ".cly" file.Can't create report!
+goto end
+
+:found
+set ARG1=%%WorkEnvPath=%dxvPath%
+set ARG2=%%RecorderFilePath=%recorderfile%
+:: #TODO: Discuss, What should be the name for the pdf?
+set ARG3=%%TestReportPath=%cd%\{{ parameters.input_parameter.project_config.project_name }}.pdf
+:: #TODO: Discuss, currently set to as single file. How to handle if it is an array?
+set ARG4=%%LayoutPath=%cd%\{{ parameters.input_parameter.reporting_stack.TestReportTemplateLibrary[0].SubSys[0].ModuleFilePath}}"
+set ARGall="%ARG1%,%ARG2%,%ARG3%,%ARG4%"
+
+set SCRIPT_PATH="%cd%\Auto_Report.csf"
+
+echo %ARG1%
+echo %ARG2%
+echo %ARG3%
+echo %ARG4%
+echo %SCRIPT_PATH%
+
+set CURRENT_DIR=%cd%
+cd %CONCERTO_HOME%
+ConcertoNet.Application.exe %SCRIPT_PATH% -var %ARGall%
+cd %CURRENT_DIR%
+
+:end
+endlocal
+pause
