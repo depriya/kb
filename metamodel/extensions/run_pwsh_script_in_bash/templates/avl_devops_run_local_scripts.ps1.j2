@@ -29,7 +29,7 @@ foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
 
   Set-Location "C:\Temp" 
   $scriptContent = Get-Content "$($software.BuildScriptPath)" -Raw 
-  $command_id = "Run$($software.BuildScriptType)Script" #TODO: Discuss, how this is used and what are the set of supported values?
+  $command_id = "Run$($software.BuildScriptType)Script"
 
   Write-Host "Get all instances of VMSS: $($VMSS_NAME) in resource group: $($VMSS_RESOURCE_GROUP)."
   $command = "az vmss list-instances --resource-group ""$($VMSS_RESOURCE_GROUP)"" --name ""$($VMSS_NAME)"" --query ""[].instanceId"" -o tsv"
