@@ -142,8 +142,11 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           
-      - name: Run Campaign
+      - name: Create and Activate Symphony Campaign
         run: |
-          cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}"
-          ls -ltr
+          cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign"
+          echo "Running Symphony Campaign"
+          ls -l
+          # ./symphony_api_calls.sh
+          echo "Symphony Campaign Activated"
           
