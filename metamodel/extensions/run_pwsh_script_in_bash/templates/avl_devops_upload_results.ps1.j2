@@ -13,9 +13,9 @@ Set-Location $args[0]
 . ./symphony_stage_script_provider.ps1 $args[1]
 
 #region Declare Constants
-$MOUNT_COMMAND_ID = "RunPowerShellScript"
-$MOUNT_SCRIPT_PATH = "./mount.ps1"
-$MOUNT_SCRIPT_CONTENT = Get-Content $MOUNT_SCRIPT_PATH -Raw 
+$UPLOAD_COMMAND_ID = "RunPowerShellScript"
+$UPLOAD_SCRIPT_PATH = "./upload.ps1"
+$UPLOAD_SCRIPT_CONTENT = Get-Content $UPLOAD_SCRIPT_PATH -Raw 
 #endregion Declare Constants
 
 #region Getting config from metamodel config yaml
@@ -28,7 +28,8 @@ $STAGING_SA_SUBSCRIPTION_ID = "$($config.customer_stamp_config.target_subscripti
 $STAGING_SA_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-rg-001" 
 $STAGING_SA_NAME = "$($config.resource_name_primary_prefix)$($config.resource_name_secondary_prefix)c$($config.project_config.oem_identifier)$($config.project_config.environment_stage[0])st" 
 $CONTAINER_NAME = "$($config.project_config.project_name)".ToLower()
-$BLOB_NAME = "$($config.project_config.version)"
+
+$localFolderPath = "$($config.reporting_stack.ResultsReturnPath)" #TODO: Check and adjust relative path where the report is generated
 
 $VMSS_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-rg-001" 
 $VMSS_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-$($config.project_config.project_name)-vmss-001"
@@ -65,9 +66,16 @@ az vmss run-command invoke `
   --resource-group $($VMSS_RESOURCE_GROUP) `
   --name $($VMSS_NAME) `
   --instance-id $($instanceId) `
-  --command-id $($MOUNT_COMMAND_ID) `
-  --scripts $($MOUNT_SCRIPT_CONTENT) `
-  --parameters "StorageAccountName=$($STAGING_SA_NAME)" "ContainerName=$($CONTAINER_NAME)" "AccountKey=$($storage_key)" "FileName=$($BLOB_NAME)"
+  --command-id $($UPLOAD_COMMAND_ID) `
+  --scripts $($UPLOAD_SCRIPT_CONTENT) `
+  --parameters "StorageAccountName=$($STAGING_SA_NAME)" "ContainerName=$($CONTAINER_NAME)" "AccountKey=$($storage_key)" "localFolderPath=$($localFolderPath)"
 "@
 }
 Write-Host "Run command executed on all VMSS instances"
+
+
+
+
+
+
+

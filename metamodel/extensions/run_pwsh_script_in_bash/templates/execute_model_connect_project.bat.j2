@@ -13,8 +13,6 @@ for /r ".\simulation" %%i in (*.mf4) do (
 	set "recorderfile=%%i"
 )
 
-:: set "clyPath=%cd%\Projects_Repo\Next-E-Truck\Reporting_Layouts\Cycle_and_EnergySummary\Next-E-Truck_v5.cly"
-:: #TODO: Discuss, currently set to as single file. How to handle if it is an array?
 set "clyPath=%cd%\{{ parameters.input_parameter.reporting_stack.TestReportTemplateLibrary[0].SubSys[0].ModuleFilePath}}"
 
 set "found=false"
@@ -35,9 +33,8 @@ goto end
 :found
 set ARG1=%%WorkEnvPath=%dxvPath%
 set ARG2=%%RecorderFilePath=%recorderfile%
-:: #TODO: Discuss, What should be the name for the pdf?
+:: #TODO: Discuss, What should be the name for the pdf? - Add a TS to the name
 set ARG3=%%TestReportPath=%cd%\{{ parameters.input_parameter.project_config.project_name }}.pdf
-:: #TODO: Discuss, currently set to as single file. How to handle if it is an array?
 set ARG4=%%LayoutPath=%cd%\{{ parameters.input_parameter.reporting_stack.TestReportTemplateLibrary[0].SubSys[0].ModuleFilePath}}"
 set ARGall="%ARG1%,%ARG2%,%ARG3%,%ARG4%"
 

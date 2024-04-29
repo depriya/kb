@@ -1,6 +1,8 @@
 set AVLAST_HOME=C:\Program Files (x86)\AVL\R2022.2
 
-"C:\Program Files (x86)\AVL\R2022.2\user_python\python3\python.exe" ModelConnect.py ^
+:: TODO: Add the additional_software_stack. FilePath matching the script
+
+"C:\Program Files (x86)\AVL\R2022.2\user_python\python3\python.exe" {{}} ^ 
 --generateSilProject ^
 --targetProjectName {{ parameters.input_parameter.project_config.project_name }}.proj ^
 {%- for lib_key, lib_value in parameters.input_parameter.model_stack.ModulesLibrary.items() -%}

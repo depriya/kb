@@ -25,10 +25,10 @@ function clear_command_variables() {
 #region Declare Constants
 resource_name_shared_short="s"
 resource_name_customer_short="c"
-DEV_CENTER_CATALOG_NAME="catalog"            #TODO: Discuss. Should this come from the config?
-ENVIRONMENT_DEFINITION_NAME="vmss"           #TODO: Discuss. Should this come from the config?
-ENVIRONMENT_TYPE="sandbox"                   #TODO: Discuss. Should this come from the config?
-ADMIN_USER="avluser"                         #TODO: Discuss and change, if needed
+DEV_CENTER_CATALOG_NAME="catalog"            
+ENVIRONMENT_DEFINITION_NAME="vmss"           
+ENVIRONMENT_TYPE="sandbox"                   
+ADMIN_USER="environmentuser"       
 #endregion Declare Constants
 
 #region Getting config from metamodel config yaml
@@ -51,8 +51,8 @@ COMPUTE_GALLERY=$(echo $config | jq -r '.shared_stamp_config.compute_gallery_nam
 SHARED_RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_shared_short}-stamp-${environment_stage_short}-rg-001"
 RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-rg-001"
 DEV_CENTER_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-dc"
-ENVIRONMENT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-p-${project_name}-vmss-001"
-PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-p-${project_name}-001"
+ENVIRONMENT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-${project_name}-vmss-001"
+PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-${project_name}-001"
 KEY_VAULT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-kv"
 USER_ID=$(az account show| jq -r '.user.name')
 MYOID=$(az ad sp show --id $USER_ID | jq -r '.objectId')

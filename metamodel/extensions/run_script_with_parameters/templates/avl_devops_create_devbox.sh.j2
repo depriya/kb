@@ -24,7 +24,7 @@ function clear_command_variables() {
 
 #region Declare Constants
 resource_name_customer_short="c"
-OEM_Subnet="OEMSubnet" #TODO: Discuss. Should this come from the config?
+OEM_Subnet="OEMSubnet" #TODO: Discuss. Should this come from the config? - Derive from naming convention
 #endregion Declare Constants
 
 #region Getting config from metamodel config yaml
@@ -40,6 +40,7 @@ project_name=$(echo $config | jq -r '.project_config.project_name')
 environment_stage_short=$(echo $config | jq -r '.project_config.environment_stage' | cut -c1)
 subscription_id=$(echo $config | jq -r '.customer_stamp_config.target_subscription_id')
 LOCATION=$(echo $config | jq -r '.customer_stamp_config.azure_region')
+
 IMAGE=$(echo $config | jq -r '.customer_stamp_config.devbox_image_definition_name')
 #endregion parameters - get from config
 
@@ -59,6 +60,7 @@ PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${res
 DEVBOX_DEF_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${project_name}-devboxdef"
 VNET_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-vnet-001"
 DEV_CENTER_NETWORK_CONNECTION_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${project_name}-ntwkcon-001"
+DEV_CENTER_ATTACHED_NETWORK_CONNECTION_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${project_name}-ntwk-001"
 NETWORK_CONNECTION_RG_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-${project_name}-rg-ntcon-001"
 DEV_CENTER_POOL_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${project_name}-pools-001"
 #endregion Set the variables
@@ -123,13 +125,12 @@ echo "Got Network Connection ID is $commandGetNetworkConnectionId_output"
 echo "Creating Azure Dev Center attached network"
 clear_command_variables
 command="az devcenter admin attached-network create \
-    --attached-network-connection-name \"xmew1-dop-c-${customer_OEM_suffix}-${project_name}-ntwk-001\" \ 
+    --attached-network-connection-name \"$DEV_CENTER_ATTACHED_NETWORK_CONNECTION_NAME\" \ 
     --network-connection-id \"/subscriptions/$subscription_id/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/networkConnections/$DEV_CENTER_NETWORK_CONNECTION_NAME\" \
     --resource-group $RESOURCE_GROUP \
     --dev-center $DEV_CENTER_NAME"
 execute_command_exit_on_failure "$command" _command_output _command_status
 echo "Created Azure Dev Center Attached network successfully."
-#TODO: Check if this is correct, there is another -ntwkcon-001 also in the script
 #endregion Create Dev Center Attached Network
 
 #region Create Dev center pool
@@ -142,10 +143,9 @@ command="az devcenter admin pool create \
     --project \"$PROJECT\" \
     --resource-group \"$RESOURCE_GROUP\" \
     --location \"$LOCATION\" \
-    --network-connection-name \"xmew1-dop-c-${customer_OEM_suffix}-${project_name}-ntwk-001\""
+    --network-connection-name \"$DEV_CENTER_ATTACHED_NETWORK_CONNECTION_NAME\""
 execute_command_exit_on_failure "$command" _command_output _command_status
 echo "Azure Dev Center Pool created successfully."
-#TODO: Check if this is correct, there is another -ntwkcon-001 also in the script
 #endregion Create Dev center pool
 
 echo_output_dictionary_to_output_file

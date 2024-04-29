@@ -2,19 +2,21 @@
 
 #region Configuration
 config:
-  resource_name_primary_prefix: <RESOURCE_NAME_PRIMARY_PREFIX Example. 'xmew1' > 
+  resource_name_primary_prefix: <RESOURCE_NAME_PRIMARY_PREFIX Example. 'xmew1' >
   resource_name_secondary_prefix: <RESOURCE_NAME_SECONDARY_PREFIX Example. 'dop'>
 
   #region project configuration
   project_config:
-    project_name: <PROJECT_NAME>  
+    project_name: <PROJECT_NAME>
     description: <PROJECT_DESCRIPTION>
     version: <VERSION>
-    author: <PROJECT_AUTHOR> 
+    author: <PROJECT_AUTHOR>
 
     environment_stage: development
     oem_identifier: <CUSTOMER_OEM_IDENTIFIER>
-  
+
+    job_id:
+    build_id:
     interactive_execution: true
   #endregion project configuration
 
@@ -23,13 +25,7 @@ config:
     azure_region: <AZURE_REGION>
     target_subscription_id: <TARGET_SUBSCRIPTION_ID>
 
-    vmss_resource_group: <VMSS_RESOURCE_GROUP>
-    vmss_name: <VMSS_NAME>
-
-    customer_key_vault_name: <CUSTOMER_KEY_VAULT_NAME>
-    
     devbox_image_definition_name: <SHARED_IMAGE_DEFINITION_NAME_DevBox>
-    devbox_image_version: <SHARED_IMAGE_VERSION_DevBox> # if this is not specified, az vm create will default to latest version #TODO: Discuss if this default behavior is implemented?
     devbox_sku:
       capacity: 1
       family: <DEVBOX_SKU_FAMILY>
@@ -41,20 +37,12 @@ config:
 
   #region shared stamp configuration
   shared_stamp_config:
-    compute_gallery_name: <SHARED_COMPUTE_GALLERY_NAME>
-    shared_key_vault_name: <SHARED_KEY_VAULT_NAME>
-    
-    meta_model_outputs_file_share_name: <FILE_SHARE_NAME used by sdv-tool-chain and symphony> 
-
-    ade_repository: #TODO: Discuss what is the motivation for this section?
-      name: <ADE_REPO_NAME>
-      owner: <ADE_REPO_OWNER>
-      branch: <ADE_REPO_BRANCH>
-      path: <ADE_REPO_PATH>
+    compute_gallery_name: Computegalleryid
+    meta_model_outputs_file_share_name: avldevops
   #endregion shared stamp configuration
 
   #region co_simulation stack configuration
-  #TODO: Discuss if this section SHOULD be used by symphony or the tool-chain
+  #TODO: Currently not used. Discuss if this has any significance.
   co_simulation_stack:
     os: # this part will help select the right image from the shared compute gallery
       class: Windows
@@ -69,7 +57,6 @@ config:
   #endregion co_simulation stack configuration
 
   #region reporting stack configuration
-  #TODO: Discuss if this section SHOULD be part of artifact collection?
   reporting_stack:
     TestReportTemplateLibrary:
       - BlockName: Report
@@ -80,29 +67,29 @@ config:
         SubSys:
           - Name: Next-E-Truck_v5
             ModuleFilePath: Projects_Repo/Next-E-Truck/Reporting_Layouts/Cycle_and_EnergySummary/Next-E-Truck_v5.cly
-    # everything in or below this path gets copied to the shared location #TODO: Discuss what below in this context means? Can there be multiple? So, can this be converted to an array?
+    # everything in or below this path gets copied to the shared location 
+    #TODO: Discuss what below in this context means? Can there be multiple? Current implementation supports only one.
     ResultsReturnPath: Projects_Repo/ReturnPath
   #endregion reporting stack configuration
 
   #region additional software stack configuration
   additional_software_stack:
-    # ModelConnect.py: #TODO: Discuss. Any rationale behind using a object instead of an Array? Can we have this as an array? 
-    - name: ModelConnect.py
+    - name: co_simulation.py
+      script: build_model_connect_project
       version: 1.1
       DownloadSource:
-        Type: <SOURCE_TYPE> # currently supported is GitHub or JFrog
+        Type: GitHub # currently supported is GitHub or JFrog
         Secret: <UNIQUE_SECRET_NAME>
-        LocationURL: <LOCATION_URL> # e.g. JFrog://home/ModelConnect/2021.1      
-      FilePath: <FILE_PATH> # e.g. /python/ModelConnect.py (the path, must be relative to the LocationURL)
+        LocationURL: workflow_repo # e.g. JFrog://home/ModelConnect/2021.1
+      FilePath: dopapi\co_simulation.py # e.g. /python/ModelConnect.py (the path, must be relative to the LocationURL)
 
       # build_script can be left empty if the tool runs out of the box without any installation/building required
       BuildScriptPath: <BUILD_SCRIPT_PATH>
-      BuildScriptType: <BUILD_SCRIPT_TYPE> # ex. Powershell (or) Bash 
+      BuildScriptType: <BUILD_SCRIPT_TYPE> # ex. Powershell (or) Bash
   #endregion additional software stack configuration
 
-  #region model stack configuration 
+  #region model stack configuration
   model_stack:
-    #region modules Library configuration
     ModulesLibrary:
       PlantModelLibrary:
         - BlockName: BEV_Truck_Mdl
@@ -126,11 +113,11 @@ config:
           SubSys:
             - Name: Driver
               ModuleFilePath: model_releases/Driver/v1.0/FMU/Driver.fmu
-              TimeStepSize: 
-              XCPSettings: #TODO: Discuss, Comment in Line 114 conflicts with this. Currently we are not using XCPSettings section.
-                XCPSlave: 
-                HostIP: 
-                Port: 
+              TimeStepSize:
+              XCPSettings: #TODO: Discuss, Comment in Line 107 conflicts with this. Currently we are not using XCPSettings section.
+                XCPSlave:
+                HostIP:
+                Port:
               SubSysParam:
                 - Param: Driver_default
                   ParamFilePath: model_releases/Driver/v1.0/param/Driver_default.dcm
@@ -142,11 +129,11 @@ config:
           SubSys:
             - Name: TMS
               ModuleFilePath: model_releases/TMS/v3.0/FMU/TMS.fmu
-              TimeStepSize: 
+              TimeStepSize:
               XCPSettings:
-                XCPSlave: 
-                HostIP: 
-                Port: 
+                XCPSlave:
+                HostIP:
+                Port:
               SubSysParam:
                 - Param: TMS_default
                   ParamFilePath: model_releases/TMS/v3.0/param/TMS_default.dcm
@@ -158,28 +145,28 @@ config:
           SubSys:
             - Name: Simple_Cabin
               ModuleFilePath: model_releases/Cabin/v2.0/FMU/Simple_Cabin.fmu
-              TimeStepSize: 
+              TimeStepSize:
               XCPSettings:
-                XCPSlave: 
-                HostIP: 
-                Port: 
+                XCPSlave:
+                HostIP:
+                Port:
               SubSysParam:
                 - Param: Simple_Cabin_default
                   ParamFilePath: model_releases/Cabin/v2.0/Param/Simple_Cabin_default.dcm
       PredefinedDriveCycleLibrary:
         - BlockName: DriveCycle_Mdl
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: PAT_TOKEN_SECRET_NAME
+            LocationURL: model_releases
           SubSys:
             - Name: DriveCycle
-              ModuleFilePath: model_releases/DriveCycle/v2.0/DriveCycle_Built-in/FMU/DriveCycle.fmu
-              TimeStepSize: 
+              ModuleFilePath: /DriveCycle/v2.0/DriveCycle_Built-in/FMU/DriveCycle.fmu
+              TimeStepSize:
               XCPSettings:
-                XCPSlave: 
-                HostIP: 
-                Port: 
+                XCPSlave:
+                HostIP:
+                Port:
               SubSysParam: []
       ControllerModelLibrary:
         - BlockName: VehicleCtrl_ECU
@@ -190,11 +177,11 @@ config:
           SubSys:
             - Name: VCU
               ModuleFilePath: xcu_releases/VehicleContrUnit/v3.0/FMU/VCU.fmu
-              TimeStepSize: 
+              TimeStepSize:
               XCPSettings:
-                XCPSlave: 
-                HostIP: 
-                Port: 
+                XCPSlave:
+                HostIP:
+                Port:
               SubSysParam:
                 - Param: VehicleContr_default
                   ParamFilePath: xcu_releases/VehicleContrUnit/v1.0/param/VehicleContr_default.dcm
@@ -206,11 +193,11 @@ config:
           SubSys:
             - Name: TCU_Simple
               ModuleFilePath: xcu_releases/TransmissionContrUnit/v1.0/FMU/TCU_Simple.fmu
-              TimeStepSize: 
+              TimeStepSize:
               XCPSettings:
-                XCPSlave: 
-                HostIP: 
-                Port: 
+                XCPSlave:
+                HostIP:
+                Port:
               SubSysParam:
                 - Param: TransmissionContr_default
                   ParamFilePath: xcu_releases/TransmissionContrUnit/v1.0/param/TransmissionContr_default.dcm
@@ -222,11 +209,11 @@ config:
           SubSys:
             - Name: Controller_NextETruck_2023
               ModuleFilePath: xcu_releases/TMSContr/v1.0/FMU/Controller_NextETruck_2023.fmu
-              TimeStepSize: 
+              TimeStepSize:
               XCPSettings:
-                XCPSlave: 
-                HostIP: 
-                Port: 
+                XCPSlave:
+                HostIP:
+                Port:
               SubSysParam:
                 - Param: TMSContr_default
                   ParamFilePath: xcu_releases/TMSContr/v1.0/param/TMSContr_default.dcm
@@ -238,11 +225,11 @@ config:
           SubSys:
             - Name: EAxle_Controller
               ModuleFilePath: xcu_releases/EAxleContrUnit/EAxle_Controller/v1.0/FMU/EAxle_Controller.fmu
-              TimeStepSize: 
+              TimeStepSize:
               XCPSettings:
-                XCPSlave: 
-                HostIP: 
-                Port: 
+                XCPSlave:
+                HostIP:
+                Port:
               SubSysParam:
                 - Param: EAxle_Ctrl_default
                   ParamFilePath: xcu_releases/EAxleContrUnit/EAxle_Controller/v1.1/param/EAxle_Ctrl_default.dcm
@@ -254,11 +241,11 @@ config:
           SubSys:
             - Name: ChargingControlUnit
               ModuleFilePath: xcu_releases/ChargingContrUnit/v1.0/FMU/ChargingControlUnit.fmu
-              TimeStepSize: 
+              TimeStepSize:
               XCPSettings:
-                XCPSlave: 
-                HostIP: 
-                Port: 
+                XCPSlave:
+                HostIP:
+                Port:
               SubSysParam:
                 - Param: ChargingUnitContr_default
                   ParamFilePath: xcu_releases/ChargingContrUnit/v1.0/param/ChargingUnitContr_default.dcm
@@ -270,11 +257,11 @@ config:
           SubSys:
             - Name: Cabin_Controller
               ModuleFilePath: xcu_releases/CabinContrUnit/v1.0/FMU/Cabin_Controller.fmu
-              TimeStepSize: 
+              TimeStepSize:
               XCPSettings:
-                XCPSlave: 
-                HostIP: 
-                Port: 
+                XCPSlave:
+                HostIP:
+                Port:
               SubSysParam:
                 - Param: CabinContr_default
                   ParamFilePath: xcu_releases/CabinContrUnit/v1.0/param/CabinContr_default.dcm
@@ -312,8 +299,8 @@ config:
           SubSys:
             - Name: Func_Total_Power_Demand
               ModuleFilePath: Projects_Repo/Next-E-Truck/Functions/Total_Power_Demand/Func_Total_Power_Demand.py
-      ConstantLibrary: #TODO: Discuss why this section doesn't follow the same structure as above? Why is DownloadSource missing?
-        - BlockName: BC_01 
+      ConstantLibrary:
+        - BlockName: BC_01
           SubSys:
             - Name: RHair_Amb
               Value: 0.3
@@ -330,13 +317,13 @@ config:
             - Name: vVV_ExtAirAmbTemp_C
               Value: 50
               Unit: temperature~degC
-    #endregion modules Library configuration
-  #endregion model stack configuration 
+  #endregion model stack configuration
 
   #region variations configuration
+  #TODO: Currently not used. Discuss if this has any significance.
   variations:
     # NOTICE: the variations are work in progress and not yet implemented
-    # 
+    #
     # the variations can also be empty, meaning that there is only one variation of the model
     # here we can define the variations of the model
     # for example, different drive cycles, different vehicle configurations, etc.
@@ -347,7 +334,7 @@ config:
       expected_runtime: 10 # expected runtime in minutes
       PlantModelLibrary:
         - BlockName: BEV_Truck_Mdl
-          RootPath: '' #TODO: Discuss why this is still present (all occurrences above are deprecated)?
+          RootPath: "" #TODO: Discuss why this is still present (all occurrences above are deprecated)?
           download_source:
             type: <GitHub or JFrog>
             secret: <secret_name>
@@ -355,7 +342,7 @@ config:
           SubSys:
             - Name: BEV_Truck_1Spd
               ModuleFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/FMU/BEV_Truck_1Spd.fmu
-              TimeStepSize: 
+              TimeStepSize:
               SubSysParam:
                 - Param: BEV_Truck_1Spd_default
                   ParamFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/param/BEV_Truck_1Spd_default.dcm
@@ -363,7 +350,7 @@ config:
       expected_runtime: 240
       PlantModelLibrary:
         - BlockName: BEV_Truck_Mdl
-          RootPath: ''
+          RootPath: ""
           download_source:
             type: <GitHub or JFrog>
             secret: <secret_name>
@@ -371,28 +358,28 @@ config:
           SubSys:
             - Name: BEV_Truck_1Spd
               ModuleFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.2/FMU/BEV_Truck_1Spd.fmu
-              TimeStepSize: 
+              TimeStepSize:
               SubSysParam:
                 - Param: BEV_Truck_1Spd_default
                   ParamFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/param/BEV_Truck_1Spd_default.dcm
   #endregion variations configuration
 
   #region XCP monitor configuration
+  #TODO: Currently not used. Discuss if this has any significance.
   XCP_monitor_config:
-    # module_name: BEV_Truck_1Spd #TODO: Fix tis. Incorrect yaml format. Not currently used
     - module_name: BEV_Truck_1Spd
       XCPSettings:
-        XCPSlave: 
-        HostIP: 
-        Port: 
+        XCPSlave:
+        HostIP:
+        Port: 0
   #endregion XCP monitor configuration
 
   #region Symphony Configuration
   symphony:
-    toolchain_output_path: <TOOLCHAIN_OUTPUT_PATH> 
+    toolchain_output_path: /app/mnt
     agent:
       port: 8098
-    base_url: localhost
+    base_url: http://192.168.0.75
   #endregion Symphony Configuration
 #endregion Configuration
 

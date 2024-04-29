@@ -1,4 +1,4 @@
-name: RunCampaign
+name: Creare and Activate Symphony Campaign
 
 on:
   workflow_dispatch:
@@ -79,3 +79,5 @@ jobs:
             token=$(curl -X POST -d '{"username":"admin", "password":""}' http://192.168.0.102:8082/v1alpha2/users/auth | jq -r '.accessToken')
             curl -X POST -d @deploy_avl_devops_symphony_campaign.json -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/campaigns/deploy_avl_devops_symphony_campaign_test
             curl -X POST -d @symphony_campaign_activation.json -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/deploy_avl_devops_symphony_campaign_test
+
+            #TODO: Wait for campaign to complete, implement a polling mechanism on loop to query the campaign status
