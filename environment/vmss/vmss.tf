@@ -49,7 +49,7 @@ variable "admin_password_length" {
 }
 
 variable "location" {
-  default = "westeurope"
+  //default = "westeurope"
 }
 
 variable "environmentStage" {
@@ -60,11 +60,23 @@ variable "gallery_name" {
   //default = "xmew1dopsstampdcomputegallery001"
 }
 variable "image"{
-  default = "mc-concerto"
+  //default = "mc-concerto"
   // $image_name="$image_offer`ModelConnect$MCBaseVersion`Concerto$ConcertoVersion"
 }
 variable "SHARED_RESOURCE_GROUP"{
   // default = "xmew1-dop-s-stamp-d-rg-001"
+}
+variable "storage_account_type"{
+  //default = "Standard_LRS"
+}
+variable "caching"{
+  //default = "ReadWrite"
+}
+variable "sku"{
+  //default = "Standard_B2als_v2"
+}
+variable "instances"{
+  //default = "1"
 }
 
 data "azurerm_resource_group" "example" {
@@ -142,8 +154,8 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   name                = "xmew1-dop-c-${var.customerOEMsuffix}-p-${var.projectname}-${var.environmentStage}-vmss-${var.vmss_uniquesuffix}"
   resource_group_name = data.azurerm_resource_group.example.name
   location            = var.location
-  sku                 = "Standard_B2als_v2"
-  instances           = 1
+  sku                 = var.sku
+  instances           = var.instances
   admin_username      = var.admin_username
   //admin_password      = random_password.vmss_password.result  
   admin_password      = azurerm_key_vault_secret.admin_password_secret.value
@@ -154,8 +166,8 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   source_image_id = local.filtered_images[0].id
 
   os_disk {
-    storage_account_type = "Standard_LRS"
-    caching              = "ReadWrite"
+    storage_account_type = var.storage_account_type
+    caching              = var.caching
   }
 
   network_interface {

@@ -32,3 +32,27 @@ parameters:
     name: "sharestampdresourcegroup"
     required: true
     type: "string"
+  - id: "storage_account_type"
+    name: "storageaccounttype"
+    required: true
+    type: "string"
+  - id: "instances"
+    name: "instances"
+    required: true
+    type: "string"
+  - id: "caching"
+    name: "caching"
+    required: true
+    type: "string"
+  - id: "sku"
+    name: "sku"
+    required: true
+    type: "string"
+  - id: "location"
+    name: "location"
+    required: true
+    type: "string"
+  - id: "image"
+    name: "image"
+    required: true
+    type: "string"
