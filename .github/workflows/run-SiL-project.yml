@@ -42,10 +42,10 @@ jobs:
       - name: Validate Metamodel 
         run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel validate --from-file  ${{ env.METAMODEL_YAML }}
 
-      - name: Generate Campaign Data for Metamodel 
+      - name: Generate Campaign and Scripts for Metamodel 
         run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel execute --from-file  ${{ env.METAMODEL_YAML }} --output-dir  ${{ env.METAMODEL_OUTPUT_DIR }}
       
-      - name: Zip the output 
+      - name: Zip Metamodel output 
         working-directory: ${{ env.METAMODEL_OUTPUT_DIR }}
         run: |
           cp ${{ env.METAMODEL_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
@@ -63,7 +63,7 @@ jobs:
     environment: sub-AVL_DevopsPilot
 
     steps:
-      - name: Get_Metamodel Output from Build
+      - name: Download output from previous job
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
@@ -73,14 +73,14 @@ jobs:
           mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
           unzip ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -d ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}          
     
-      - name: 'Az CLI login'
+      - name: Az CLI login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Upload Output Files to file share
+      - name: Upload output files to file share
         shell: pwsh
         run: |
           cd ${{ env.WORKFLOW_ARTIFACT_NAME }}
@@ -125,7 +125,7 @@ jobs:
     environment: sub-AVL_DevopsPilot
     
     steps:
-      - name: Get Metamodel Output from Build
+      - name: Download output from previous job
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
@@ -140,4 +140,3 @@ jobs:
         run: |
           cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign"
           bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign//symphony_api_calls.sh"
-          
