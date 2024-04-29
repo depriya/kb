@@ -30,7 +30,7 @@ config:
   ade_config:
     vmsssuffix: 006
 
-  devbox_sku:  
+  devbox_config:  
     suffix: 006
     devbox_image_name: Test001
     capacity: 1
