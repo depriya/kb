@@ -2,37 +2,37 @@
 
 #region Configuration
 config:
-  resource_name_primary_prefix: <RESOURCE_NAME_PRIMARY_PREFIX Example. 'xmew1' >
-  resource_name_secondary_prefix: <RESOURCE_NAME_SECONDARY_PREFIX Example. 'dop'>
+  resource_name_primary_prefix: xmew1
+  resource_name_secondary_prefix: dop
 
   #region project configuration
   project_config:
-    project_name: <PROJECT_NAME>
-    description: <PROJECT_DESCRIPTION>
-    version: <VERSION>
-    author: <PROJECT_AUTHOR>
+    project_name: pj2
+    description: pj2 description
+    version: 0.1.0
+    author: pj2 author
 
     environment_stage: development
-    oem_identifier: <CUSTOMER_OEM_IDENTIFIER>
+    oem_identifier: tstoem
 
     job_id:
     build_id:
-    interactive_execution: true
+    interactive_execution: false
   #endregion project configuration
 
   #region customer stamp configuration
   customer_stamp_config:
-    azure_region: <AZURE_REGION>
-    target_subscription_id: <TARGET_SUBSCRIPTION_ID>
+    azure_region: westeurope
+    target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
 
-    devbox_image_definition_name: <SHARED_IMAGE_DEFINITION_NAME_DevBox>
+    devbox_image_definition_name: microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os
     devbox_sku:
       capacity: 1
-      family: <DEVBOX_SKU_FAMILY>
-      compute: <DEVBOX_SKU_COMPUTE>
-      size: <DEVBOX_SKU_SIZE>
-      tier: <DEVBOX_SKU_TIER>
-      osstoragetype: <DEVBOX_SKU_OS_STORAGE_TYPE>
+      family: Standard
+      compute: general_i_8c32gb256ssd_v2
+      size: Standard_DS1_v2
+      tier: Standard
+      osstoragetype: ssd_256gb
   #endregion customer stamp configuration
 
   #region shared stamp configuration
@@ -67,7 +67,7 @@ config:
         SubSys:
           - Name: Next-E-Truck_v5
             ModuleFilePath: Projects_Repo/Next-E-Truck/Reporting_Layouts/Cycle_and_EnergySummary/Next-E-Truck_v5.cly
-    # everything in or below this path gets copied to the shared location 
+    # everything in or below this path gets copied to the shared location
     #TODO: Discuss what below in this context means? Can there be multiple? Current implementation supports only one.
     ResultsReturnPath: Projects_Repo/ReturnPath
   #endregion reporting stack configuration

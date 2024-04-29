@@ -20,7 +20,6 @@ jobs:
       TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
       TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
       METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
-      METAMODEL_OVERRIDES_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template_overrides.yaml
       METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel 
 
     steps:
@@ -41,15 +40,15 @@ jobs:
           pip install -r ${{ env.TOOlCHAIN_ROOT_PATH }}/requirements_test.txt
 
       - name: Validate Metamodel 
-        run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel validate --from-file  ${{ env.METAMODEL_YAML }} --override  ${{ env.METAMODEL_OVERRIDES_YAML}}
+        run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel validate --from-file  ${{ env.METAMODEL_YAML }}
 
       - name: Generate Campaign Data for Metamodel 
-        run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel execute --from-file  ${{ env.METAMODEL_YAML }} --override  ${{ env.METAMODEL_OVERRIDES_YAML}} --output-dir  ${{ env.METAMODEL_OUTPUT_DIR }}
+        run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel execute --from-file  ${{ env.METAMODEL_YAML }} --output-dir  ${{ env.METAMODEL_OUTPUT_DIR }}
       
       - name: Zip the output 
         working-directory: ${{ env.METAMODEL_OUTPUT_DIR }}
         run: |
-          cp ${{ env.METAMODEL_OVERRIDES_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
+          cp ${{ env.METAMODEL_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
           zip -r ${{ env.WORKFLOW_ARTIFACT_NAME }} *
       
       - name: Publish Metamodel Output
