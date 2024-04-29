@@ -54,6 +54,10 @@ caching=$(echo $config | jq -r '.ade_config.caching')
 target_subscription_id=$(echo $config | jq -r '.customer_stamp_config.target_subscription_id')
 compute_gallery_managedid=$(echo $config | jq -r '.shared_stamp_config.compute_gallery_managedid')
 compute_gallery_name=$(echo $config | jq -r '.shared_stamp_config.compute_gallery_name')
+class=$(echo $config | jq -r '.co_simulation_stack.os.class')
+osversion=$(echo $config | jq -r '.co_simulation_stack.os.version')
+modelconnectversion=$(echo $config | jq -r '.co_simulation_stack.tools.simulator.version')
+concertoversion=$(echo $config | jq -r '.co_simulation_stack.tools.reportings.version')
 
 #endregion parameters - get from config
 
@@ -71,6 +75,8 @@ PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${o
 echo "setting project name $PROJECT"
 KEY_VAULT_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-kv"
 echo "setting key vault name $KEY_VAULT_NAME"
+IMAGE_NAME="${class}-${osversion}ModelConnect${modelconnectversion}Concerto${concertoversion}"
+echo "setting image name $IMAGE_NAME"
 #endregion Set the variables
 
 #region Install Azure Dev Center extension
@@ -189,7 +195,7 @@ command="az devcenter dev environment create \
             --project-name \"$PROJECT\" \
             --catalog-name \"$DEV_CENTER_CATALOG_NAME\" \
             --environment-definition-name \"$ENVIRONMENT_DEFINITION_NAME\" \
-            --parameters '{\"customerOEMsuffix\":\"${oem_identifier}\",\"admin_username\":\"${ADMIN_USER}\",\"environmentStage\":\"${environment_stage_short}\",\"vmss_uniquesuffix\":\"${vmsssuffix}\",\"sku\":\"${sku}\",\"instances\":\"${instances}\",\"storage_account_type\":\"${storage_account_type}\",\"caching\":\"${caching}\",\"compute_gallery_name\":\"${compute_gallery_name}\",\"SHARED_RESOURCE_GROUP\":\"${SHARED_RESOURCE_GROUP}\",\"projectname\":\"${project_name}\"}'"
+            --parameters '{\"customerOEMsuffix\":\"${oem_identifier}\",\"admin_username\":\"${ADMIN_USER}\",\"environmentStage\":\"${environment_stage_short}\",\"vmss_uniquesuffix\":\"${vmsssuffix}\",\"sku\":\"${sku}\",\"instances\":\"${instances}\",\"storage_account_type\":\"${storage_account_type}\",\"caching\":\"${caching}\",\"compute_gallery_name\":\"${compute_gallery_name}\",\"SHARED_RESOURCE_GROUP\":\"${SHARED_RESOURCE_GROUP}\",\"IMAGE_NAME\":\"${IMAGE_NAME}\",\"projectname\":\"${project_name}\"}'"
 execute_command_exit_on_failure "$command" _command_output _command_status
 echo "Created Dev Environment: $ENVIRONMENT_NAME"
 #endregion Create Dev Environment

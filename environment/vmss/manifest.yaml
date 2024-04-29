@@ -52,7 +52,7 @@ parameters:
     name: "location"
     required: true
     type: "string"
-  - id: "image"
-    name: "image"
+  - id: "IMAGE_NAME"
+    name: "imagename"
     required: true
     type: "string"

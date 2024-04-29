@@ -59,7 +59,7 @@ variable "environmentStage" {
 variable "gallery_name" {
   //default = "xmew1dopsstampdcomputegallery001"
 }
-variable "image"{
+variable "IMAGE_NAME"{
   //default = "mc-concerto"
   // $image_name="$image_offer`ModelConnect$MCBaseVersion`Concerto$ConcertoVersion"
 }
@@ -102,24 +102,31 @@ data "azurerm_shared_image_gallery" "example"{
       resource_group_name = var.SHARED_RESOURCE_GROUP
       name        = var.gallery_name
 }
-data "azurerm_shared_image" "all" {
-  for_each = toset(data.azurerm_shared_image_gallery.example.image_names)
 
-  name                = each.value
+data "azurerm_shared_image" "all" {
+  name                = var.IMAGE_NAME
   resource_group_name = var.SHARED_RESOURCE_GROUP
   gallery_name        = var.gallery_name
 }
+
+//data "azurerm_shared_image" "all" {
+  //for_each = toset(data.azurerm_shared_image_gallery.example.image_names)
+
+  //name                = each.value
+  //resource_group_name = var.SHARED_RESOURCE_GROUP
+  //gallery_name        = var.gallery_name
+//}
 // make it variable - sms
-locals {
-  filtered_images = [
-    for image in values(data.azurerm_shared_image.all) :
-    image
-    if image.name != null && can(regex("${var.image}", image.name))    
-  ]
-}
-output "filtered_images" {
-  value = local.filtered_images
-}
+//locals {
+  //filtered_images = [
+    //for image in values(data.azurerm_shared_image.all) :
+    //image
+    //if image.name != null && can(regex("${var.IMAGE_NAME}", image.name))    
+  //]
+//}
+//output "filtered_images" {
+  //value = local.filtered_images
+//}
 
 resource "random_password" "vmss_password" {
   length  = var.admin_password_length
@@ -163,7 +170,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "example" {
   secure_boot_enabled = true
   vtpm_enabled = true
 
-  source_image_id = local.filtered_images[0].id
+  source_image_id = data.azurerm_shared_image.all.id
 
   os_disk {
     storage_account_type = var.storage_account_type
