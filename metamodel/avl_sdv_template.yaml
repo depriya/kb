@@ -379,10 +379,11 @@ config:
 
   #region Symphony Configuration
   symphony:
+    campaign_name: deploy_avl_devops_symphony_campaign
     toolchain_output_path: /app/mnt
     agent:
-      port: 8098
-    base_url: http://192.168.0.75
+      port: 8082
+    base_url: http://192.168.0.102:8082/v1alpha2
   #endregion Symphony Configuration
 #endregion Configuration
 

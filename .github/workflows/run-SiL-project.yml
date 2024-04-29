@@ -1,4 +1,4 @@
-name: Generate Symphony Campaign
+name: Run SiL Project
 
 on:
   workflow_dispatch:
@@ -12,8 +12,8 @@ env:
   CONFIG_FILE_YAML: metamodel-config-${{ github.run_id }}.yaml
 
 jobs:
-  build:
-    runs-on: ubuntu-latest #TODO: Discuss and decide on the runner type
+  Generate_Campaign_from_Metamodel:
+    runs-on: ubuntu-latest #TODO: Change the Runner Type
     environment: sub-AVL_DevopsPilot
     
     env:
@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 #TODO: Discuss if this should be triggered from this repo or external.
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -57,13 +57,13 @@ jobs:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
           path: ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.WORKFLOW_ARTIFACT_NAME }}.zip
 
-  upload:
-    needs: build
-    runs-on: ubuntu-latest #TODO: Discuss and decide on the runner type
+  Upload_Campaign_and_Scripts_to_File_Share:
+    needs: Generate_Campaign_from_Metamodel
+    runs-on: ubuntu-latest #TODO: Change the Runner Type
     environment: sub-AVL_DevopsPilot
 
     steps:
-      - name: Get Metamodel Output from Build
+      - name: Get_Metamodel Output from Build
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
@@ -119,3 +119,23 @@ jobs:
             --account-key $storage_key `
             --share-name "$meta_model_outputs_file_share_name" 
         
+  Create_and_Activate_Symphony_Campaign:
+    needs: Upload_Campaign_and_Scripts_to_File_Share
+    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner Type
+    environment: sub-AVL_DevopsPilot
+    
+    steps:
+      - name: Get Metamodel Output from Build
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
+        
+      - name: Unzip the output
+        shell: pwsh
+        run: |
+          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}
+          
+      - name: Create and Activate Symphony Campaign
+        run: bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign//symphony_api_calls.sh"
+          
