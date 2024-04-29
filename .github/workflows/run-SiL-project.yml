@@ -58,12 +58,12 @@ jobs:
           path: ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.WORKFLOW_ARTIFACT_NAME }}.zip
 
   Upload_Campaign_and_Scripts_to_File_Share:
-    needs: Generate Campaign from Metamodel
+    needs: Generate_Campaign_from_Metamodel
     runs-on: ubuntu-latest #TODO: Change the Runner Type
     environment: sub-AVL_DevopsPilot
 
     steps:
-      - name: Get Metamodel Output from Build
+      - name: Get_Metamodel Output from Build
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
