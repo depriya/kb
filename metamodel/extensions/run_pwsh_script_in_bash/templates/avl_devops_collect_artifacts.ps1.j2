@@ -38,27 +38,27 @@ $MODEL_STACK = $config.model_stack
 #TODO: Discuss, are these parameters now obselete?
 $JFROG_DOWNLOAD_URL = "$($config.jfrog.download_url)"
 $JFROG_TOKEN_SECRET_NAME = "$($config.jfrog.token_secret_name)"
-$REPOS_TO_CLONE = $config.clone_github_repositories
+#$REPOS_TO_CLONE = $config.clone_github_repositories
 #endregion parameters - get from config
 
 az login --identity
 
 #TODO: Discuss, Is this region now obselete?
 #region clone github repositories using pat token
-Write-Host "Cloning github repositories using pat token"
-foreach ($repo in $REPOS_TO_CLONE) {
-    $command = "az keyvault secret show --vault-name $STAGING_KV_NAME --name $($repo.pat_token_secret_name) --query value -o tsv "
-    $github_pat_token = ""
-    $command_status = 0
-    Invoke-Command-ExitOnFailure -c $command -o $github_pat_token -s $command_status
+# Write-Host "Cloning github repositories using pat token"
+# foreach ($repo in $REPOS_TO_CLONE) {
+#     $command = "az keyvault secret show --vault-name $STAGING_KV_NAME --name $($repo.pat_token_secret_name) --query value -o tsv "
+#     $github_pat_token = ""
+#     $command_status = 0
+#     Invoke-Command-ExitOnFailure -c $command -o $github_pat_token -s $command_status
 
-    $repoCloneUrl = "https://$($github_pat_token)@github.com/$($repo.organisation)/$($repo.repository).git"
-    $command = "git clone ""$($repoCloneUrl)"" --depth 1 --no-tags"
-    $command_output = ""
-    $command_status = 0
-    Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
-}
-Write-Host "Completed cloning github repositories."
+#     $repoCloneUrl = "https://$($github_pat_token)@github.com/$($repo.organisation)/$($repo.repository).git"
+#     $command = "git clone ""$($repoCloneUrl)"" --depth 1 --no-tags"
+#     $command_output = ""
+#     $command_status = 0
+#     Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
+# }
+# Write-Host "Completed cloning github repositories."
 #endregion clone github repositories using pat token
 
 #TODO: Discuss, Is this region now obselete?
@@ -122,7 +122,13 @@ foreach ($item in $ARRAY_TO_PROCESS) {
                 $segments = $LocationURL -split '/'
                 $repo_organisation = $segments[3]
                 $repo_name = $segments[4] -replace '\.git$', ''
-                git clone https://$($github_pat_token)@github.com/$($repo_organisation)/$($repo_name).git
+                if (-not (Test-Path -LiteralPath $repo_name)) {
+                    try {
+                        git clone https://$($github_pat_token)@github.com/$($repo_organisation)/$($repo_name).git
+                    } catch {
+                       Write-Error "Unable to create directory '$DirectoryToCreate'."
+                    }
+                }
             }
             foreach ($subSys in $item.SubSys) {
                 if ($subSys.GetType().BaseType.Name -eq "Object" -and $subSys.PSObject.Properties.Name -contains "ModuleFilePath" -and $null -ne $subSys.ModuleFilePath) {

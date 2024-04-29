@@ -74,8 +74,8 @@ config:
     TestReportTemplateLibrary:
       - BlockName: Report
         DownloadSource:
-          Type: <SOURCE_TYPE> # currently supported is GitHub or JFrog
-          Secret: <UNIQUE_SECRET_NAME>
+          Type: GitHub # currently supported is GitHub or JFrog
+          Secret: GithubPatToken
           LocationURL: <LOCATION_URL>
         SubSys:
           - Name: Next-E-Truck_v5
@@ -90,7 +90,7 @@ config:
     - name: ModelConnect.py
       version: 1.1
       DownloadSource:
-        Type: <SOURCE_TYPE> # currently supported is GitHub or JFrog
+        Type: GitHub # currently supported is GitHub or JFrog
         Secret: <UNIQUE_SECRET_NAME>
         LocationURL: <LOCATION_URL> # e.g. JFrog://home/ModelConnect/2021.1      
       FilePath: <FILE_PATH> # e.g. /python/ModelConnect.py (the path, must be relative to the LocationURL)
@@ -120,9 +120,9 @@ config:
                   ParamFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/param/BEV_Truck_1Spd_default.dcm # the path to the parameter file, must be relative to the LocationURL
         - BlockName: Driver_Mdl
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/model_releases.git
           SubSys:
             - Name: Driver
               ModuleFilePath: model_releases/Driver/v1.0/FMU/Driver.fmu
@@ -136,9 +136,9 @@ config:
                   ParamFilePath: model_releases/Driver/v1.0/param/Driver_default.dcm
         - BlockName: TMS_Mdl
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/model_releases.git
           SubSys:
             - Name: TMS
               ModuleFilePath: model_releases/TMS/v3.0/FMU/TMS.fmu
@@ -152,9 +152,9 @@ config:
                   ParamFilePath: model_releases/TMS/v3.0/param/TMS_default.dcm
         - BlockName: Cabin_Mdl
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/model_releases.git
           SubSys:
             - Name: Simple_Cabin
               ModuleFilePath: model_releases/Cabin/v2.0/FMU/Simple_Cabin.fmu
@@ -169,9 +169,9 @@ config:
       PredefinedDriveCycleLibrary:
         - BlockName: DriveCycle_Mdl
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/model_releases.git
           SubSys:
             - Name: DriveCycle
               ModuleFilePath: model_releases/DriveCycle/v2.0/DriveCycle_Built-in/FMU/DriveCycle.fmu
@@ -184,9 +184,9 @@ config:
       ControllerModelLibrary:
         - BlockName: VehicleCtrl_ECU
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/xcu_releases.git
           SubSys:
             - Name: VCU
               ModuleFilePath: xcu_releases/VehicleContrUnit/v3.0/FMU/VCU.fmu
@@ -200,9 +200,9 @@ config:
                   ParamFilePath: xcu_releases/VehicleContrUnit/v1.0/param/VehicleContr_default.dcm
         - BlockName: TransmissionCtrl_ECU
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/xcu_releases.git
           SubSys:
             - Name: TCU_Simple
               ModuleFilePath: xcu_releases/TransmissionContrUnit/v1.0/FMU/TCU_Simple.fmu
@@ -216,9 +216,9 @@ config:
                   ParamFilePath: xcu_releases/TransmissionContrUnit/v1.0/param/TransmissionContr_default.dcm
         - BlockName: TMSCtrl_ECU
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/xcu_releases.git
           SubSys:
             - Name: Controller_NextETruck_2023
               ModuleFilePath: xcu_releases/TMSContr/v1.0/FMU/Controller_NextETruck_2023.fmu
@@ -232,9 +232,9 @@ config:
                   ParamFilePath: xcu_releases/TMSContr/v1.0/param/TMSContr_default.dcm
         - BlockName: EAxleCtrl_ECU
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/xcu_releases.git
           SubSys:
             - Name: EAxle_Controller
               ModuleFilePath: xcu_releases/EAxleContrUnit/EAxle_Controller/v1.0/FMU/EAxle_Controller.fmu
@@ -248,9 +248,9 @@ config:
                   ParamFilePath: xcu_releases/EAxleContrUnit/EAxle_Controller/v1.1/param/EAxle_Ctrl_default.dcm
         - BlockName: ChargingCtrl_ECU
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/xcu_releases.git
           SubSys:
             - Name: ChargingControlUnit
               ModuleFilePath: xcu_releases/ChargingContrUnit/v1.0/FMU/ChargingControlUnit.fmu
@@ -264,9 +264,9 @@ config:
                   ParamFilePath: xcu_releases/ChargingContrUnit/v1.0/param/ChargingUnitContr_default.dcm
         - BlockName: CabinContr_ECU
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/xcu_releases.git
           SubSys:
             - Name: Cabin_Controller
               ModuleFilePath: xcu_releases/CabinContrUnit/v1.0/FMU/Cabin_Controller.fmu
@@ -281,34 +281,34 @@ config:
       StimuliLibrary:
         - BlockName: ChargingStation
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/Projects_Repo.git
           SubSys:
             - Name: ChargingStation
               ModuleFilePath: Projects_Repo/Next-E-Truck/Stimuli/CSV/Charging_Station/ChargingStation.csv
         - BlockName: Powertrain_Transient
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/Projects_Repo.git
           SubSys:
             - Name: PowertrainTransient
               ModuleFilePath: Projects_Repo/Next-E-Truck/Stimuli/CSV/Powertrain_Transient/PowertrainTransient.csv
         - BlockName: Cycle_Switch
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/Projects_Repo.git
           SubSys:
             - Name: CycleSwitch
               ModuleFilePath: Projects_Repo/Next-E-Truck/Stimuli/CSV/Cycle_Switch/CycleSwitch.csv
       UserFunctionLibrary:
         - BlockName: Func_Total_PWD
           DownloadSource:
-            Type: <SOURCE_TYPE>
-            Secret: <UNIQUE_SECRET_NAME>
-            LocationURL: <LOCATION_URL>
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/Projects_Repo.git
           SubSys:
             - Name: Func_Total_Power_Demand
               ModuleFilePath: Projects_Repo/Next-E-Truck/Functions/Total_Power_Demand/Func_Total_Power_Demand.py
