@@ -41,7 +41,7 @@ variable "admin_username" {
   //default = "avluser"
 }
 variable "vmss_uniquesuffix" {
-  default = "012"
+  //default = "012"
 }
 variable "admin_password_length" {
   description = "The length of the generated admin password"
@@ -60,7 +60,8 @@ variable "gallery_name" {
   default = "xmew1dopsstampdcomputegallery001"
 }
 variable "image"{
-  default = "concerto"
+  default = "mc-concerto"
+  // $image_name="$image_offer`ModelConnect$MCBaseVersion`Concerto$ConcertoVersion"
 }
 
 data "azurerm_resource_group" "example" {
@@ -78,7 +79,7 @@ data "azurerm_virtual_network" "example" {
 }
 
 data "azurerm_subnet" "internal" {
-  name                 = "OEMSubnet"
+  name                 = "xmew1-dop-c-${var.customerOEMsuffix}-${var.environmentStage}-vnet-001-subnet"
   resource_group_name  = data.azurerm_resource_group.example.name
   virtual_network_name = data.azurerm_virtual_network.example.name
 }

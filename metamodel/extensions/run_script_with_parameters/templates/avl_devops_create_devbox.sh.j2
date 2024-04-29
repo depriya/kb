@@ -10,19 +10,6 @@ set -u
 
 source $(dirname $0)/symphony_stage_script_provider.sh
 
-#region Declare Constants
-echo "variable declation"
-LOCATION="westeurope"  #TODO: Discuss. Should this come from the config?
-IMAGE="Test001"
-#IMAGE="microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os" #TODO: Discuss. Should this come from the config?
-#endregion Declare Constants
-echo "SKU Details"
-capacity=1
-family="Standard"
-compute="general_i_8c32gb256ssd_v2"
-size="Standard_DS1_v2"
-tier="Standard"
-osstoragetype="ssd_256gb"
 echo "getting config from metamodel" 
 #region Getting config from metamodel config yaml
 configEncoded="{{ parameters.input_parameter_to_script }}"
@@ -31,29 +18,36 @@ config=$(echo $configEncoded | base64 -d)
 
 echo "parameters from config"
 #region parameters - get from config
-resource_name_primary_prefix=$(echo $config | jq -r '.resource_name_primary_prefix')
-resource_name_secondary_prefix=$(echo $config | jq -r '.resource_name_secondary_prefix')
-resource_name_shared_short=$(echo $config | jq -r '.resource_name_shared_short')
-resource_name_customer_short=$(echo $config | jq -r '.resource_name_customer_short')
-customer_OEM_suffix=$(echo $config | jq -r '.customer_OEM_suffix')
-project_name=$(echo $config | jq -r '.project_name')
-environment_stage_short=$(echo $config | jq -r '.environment_stage_short')
-subscription_id=$(echo $config | jq -r '.subscription_id')
-suffix=$(echo $config | jq -r '.suffix')
+resource_name_primary_prefix=$(echo $config | jq -r '.config.resource_name_primary_prefix')
+resource_name_secondary_prefix=$(echo $config | jq -r '.config.resource_name_secondary_prefix')
+oem_identifier=$(echo $config | jq -r '.project_config.oem_identifier')
+project_name=$(echo $config | jq -r '.project_config.project_name')
+environment_stage_short=$(echo $config | jq -r '.customer_stamp_config.environment_stage_short')
+target_subscription_id=$(echo $config | jq -r '.customer_stamp_config.target_subscription_id')
+suffix=$(echo $config | jq -r '.devbox_config.suffix')
+azure_region=$(echo $config | jq -r '.customer_stamp_config.azure_region')
+devbox_image_name=$(echo $config | jq -r '.devbox_config.devbox_image_name')
+capacity=$(echo $config | jq -r '.devbox_config.capacity')
+family=$(echo $config | jq -r '.devbox_config.family')
+compute=$(echo $config | jq -r '.devbox_config.compute')
+size=$(echo $config | jq -r '.devbox_config.size')
+tier=$(echo $config | jq -r '.devbox_config.tier')
+osstoragetype=$(echo $config | jq -r '.devbox_config.osstoragetype')
+compute_gallery_name=$(echo $config | jq -r '.shared_stamp_config.compute_gallery_name')
 
 #endregion parameters - get from config
 echo "setting the variables"
 #region Set the variables
-RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-rg-001"
-DEV_CENTER_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-dc"
-PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-p-${project_name}-${suffix}"
-DEVBOX_DEF_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${project_name}-devboxdef-${suffix}"
-VNET_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-vnet-001"
-DEV_CENTER_NETWORK_CONNECTION_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${project_name}-ntwkcon-${suffix}"
-NETWORK_CONNECTION_RG_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-${project_name}-rg-ntcon-${suffix}"
-DEV_CENTER_POOL_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${project_name}-pools-${suffix}"
-OEM_Subnet="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}-${customer_OEM_suffix}-${environment_stage_short}-vnet-001-subnet"
-network_connection_name="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-${resource_name_customer_short}${customer_OEM_suffix}-${project_name}-ntwk-${suffix}"
+RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-rg-001"
+DEV_CENTER_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-dc"
+PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-p-${project_name}-001"
+DEVBOX_DEF_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${project_name}-devboxdef-${suffix}"
+VNET_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-vnet-001"
+DEV_CENTER_NETWORK_CONNECTION_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${project_name}-ntwkcon-${suffix}"
+NETWORK_CONNECTION_RG_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-${project_name}-rg-ntcon-${suffix}"
+DEV_CENTER_POOL_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${project_name}-pools-${suffix}"
+OEM_Subnet="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-vnet-001-subnet"
+network_connection_name="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${project_name}-ntwk-${suffix}"
 
 #endregion Set the variables
 
@@ -76,12 +70,12 @@ echo "Creating Dev Box definition"
 commandCreateDevboxDef="az devcenter admin devbox-definition create \
     --dev-center $DEV_CENTER_NAME \
     --devbox-definition-name $DEVBOX_DEF_NAME \
-	--image-reference \"{\\\"id\\\": \\\"/subscriptions/$subscription_id/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/devcenters/$DEV_CENTER_NAME/galleries/xmew1dopsstampdcomputegallery001/images/$IMAGE\\\"}\" \
+	--image-reference \"{\\\"id\\\": \\\"/subscriptions/$target_subscription_id/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/devcenters/$DEV_CENTER_NAME/galleries/$compute_gallery_name/images/$devbox_image_name\\\"}\" \
     --os-storage-type $osstoragetype \
     --resource-group $RESOURCE_GROUP \
 	--sku \"{\\\"capacity\\\": $capacity, \\\"family\\\": \\\"$family\\\", \\\"name\\\": \\\"$compute\\\", \\\"size\\\": \\\"$size\\\", \\\"tier\\\": \\\"$tier\\\"}\" \
     --hibernate-support \"Disabled\" \
-    --location \"$LOCATION\""
+    --location \"$azure_region\""
 commandCreateDevboxDef_output=""
 commandCreateDevboxDef_status=0
 execute_command_with_status_code "$commandCreateDevboxDef" commandCreateDevboxDef_output commandCreateDevboxDef_status
@@ -114,7 +108,7 @@ commandCreateNetworkConnection="az devcenter admin network-connection create \
     --name \"$DEV_CENTER_NETWORK_CONNECTION_NAME\" \
     --resource-group $RESOURCE_GROUP \
     --subnet-id \"$commandGetSubnetId_output\" \
-    --location \"$LOCATION\" \
+    --location \"$azure_region\" \
     --networking-resource-group-name \"$NETWORK_CONNECTION_RG_NAME\""
 commandCreateNetworkConnection_output=""
 commandCreateNetworkConnection_status=0
@@ -145,7 +139,7 @@ echo "Got Network Connection ID is $commandGetNetworkConnectionId_output"
 echo "Creating Azure Dev Center attached network"
 commandCreateAttachedNetwork="az devcenter admin attached-network create \
     --attached-network-connection-name $network_connection_name \
-    --network-connection-id \"/subscriptions/$subscription_id/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/networkConnections/$DEV_CENTER_NETWORK_CONNECTION_NAME\" \
+    --network-connection-id \"/subscriptions/$target_subscription_id/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/networkConnections/$DEV_CENTER_NETWORK_CONNECTION_NAME\" \
     --resource-group $RESOURCE_GROUP \
     --dev-center $DEV_CENTER_NAME"
 commandCreateAttachedNetwork_output=""
@@ -167,7 +161,7 @@ commandCreatePool="az devcenter admin pool create \
     --name \"$DEV_CENTER_POOL_NAME\" \
     --project \"$PROJECT\" \
     --resource-group \"$RESOURCE_GROUP\" \
-    --location \"$LOCATION\" \
+    --location \"$azure_region\" \
     --network-connection-name \"$network_connection_name\" \
 	--single-sign-on-status \"Enabled\""
 commandCreatePool_output=""

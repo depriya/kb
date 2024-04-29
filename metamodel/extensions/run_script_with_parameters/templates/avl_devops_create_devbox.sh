@@ -24,15 +24,15 @@ oem_identifier=$(echo $config | jq -r '.project_config.oem_identifier')
 project_name=$(echo $config | jq -r '.project_config.project_name')
 environment_stage_short=$(echo $config | jq -r '.customer_stamp_config.environment_stage_short')
 target_subscription_id=$(echo $config | jq -r '.customer_stamp_config.target_subscription_id')
-suffix=$(echo $config | jq -r '.devbox_sku.suffix')
+suffix=$(echo $config | jq -r '.devbox_config.suffix')
 azure_region=$(echo $config | jq -r '.customer_stamp_config.azure_region')
-devbox_image_name=$(echo $config | jq -r '.devbox_sku.devbox_image_name')
-capacity=$(echo $config | jq -r '.devbox_sku.capacity')
-family=$(echo $config | jq -r '.devbox_sku.family')
-compute=$(echo $config | jq -r '.devbox_sku.compute')
-size=$(echo $config | jq -r '.devbox_sku.size')
-tier=$(echo $config | jq -r '.devbox_sku.tier')
-osstoragetype=$(echo $config | jq -r '.devbox_sku.osstoragetype')
+devbox_image_name=$(echo $config | jq -r '.devbox_config.devbox_image_name')
+capacity=$(echo $config | jq -r '.devbox_config.capacity')
+family=$(echo $config | jq -r '.devbox_config.family')
+compute=$(echo $config | jq -r '.devbox_config.compute')
+size=$(echo $config | jq -r '.devbox_config.size')
+tier=$(echo $config | jq -r '.devbox_config.tier')
+osstoragetype=$(echo $config | jq -r '.devbox_config.osstoragetype')
 compute_gallery_name=$(echo $config | jq -r '.shared_stamp_config.compute_gallery_name')
 
 #endregion parameters - get from config
@@ -40,7 +40,7 @@ echo "setting the variables"
 #region Set the variables
 RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-rg-001"
 DEV_CENTER_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-dc"
-PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-p-${project_name}-${suffix}"
+PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-p-${project_name}-001"
 DEVBOX_DEF_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${project_name}-devboxdef-${suffix}"
 VNET_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-vnet-001"
 DEV_CENTER_NETWORK_CONNECTION_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${project_name}-ntwkcon-${suffix}"
