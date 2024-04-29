@@ -24,3 +24,11 @@ parameters:
     name: "vmsssuffixidentifier"
     required: true
     type: "string"
+  - id: "compute_gallery_name"
+    name: "compute_gallery_name"
+    required: true
+    type: "string"
+  - id: "SHARED_RESOURCE_GROUP"
+    name: "sharestampdresourcegroup"
+    required: true
+    type: "string"
