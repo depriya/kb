@@ -115,7 +115,15 @@ foreach ($property in $MODEL_STACK_PROPERTIES) {
 }
 foreach ($item in $ARRAY_TO_PROCESS) {
     if ($item.GetType().BaseType.Name -eq "Object" ) {
-        if ($item.PSObject.Properties.Name -contains "SubSys" -and $item.SubSys.GetType().BaseType.Name -eq "Array") {
+        if ($item.PSObject.Properties.Name -contains "SubSys" -and $item.SubSys.GetType().BaseType.Name -eq "Array" -and $item.PSObject.Properties.Name -contains "DownloadSource") {
+            if ($item.DownloadSource.Type -eq "GitHub") {
+                $github_pat_token =$(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($item.DownloadSource.Secret) --query value -o tsv)
+                $LocationURL = $item.DownloadSource.LocationURL
+                $segments = $LocationURL -split '/'
+                $repo_organisation = $segments[3]
+                $repo_name = $segments[4] -replace '\.git$', ''
+                git clone https://$($github_pat_token)@github.com/$($repo_organisation)/$($repo_name).git
+            }
             foreach ($subSys in $item.SubSys) {
                 if ($subSys.GetType().BaseType.Name -eq "Object" -and $subSys.PSObject.Properties.Name -contains "ModuleFilePath" -and $null -ne $subSys.ModuleFilePath) {
                     Write-Host "Copying from ModuleFilePath - $PWD/$($subSys.ModuleFilePath)"
