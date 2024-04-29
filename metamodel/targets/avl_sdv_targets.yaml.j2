@@ -28,8 +28,8 @@ deploy_avl_symphony_campaign:
     - avl_devops_custom_script
     - avl_devops_custom_powershell_script
   parameters:
-    campaign_name: {{ config.symphony.campaign_name }}
-    campaign_activation_name: {{ config.symphony.campaign_name }}_activation
+    campaign_name: {{ config.project_config.project_name }}_{{ config.workflow_run_config.job_id }}
+    campaign_activation_name: {{ config.project_config.project_name }}_{{ config.workflow_run_config.job_id }}_activation
     campaign_start_stage_inputs:
 
     symphony_campaign_parameters_file: ./targets/deploy_avl_devops_symphony_campaign.json.j2
