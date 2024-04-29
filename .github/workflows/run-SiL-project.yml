@@ -121,7 +121,7 @@ jobs:
         
   Create_and_Activate_Symphony_Campaign:
     needs: Upload_Campaign_and_Scripts_to_File_Share
-    runs-on: ubuntu-latest #TODO: Change the Runner Type
+    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner Type
     environment: sub-AVL_DevopsPilot
     
     steps:
@@ -133,7 +133,7 @@ jobs:
       - name: Unzip the output
         run: |
           mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
-          unzip ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -d ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}
+          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}
           
       - name: Create and Activate Symphony Campaign
         run: bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign//symphony_api_calls.sh"
