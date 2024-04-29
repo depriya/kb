@@ -1,0 +1,149 @@
+name: Run SiL Project
+
+on:
+  workflow_dispatch:
+      
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  WORKFLOW_ARTIFACT_NAME: metamodel-output-${{ github.run_id }}
+  CONFIG_FILE_YAML: metamodel-config-${{ github.run_id }}.yaml
+
+jobs:
+  Generate Campaign from Metamodel:
+    runs-on: ubuntu-latest #TODO: Change the Runner Type
+    environment: sub-AVL_DevopsPilot
+    
+    env:
+      TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
+      TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
+      METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
+      METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 #TODO: Discuss if this should be triggered from this repo or external.
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+          cache: 'pip'
+          
+      - name: Install dependencies
+        run: |
+          ls -R
+          pip install yq # yq is used to parse yaml files
+          pip install -r ${{ env.TOOlCHAIN_ROOT_PATH }}/requirements.txt
+          pip install -r ${{ env.TOOlCHAIN_ROOT_PATH }}/requirements_test.txt
+
+      - name: Validate Metamodel 
+        run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel validate --from-file  ${{ env.METAMODEL_YAML }}
+
+      - name: Generate Campaign Data for Metamodel 
+        run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel execute --from-file  ${{ env.METAMODEL_YAML }} --output-dir  ${{ env.METAMODEL_OUTPUT_DIR }}
+      
+      - name: Zip the output 
+        working-directory: ${{ env.METAMODEL_OUTPUT_DIR }}
+        run: |
+          cp ${{ env.METAMODEL_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
+          zip -r ${{ env.WORKFLOW_ARTIFACT_NAME }} *
+      
+      - name: Publish Metamodel Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          path: ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.WORKFLOW_ARTIFACT_NAME }}.zip
+
+  Upload Campaign and Scripts to File Share:
+    needs: Generate Campaign from Metamodel
+    runs-on: ubuntu-latest #TODO: Change the Runner Type
+    environment: sub-AVL_DevopsPilot
+
+    steps:
+      - name: Get Metamodel Output from Build
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
+        
+      - name: Unzip the output
+        run: |
+          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          unzip ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -d ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}          
+    
+      - name: 'Az CLI login'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Upload Output Files to file share
+        shell: pwsh
+        run: |
+          cd ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          $customer_OEM_suffix = (yq '.config.project_config.oem_identifier' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $project_name = (yq '.config.project_config.project_name' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $resource_name_primary_prefix = (yq '.config.resource_name_primary_prefix' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $resource_name_secondary_prefix = (yq '.config.resource_name_secondary_prefix' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $resource_name_shared_short = "s"
+          $environment_stage = (yq '.config.project_config.environment_stage' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $meta_model_outputs_file_share_name = (yq '.config.shared_stamp_config.meta_model_outputs_file_share_name' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          
+
+          $subscription_id = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          $ResourceGroup =  "$($resource_name_primary_prefix)-$($resource_name_secondary_prefix)-$($resource_name_shared_short)-stamp-$($environment_stage[0])-rg-001"
+          $storageAccount = "$($resource_name_primary_prefix)$($resource_name_secondary_prefix)$($resource_name_shared_short)$($environment_stage[0])st"
+          $destinationPath = "$($customer_OEM_suffix)/$($project_name)/$($meta_model_outputs_file_share_name)"
+
+          $storage_key = 
+          az storage account keys list `
+            --subscription "$subscriptionID" `
+            -g "$ResourceGroup" `
+            -n "$storageAccount" `
+            --query "[0].value" `
+            -o tsv `
+            --only-show-errors
+          
+          az storage file upload-batch `
+            --account-name $storageAccount `
+            --account-key $storage_key `
+            --destination "$meta_model_outputs_file_share_name" `
+            --destination-path  "$destinationPath"`
+            --source "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}"
+
+          az storage file list `
+            --account-name $storageAccount `
+            --account-key $storage_key `
+            --share-name "$meta_model_outputs_file_share_name" 
+        
+  Create and Activate Symphony Campaign:
+    needs: Generate Campaign from Metamodel
+    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner Type
+    environment: sub-AVL_DevopsPilot
+    
+    steps:
+      - name: Get Metamodel Output from Build
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
+        
+      - name: Unzip the output
+        run: |
+          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          unzip ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -d ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}
+
+      - name: 'Az CLI login'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          
+      - name: Run Campaign
+        run: |
+          cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}"
+          ls -ltr
+          
