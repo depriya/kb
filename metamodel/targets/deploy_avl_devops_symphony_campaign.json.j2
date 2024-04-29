@@ -81,6 +81,36 @@
                  "inputs": {
                     "ps_script_path":"./avl_devops_run_local_scripts.ps1"
                 },
+                "stageSelector": "execute_avl_devops_build_project"
+            },
+            "execute_avl_devops_build_project": {
+                "name": "execute_avl_devops_build_project",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute local installer script",
+                    "script": "run_pwsh_script_in_bash.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
+                },
+                 "inputs": {
+                    "ps_script_path":"./avl_devops_run_simulation_build.ps1"
+                },
+                "stageSelector": "execute_avl_devops_execute_project" //TODO: Make this conditional based on interactive flag
+            },
+            "execute_avl_devops_execute_project": {
+                "name": "execute_avl_devops_execute_project",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute local installer script",
+                    "script": "run_pwsh_script_in_bash.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
+                },
+                 "inputs": {
+                    "ps_script_path":"./avl_devops_run_simulation_execute.ps1" 
+                },
                 "stageSelector": "execute_avl_devops_upload_results"
             },
             "execute_avl_devops_upload_results": {

@@ -17,7 +17,7 @@ config:
   #endregion project configuration
 
   workflow_run_config:
-    job_id:
+    job_id: 142738 #example value
     build_id:
     interactive_execution: false
 
@@ -383,7 +383,6 @@ config:
 
   #region Symphony Configuration
   symphony:
-    campaign_name: deploy_avl_devops_symphony_campaign
     toolchain_output_path: /app/mnt
     agent:
       port: 8082
