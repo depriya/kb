@@ -25,6 +25,9 @@ config:
     azure_region: westeurope
     target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
     environment_stage_short: d
+  
+  ade_config:
+    vmsssuffix: 006
 
   devbox_sku:  
     suffix: 006

@@ -40,7 +40,7 @@ echo "setting the variables"
 #region Set the variables
 RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-rg-001"
 DEV_CENTER_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-dc"
-PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-p-${project_name}-${suffix}"
+PROJECT="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-p-${project_name}-001"
 DEVBOX_DEF_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${project_name}-devboxdef-${suffix}"
 VNET_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-vnet-001"
 DEV_CENTER_NETWORK_CONNECTION_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${project_name}-ntwkcon-${suffix}"
