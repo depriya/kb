@@ -10,9 +10,9 @@ terraform {
   }
 
    backend "azurerm" {
-     resource_group_name  = "xmew1-dop-c-avl-d-rg-001"
-     storage_account_name = "xmew1dopcavldst"
-     container_name       = "tfstatetf"
+     resource_group_name  = "xmew1-dop-s-stamp-d-rg-001"
+     storage_account_name = "xmew1dopsdst"
+     container_name       = "tfstate"
      key                  = "terraform.tfstate"
      #use_oidc             = true
   #   client_id = "13b095e6-55df-4d76-9c6d-b59404e4d506"
@@ -57,11 +57,14 @@ variable "environmentStage" {
 }
 
 variable "gallery_name" {
-  default = "xmew1dopsstampdcomputegallery001"
+  //default = "xmew1dopsstampdcomputegallery001"
 }
 variable "image"{
   default = "mc-concerto"
   // $image_name="$image_offer`ModelConnect$MCBaseVersion`Concerto$ConcertoVersion"
+}
+variable "SHARED_RESOURCE_GROUP"{
+  // default = "xmew1-dop-s-stamp-d-rg-001"
 }
 
 data "azurerm_resource_group" "example" {
@@ -84,14 +87,14 @@ data "azurerm_subnet" "internal" {
   virtual_network_name = data.azurerm_virtual_network.example.name
 }
 data "azurerm_shared_image_gallery" "example"{
-      resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
+      resource_group_name = var.SHARED_RESOURCE_GROUP
       name        = var.gallery_name
 }
 data "azurerm_shared_image" "all" {
   for_each = toset(data.azurerm_shared_image_gallery.example.image_names)
 
   name                = each.value
-  resource_group_name = "xmew1-dop-s-stamp-d-rg-001"
+  resource_group_name = var.SHARED_RESOURCE_GROUP
   gallery_name        = var.gallery_name
 }
 // make it variable - sms
