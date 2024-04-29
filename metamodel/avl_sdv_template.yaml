@@ -74,11 +74,10 @@ config:
 
   #region additional software stack configuration
   additional_software_stack:
-    - name: co_simulation.py
-      script: build_model_connect_project
-      version: 1.1
+    - Name: co_simulation.py
+      Script: build_model_connect_project
+      Version: 1.1
       DownloadSource:
-        Type: GitHub # currently supported is GitHub or JFrog
         Type: GitHub # currently supported is GitHub or JFrog
         Secret: <UNIQUE_SECRET_NAME>
         LocationURL: workflow_repo # e.g. JFrog://home/ModelConnect/2021.1
