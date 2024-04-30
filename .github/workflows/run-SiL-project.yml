@@ -181,7 +181,7 @@ jobs:
           if (Test-Path ${{ env.WORKFLOW_ARTIFACT_NAME }}) {
             Remove-Item ${{ env.WORKFLOW_ARTIFACT_NAME }} -Recurse -Force
           }
-          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
+          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
           Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
 
       - name: Create and Activate Symphony Campaign
