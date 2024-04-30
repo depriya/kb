@@ -19,7 +19,7 @@ config:
   workflow_run_config:
     job_id: 142738 #example value
     build_id:
-    interactive_execution: false
+    interactive_execution: true
 
   #region customer stamp configuration
   customer_stamp_config:

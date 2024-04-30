@@ -13,5 +13,5 @@ set -u
 
 token=$(curl -X POST -d '{"username":"admin", "password":""}' {{parameters.symphony_base_url}}/users/auth | jq -r '.accessToken')
 
-curl -X POST -d @deploy_avl_devops_symphony_campaign.json -H "Authorization: Bearer $token" {{parameters.symphony_base_url}}/campaigns/{{parameters.campaign_name|e}}
+curl -X POST -d @{{parameters.campaign_file_name}}.json -H "Authorization: Bearer $token" {{parameters.symphony_base_url}}/campaigns/{{parameters.campaign_name|e}}
 curl -X POST -d @symphony_campaign_activation.json -H "Authorization: Bearer $token" {{parameters.symphony_base_url}}/activations/registry/{{parameters.campaign_activation_name|e}}
