@@ -68,7 +68,7 @@ jobs:
   Upload_Campaign_and_Scripts_to_File_Share:
     needs: Generate_Campaign_from_Metamodel
     runs-on: ubuntu-latest #TODO: Change the Runner Type
-    environment: sub-DCP_SIL #TODO: Change the Environment
+    environment: sub-AVL_DevopsPilot #TODO: Change the Environment
 
     steps:
       - name: Download output from previous job
