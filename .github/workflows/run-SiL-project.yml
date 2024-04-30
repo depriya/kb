@@ -146,5 +146,5 @@ jobs:
 
       - name: Create and Activate Symphony Campaign
         run: |
-          cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign"
-          bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign//symphony_api_calls.sh"
+          cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build"
+          bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build//symphony_api_calls.sh"

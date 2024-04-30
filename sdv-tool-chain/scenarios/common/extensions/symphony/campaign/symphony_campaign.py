@@ -22,6 +22,8 @@ class SymphonyCampaign(BaseMetamodelExtension):
         campaign_activation_name: str
         campaign_start_stage_inputs: Optional[dict[str, Any]]
 
+        campaign_file_name: str
+
         symphony_campaign_parameters_file: str
         symphony_campaign_parameters_file_input: Optional[dict[str, Any]]
 

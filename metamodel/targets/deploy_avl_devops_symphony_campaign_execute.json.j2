@@ -1,0 +1,49 @@
+{
+    "spec": {
+        "firstStage": "azure_login",
+        "stages": {
+            "azure_login": {
+                "name": "azure_login",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "azure login",
+                    "script": "azure_login.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/azure_login",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/azure_login"
+                },
+                "stageSelector": "execute_avl_devops_execute_project"
+            },
+            "execute_avl_devops_execute_project": {
+                "name": "execute_avl_devops_execute_project",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute local installer script",
+                    "script": "run_pwsh_script_in_bash.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
+                },
+                 "inputs": {
+                    "ps_script_path":"./avl_devops_run_simulation_execute.ps1" 
+                },
+                "stageSelector": "execute_avl_devops_upload_results"
+            },
+            "execute_avl_devops_upload_results": {
+                "name": "execute_avl_devops_upload_results",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute upload results script",
+                    "script": "run_pwsh_script_in_bash.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
+                },
+                 "inputs": {
+                    "ps_script_path":"./avl_devops_upload_results.ps1"
+                }
+            }
+        },
+        "selfDriving": true
+    }
+}
