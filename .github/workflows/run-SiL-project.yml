@@ -140,7 +140,8 @@ jobs:
   Create_and_Activate_Symphony_Campaign_Build:
     needs: Upload_Campaign_and_Scripts_to_File_Share
     runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
-    environment: ${{ env.EXECUTION_ENVIRONENT }} #TODO: Change the Environment
+    environment: 
+      name: ${{ env.EXECUTION_ENVIRONENT }} #TODO: Change the Environment
     
     steps:
       - name: Download output from previous job
@@ -161,7 +162,8 @@ jobs:
   Create_and_Activate_Symphony_Campaign_Execute:
     needs: Create_and_Activate_Symphony_Campaign_Build
     runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
-    environment: ${{ env.EXECUTION_ENVIRONENT }} #TODO: Change the Environment
+    environment: 
+      name: ${{ env.EXECUTION_ENVIRONENT }} #TODO: Change the Environment
     
     steps:
       - name: Download output from previous job
