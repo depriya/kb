@@ -152,6 +152,9 @@ jobs:
       - name: Unzip the output
         shell: pwsh
         run: |
+          if (Test-Path ${{ env.WORKFLOW_ARTIFACT_NAME }}) {
+            Remove-Item ${{ env.WORKFLOW_ARTIFACT_NAME }} -Recurse -Force
+          }
           mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
           Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
 
@@ -175,7 +178,10 @@ jobs:
       - name: Unzip the output
         shell: pwsh
         run: |
-          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          if (Test-Path ${{ env.WORKFLOW_ARTIFACT_NAME }}) {
+            Remove-Item ${{ env.WORKFLOW_ARTIFACT_NAME }} -Recurse -Force
+          }
+          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
           Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
 
       - name: Create and Activate Symphony Campaign
