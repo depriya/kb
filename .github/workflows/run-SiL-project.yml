@@ -127,7 +127,7 @@ jobs:
             --account-key $storage_key `
             --share-name "$meta_model_outputs_file_share_name" 
         
-  Create_and_Activate_Symphony_Campaign:
+  Create_and_Activate_Symphony_Campaign_Build:
     needs: Upload_Campaign_and_Scripts_to_File_Share
     runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
     environment: sub-AVL_DevopsPilot #TODO: Change the Environment
@@ -148,3 +148,25 @@ jobs:
         run: |
           cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build"
           bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build//symphony_api_calls.sh"
+
+  Create_and_Activate_Symphony_Campaign_Execute:
+    needs: Create_and_Activate_Symphony_Campaign_Build
+    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
+    environment: sub-AVL_DevopsPilot #TODO: Change the Environment
+    
+    steps:
+      - name: Download output from previous job
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
+        
+      - name: Unzip the output
+        shell: pwsh
+        run: |
+          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}
+
+      - name: Create and Activate Symphony Campaign
+        run: |
+          cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_execute"
+          bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_execute//symphony_api_calls.sh"
