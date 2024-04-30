@@ -44,7 +44,11 @@ jobs:
           $job_id = (yq '.config.workflow_run_config.oem_identifier.job_id' "${{ env.METAMODEL_YAML }}").Trim('"')
           $build_id = (yq '.config.workflow_run_config.project_name.build_id' "${{ env.METAMODEL_YAML }}").Trim('"')
           $interactive_execution = (yq '.config.workflow_run_config.interactive_execution' "${{ env.METAMODEL_YAML }}").Trim('"')
-          Write-Host "IS_INTERACTIVE=$($interactive_execution)" >> $GITHUB_ENV
+          echo "IS_INTERACTIVE=$($interactive_execution)" >> $env:GITHUB_ENV
+
+      - name: Get Run Config from Metamodel
+        shell: pwsh
+        run: |
           Write-Host "${{ env.IS_INTERACTIVE }}"
 
       - name: Validate Metamodel 
