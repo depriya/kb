@@ -11,6 +11,7 @@ permissions:
 env:
   WORKFLOW_ARTIFACT_NAME: metamodel-output-${{ github.run_id }}
   CONFIG_FILE_YAML: metamodel-config-${{ github.run_id }}.yaml
+  EXECUTION_ENVIRONENT : sub-AVL_DevopsPilot_Interactive
 
 jobs:
   Generate_Campaign_from_Metamodel:
@@ -45,7 +46,15 @@ jobs:
           $job_id = (yq '.config.workflow_run_config.oem_identifier.job_id' "${{ env.METAMODEL_YAML }}").Trim('"')
           $build_id = (yq '.config.workflow_run_config.project_name.build_id' "${{ env.METAMODEL_YAML }}").Trim('"')
           $interactive_execution = (yq '.config.workflow_run_config.interactive_execution' "${{ env.METAMODEL_YAML }}").Trim('"')
-          echo "IS_INTERACTIVE=$($interactive_execution)" >> $env:GITHUB_ENV
+          Write-Host "Interactive Execution: $interactive_execution"
+          if ($interactive_execution -eq "true") {
+            Write-Host "Setting Execution Environment to sub-AVL_DevopsPilot_Interactive"
+            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot_Interactive" >> $env:GITHUB_ENV
+          } else {
+            Write-Host "Setting Execution Environment to sub-AVL_DevopsPilot"
+            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot" >> $env:GITHUB_ENV
+          }
+          
 
       - name: Validate Metamodel 
         run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel validate --from-file  ${{ env.METAMODEL_YAML }}
@@ -67,7 +76,7 @@ jobs:
 
   Upload_Campaign_and_Scripts_to_File_Share:
     needs: Generate_Campaign_from_Metamodel
-    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner Type
+    runs-on: ubuntu-latest #TODO: Change the Runner Type
     environment: sub-AVL_DevopsPilot #TODO: Change the Environment
 
     steps:
@@ -81,6 +90,8 @@ jobs:
           mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
           Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force         
     
+          Write-Host "Execution Environment: ${{ env.EXECUTION_ENVIRONENT }}"
+
       - name: Az CLI login
         uses: azure/login@v2
         with:
@@ -129,7 +140,7 @@ jobs:
   Create_and_Activate_Symphony_Campaign_Build:
     needs: Upload_Campaign_and_Scripts_to_File_Share
     runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
-    environment: sub-AVL_DevopsPilot #TODO: Change the Environment
+    environment: ${{ env.EXECUTION_ENVIRONENT }} #TODO: Change the Environment
     
     steps:
       - name: Download output from previous job
@@ -150,7 +161,7 @@ jobs:
   Create_and_Activate_Symphony_Campaign_Execute:
     needs: Create_and_Activate_Symphony_Campaign_Build
     runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
-    environment: sub-AVL_DevopsPilot_Interactive #TODO: Change the Environment
+    environment: ${{ env.EXECUTION_ENVIRONENT }} #TODO: Change the Environment
     
     steps:
       - name: Download output from previous job
