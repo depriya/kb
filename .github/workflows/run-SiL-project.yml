@@ -47,9 +47,9 @@ jobs:
           echo "IS_INTERACTIVE=$($interactive_execution)" >> $env:GITHUB_ENV
 
       - name: Get Run Config from Metamodel
-          shell: pwsh
-          run: |
-            Write-Host "${{ env.IS_INTERACTIVE }}"
+        shell: pwsh
+        run: |
+          Write-Host "${{ env.IS_INTERACTIVE }}"
 
       - name: Validate Metamodel 
         run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel validate --from-file  ${{ env.METAMODEL_YAML }}
