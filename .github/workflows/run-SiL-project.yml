@@ -139,6 +139,7 @@ jobs:
         
   Create_and_Activate_Symphony_Campaign_Build:
     needs: [ Generate_Campaign_from_Metamodel, Upload_Campaign_and_Scripts_to_File_Share ]
+    runs-on: ubuntu-latest #TODO: Change the Runner Type
     runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
     environment: 
       name: sub-AVL_DevopsPilot #TODO: Change the Environment
@@ -161,7 +162,8 @@ jobs:
 
   Create_and_Activate_Symphony_Campaign_Execute:
     needs: [ Generate_Campaign_from_Metamodel, Upload_Campaign_and_Scripts_to_File_Share, Create_and_Activate_Symphony_Campaign_Build ]
-    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
+    runs-on: ubuntu-latest #TODO: Change the Runner Type
+    # runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
     environment: 
       name: ${{ needs.Generate_Campaign_from_Metamodel.outputs.is_interactive }}
     
