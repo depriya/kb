@@ -6,6 +6,7 @@ on:
 permissions:
   id-token: write
   contents: read
+  issues: write
 
 env:
   WORKFLOW_ARTIFACT_NAME: metamodel-output-${{ github.run_id }}
@@ -143,7 +144,9 @@ jobs:
           mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
           Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}
       
-      - uses: trstringer/manual-approval@v1
+      
+      - name: Trigger Manual Approval
+        uses: trstringer/manual-approval@v1.9.0
         with:
           secret: ${{ github.TOKEN }}
           approvers: sai-patamsetty_avl
