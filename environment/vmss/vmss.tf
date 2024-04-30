@@ -60,7 +60,7 @@ variable "gallery_name" {
   //default = "xmew1dopsstampdcomputegallery001"
 }
 variable "IMAGE_NAME"{
-  //default = "mc-concerto"
+  default = "node-sms-silver-mc-concerto-generalized"
   // $image_name="$image_offer`ModelConnect$MCBaseVersion`Concerto$ConcertoVersion"
 }
 variable "SHARED_RESOURCE_GROUP"{
