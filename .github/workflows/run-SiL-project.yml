@@ -163,6 +163,11 @@ jobs:
           cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build"
           bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build//symphony_api_calls.sh"
 
+      - name: Wait Until Campaign Completion 
+        run: |
+          cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build"
+          bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build//symphony_check_completion.sh"
+
   Create_and_Activate_Symphony_Campaign_Execute:
     needs: [ Generate_Campaign_from_Metamodel, Upload_Campaign_and_Scripts_to_File_Share, Create_and_Activate_Symphony_Campaign_Build ]
     runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
