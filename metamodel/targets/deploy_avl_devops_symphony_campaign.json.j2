@@ -96,7 +96,7 @@
                  "inputs": {
                     "ps_script_path":"./avl_devops_run_simulation_build.ps1"
                 },
-                "stageSelector": "execute_avl_devops_execute_project"
+                "stageSelector": "{%- if True -%}execute_avl_devops_execute_project{% endif %}"
             },
             "execute_avl_devops_execute_project": {
                 "name": "execute_avl_devops_execute_project",
