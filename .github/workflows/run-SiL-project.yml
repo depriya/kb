@@ -14,8 +14,8 @@ env:
 
 jobs:
   Generate_Campaign_from_Metamodel:
-    runs-on: ubuntu-latest #TODO: Change the Runner Type
-    environment: sub-DCP_SIL #TODO: Change the Environment
+    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner Type
+    environment: sub-AVL_DevopsPilot #TODO: Change the Environment
     
     env:
       TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
@@ -67,7 +67,7 @@ jobs:
 
   Upload_Campaign_and_Scripts_to_File_Share:
     needs: Generate_Campaign_from_Metamodel
-    runs-on: ubuntu-latest #TODO: Change the Runner Type
+    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner Type
     environment: sub-AVL_DevopsPilot #TODO: Change the Environment
 
     steps:
@@ -142,7 +142,7 @@ jobs:
         shell: pwsh
         run: |
           mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
-          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}
+          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
 
       - name: Create and Activate Symphony Campaign
         run: |
@@ -152,7 +152,7 @@ jobs:
   Create_and_Activate_Symphony_Campaign_Execute:
     needs: Create_and_Activate_Symphony_Campaign_Build
     runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
-    environment: sub-AVL_DevopsPilot #TODO: Change the Environment
+    environment: sub-AVL_DevopsPilot_Interactive #TODO: Change the Environment
     
     steps:
       - name: Download output from previous job
@@ -164,7 +164,7 @@ jobs:
         shell: pwsh
         run: |
           mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
-          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}
+          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
 
       - name: Create and Activate Symphony Campaign
         run: |
