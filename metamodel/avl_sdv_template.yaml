@@ -64,7 +64,8 @@ config:
         version: "2022.2"
       reportings:
         name: Concerto
-        version: "5 R7.5 Build: 215 64-Bit"
+        version: "5.7.5"
+        Build: 215 64-Bit"
   #endregion co_simulation stack configuration
 
   #region reporting stack configuration
