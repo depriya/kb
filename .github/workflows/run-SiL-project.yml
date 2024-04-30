@@ -51,10 +51,10 @@ jobs:
           Write-Host "Interactive Execution: $interactive_execution"
           if ($interactive_execution -eq "true") {
             Write-Host "Setting Execution Environment to sub-AVL_DevopsPilot_Interactive"
-            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot_Interactive" >> $env:$GITHUB_OUTPUT
+            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot_Interactive" >> $env:GITHUB_OUTPUT
           } else {
             Write-Host "Setting Execution Environment to sub-AVL_DevopsPilot"
-            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot" >> $env:$GITHUB_OUTPUT
+            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot" >> $env:GITHUB_OUTPUT
           }
       
       - name: Validate Metamodel 
