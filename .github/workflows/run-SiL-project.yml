@@ -86,11 +86,10 @@ jobs:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
         
       - name: Unzip the output
+        shell: pwsh
         run: |
           mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
-          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force         
-    
-          Write-Host "Execution Environment: ${{ env.EXECUTION_ENVIRONENT }}"
+          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
 
       - name: Az CLI login
         uses: azure/login@v2
