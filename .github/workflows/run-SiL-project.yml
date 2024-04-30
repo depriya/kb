@@ -11,11 +11,12 @@ permissions:
 env:
   WORKFLOW_ARTIFACT_NAME: metamodel-output-${{ github.run_id }}
   CONFIG_FILE_YAML: metamodel-config-${{ github.run_id }}.yaml
-  EXECUTION_ENVIRONENT : sub-AVL_DevopsPilot_Interactive
 
 jobs:
   Generate_Campaign_from_Metamodel:
     runs-on: ubuntu-latest #TODO: Change the Runner Type
+    outputs:
+      is_interactive: ${{ steps.interactive-execution.outputs.EXECUTION_ENVIRONENT }}
     environment: sub-AVL_DevopsPilot #TODO: Change the Environment
     
     env:
@@ -41,6 +42,7 @@ jobs:
           pip install -r ${{ env.TOOlCHAIN_ROOT_PATH }}/requirements_test.txt
 
       - name: Check if the execution is interactive
+        id: interactive-execution
         shell: pwsh
         run: |
           $job_id = (yq '.config.workflow_run_config.oem_identifier.job_id' "${{ env.METAMODEL_YAML }}").Trim('"')
@@ -49,13 +51,12 @@ jobs:
           Write-Host "Interactive Execution: $interactive_execution"
           if ($interactive_execution -eq "true") {
             Write-Host "Setting Execution Environment to sub-AVL_DevopsPilot_Interactive"
-            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot_Interactive" >> $env:GITHUB_ENV
+            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot_Interactive" >> $env:$GITHUB_OUTPUT
           } else {
             Write-Host "Setting Execution Environment to sub-AVL_DevopsPilot"
-            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot" >> $env:GITHUB_ENV
+            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot" >> $env:$GITHUB_OUTPUT
           }
-          
-
+      
       - name: Validate Metamodel 
         run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel validate --from-file  ${{ env.METAMODEL_YAML }}
 
@@ -160,10 +161,10 @@ jobs:
           bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build//symphony_api_calls.sh"
 
   Create_and_Activate_Symphony_Campaign_Execute:
-    needs: Create_and_Activate_Symphony_Campaign_Build
+    needs: [ Generate_Campaign_from_Metamodel, Create_and_Activate_Symphony_Campaign_Build ]
     runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
     environment: 
-      name: sub-AVL_DevopsPilot_Interactive #TODO: Change the Environment
+      name: ${{ needs.Generate_Campaign_from_Metamodel.outputs.is_interactive }}
     
     steps:
       - name: Download output from previous job
