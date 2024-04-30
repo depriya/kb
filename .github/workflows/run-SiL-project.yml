@@ -14,7 +14,7 @@ env:
 
 jobs:
   Generate_Campaign_from_Metamodel:
-    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner Type
+    runs-on: ubuntu-latest #TODO: Change the Runner Type
     environment: sub-AVL_DevopsPilot #TODO: Change the Environment
     
     env:
@@ -54,7 +54,6 @@ jobs:
         run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel execute --from-file  ${{ env.METAMODEL_YAML }} --output-dir  ${{ env.METAMODEL_OUTPUT_DIR }}
       
       - name: Zip Metamodel output 
-        shell: bash
         working-directory: ${{ env.METAMODEL_OUTPUT_DIR }}
         run: |
           cp ${{ env.METAMODEL_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
@@ -78,10 +77,9 @@ jobs:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
         
       - name: Unzip the output
-        shell: bash
         run: |
           mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
-          unzip ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -d ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }}          
+          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force         
     
       - name: Az CLI login
         uses: azure/login@v2
@@ -91,7 +89,6 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Upload output files to file share
-        shell: pwsh
         run: |
           cd ${{ env.WORKFLOW_ARTIFACT_NAME }}
           $customer_OEM_suffix = (yq '.config.project_config.oem_identifier' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
@@ -141,7 +138,6 @@ jobs:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
         
       - name: Unzip the output
-        shell: pwsh
         run: |
           mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
           Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
@@ -163,7 +159,6 @@ jobs:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
         
       - name: Unzip the output
-        shell: pwsh
         run: |
           mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
           Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
