@@ -114,7 +114,7 @@ jobs:
           $subscription_id = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
           $ResourceGroup =  "$($resource_name_primary_prefix)-$($resource_name_secondary_prefix)-$($resource_name_shared_short)-stamp-$($environment_stage[0])-rg-001"
           $storageAccount = "$($resource_name_primary_prefix)$($resource_name_secondary_prefix)$($resource_name_shared_short)$($environment_stage[0])st"
-          $destinationPath = "$($customer_OEM_suffix)/$($project_name)/$($meta_model_outputs_file_share_name)"
+          $destinationPath = "$($customer_OEM_suffix)/$($project_name)"
 
           $storage_key = 
           az storage account keys list `
