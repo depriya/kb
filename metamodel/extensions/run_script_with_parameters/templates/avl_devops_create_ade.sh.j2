@@ -41,6 +41,7 @@ config=$(echo $configEncoded | base64 -d)
 #region parameters - get from config
 echo "getting parameters from config"
 resource_name_primary_prefix=$(echo $config | jq -r '.resource_name_primary_prefix')
+echo "resource_name_primary_prefix is $resource_name_primary_prefix"
 resource_name_secondary_prefix=$(echo $config | jq -r '.resource_name_secondary_prefix')
 oem_identifier=$(echo $config | jq -r '.project_config.oem_identifier')
 project_name=$(echo $config | jq -r '.project_config.project_name')
