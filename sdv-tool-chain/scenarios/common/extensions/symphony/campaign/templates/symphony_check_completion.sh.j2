@@ -13,6 +13,19 @@ set -u
 
 token=$(curl -X POST -d '{"username":"admin", "password":""}' http://192.168.0.102:8082/v1alpha2/users/auth | jq -r '.accessToken')
 
-curl -X GET  -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/build_pj3_142738_activation
+while : ; do
+    response=$(curl -X GET -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/build_pj3_142738_activation)
 
-# TODO: ADD a loop
+    echo "Response: $response"
+
+    status=$(echo $response | jq -r '.status.status')
+
+    if [[ $status -ne 9994 ]]; then
+        echo "Exiting."
+        exit 0
+    fi
+
+    echo "Waiting for 1 minute..."
+    sleep 1m
+    echo "Wait Completed. Checking Status again..."
+done

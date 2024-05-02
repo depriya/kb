@@ -2,15 +2,23 @@
 
 # Copyright (C) Microsoft Corporation.
 
+param(
+    [Parameter(Mandatory = $true)][string] $Arg
+)
+
 # Exit immediately if a command fails
 $ErrorActionPreference = "Stop"
 
 # Fail if an unset variable is used
 Set-StrictMode -Version Latest
 
-Set-Location $args[0]
+param(
+    [Parameter(Mandatory = $true)][string] $Arg
+)
 
-. ./symphony_stage_script_provider.ps1 $args[1]
+Write-Host "args: $($Arg) "
+
+. ./symphony_stage_script_provider.ps1 "$($Arg)"
 
 #region Declare Constants
 $DOWNLOAD_REQUEST_TIMEOUT_SECONDS = 600
@@ -117,7 +125,7 @@ foreach ($item in $ARRAY_TO_PROCESS) {
     if ($item.GetType().BaseType.Name -eq "Object" ) {
         if ($item.PSObject.Properties.Name -contains "SubSys" -and $item.SubSys.GetType().BaseType.Name -eq "Array" -and $item.PSObject.Properties.Name -contains "DownloadSource") {
             if ($item.DownloadSource.Type -eq "GitHub") {
-                $github_pat_token =$(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($item.DownloadSource.Secret) --query value -o tsv)
+                $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($item.DownloadSource.Secret) --query value -o tsv)
                 $LocationURL = $item.DownloadSource.LocationURL
                 $segments = $LocationURL -split '/'
                 $repo_organisation = $segments[3]
@@ -125,8 +133,9 @@ foreach ($item in $ARRAY_TO_PROCESS) {
                 if (-not (Test-Path -LiteralPath $repo_name)) {
                     try {
                         git clone https://$($github_pat_token)@github.com/$($repo_organisation)/$($repo_name).git
-                    } catch {
-                       Write-Error "Unable to clone"
+                    }
+                    catch {
+                        Write-Error "Unable to clone"
                     }
                 }
             }

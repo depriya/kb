@@ -38,7 +38,7 @@ function Get-ValueFromOutputDictionary {
             ValueFromPipelineByPropertyName = $true,
             Position = 0
         )]
-        [Alias("k", "Key")]
+        [Alias("k")]
         [string]$key
     )
 
@@ -69,7 +69,7 @@ function Add-KeyValuePairToOutputDictionary {
             ValueFromPipelineByPropertyName = $true,
             Position = 0
         )]
-        [Alias("k", "Key")]
+        [Alias("k")]
         [string]$key,
 
         [Parameter(
@@ -77,7 +77,7 @@ function Add-KeyValuePairToOutputDictionary {
             ValueFromPipelineByPropertyName = $true,
             Position = 1
         )]
-        [Alias("v", "Value")]
+        [Alias("v")]
         [string]$value
     )
 
@@ -164,15 +164,15 @@ function Invoke-CommandWithStatusCode {
             ValueFromPipelineByPropertyName = $true,
             Position = 0
         )]
-        [Alias("c", "Command")]
-        [string]$command,
+        [Alias("c")]
+        [string]$input_command,
 
         [Parameter(
             Mandatory = $true,
             ValueFromPipelineByPropertyName = $true,
             Position = 1
         )]
-        [Alias("o", "OutVariable")]
+        [Alias("o")]
         [ref]$base_command_output,
 
         [Parameter(
@@ -185,14 +185,13 @@ function Invoke-CommandWithStatusCode {
     )
 
     # Execute the command and capture output
-    $base_command_output.Value = Invoke-Expression $command 2>&1
-    $base_command_status.Value = $LASTEXITCODE
-
-    if ($base_command_status.Value -ne 0) {
-        Add-ErrorStatusToOutputDictionary $base_command_output.Value
-    }
-    else {
+    try {
+        $base_command_output.Value = Invoke-Expression $input_command 2>&1
         Add-SuccessStatusToOutputDictionary
+    }
+    catch {
+        Write-Host $_
+        Add-ErrorStatusToOutputDictionary $base_command_output.Value
     }
 }
 
@@ -223,15 +222,15 @@ function Invoke-Command-ExitOnFailure {
             ValueFromPipelineByPropertyName = $true,
             Position = 0
         )]
-        [Alias("c", "Command")]
-        [string]$command,
+        [Alias("c")]
+        [string]$input_command,
 
         [Parameter(
             Mandatory = $true,
             ValueFromPipelineByPropertyName = $true,
             Position = 1
         )]
-        [Alias("o", "OutVariable")]
+        [Alias("o")]
         [ref]$command_output,
 
         [Parameter(
@@ -243,7 +242,7 @@ function Invoke-Command-ExitOnFailure {
         [ref]$command_status
     )
 
-    Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
+    Invoke-CommandWithStatusCode -c $input_command -o $command_output -s $command_status
 
     if ($command_status.Value -ne 0) {
         Write-OutputDictionaryToOutputFile
@@ -255,6 +254,6 @@ function Invoke-Command-ExitOnFailure {
 
 $inputs_file = $args[0]
 
-$outputs = (Get-Content $inputs_file | ConvertFrom-Json | ForEach-Object { $_ | Add-Member -NotePropertyName $_.Name -NotePropertyValue $_.Value -PassThru -Force }) | ConvertTo-Json -Compress
+$outputs = Get-Content -Path $inputs_file | ConvertFrom-Json | ConvertTo-Json -Compress
 
 $output_file_path = $inputs_file -replace '\.[^.]+$', '-output.$&'

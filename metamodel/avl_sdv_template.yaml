@@ -28,7 +28,7 @@ config:
 
   
   ade_config:
-    vmss_suffix: 006
+    vmss_suffix: 007
     sku: Standard_B2als_v2
     instances: 1
     storage_account_type: Standard_LRS

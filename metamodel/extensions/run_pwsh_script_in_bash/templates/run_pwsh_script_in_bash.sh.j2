@@ -12,10 +12,11 @@ source $(dirname $0)/symphony_stage_script_provider.sh
 
 #region get the PowerShell script details
 ps_script_path=$(get_value_from_output_dictionary "ps_script_path")
+arg1=$(echo $1)
 #endregion get the PowerShell script details
 
 #region Execute the PowerShell script
-echo "Executing PowerShell script $ps_script_path"
-pwsh -f "$ps_script_path" "$(dirname "$0")" "$1"
+echo "Executing PowerShell script $ps_script_path, $arg1"
+pwsh -NoProfile -File $ps_script_path -Arg $arg1
 echo "Execution of PowerShell script $ps_script_path completed successfully."
 #endregion Execute the PowerShell script
