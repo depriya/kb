@@ -8,6 +8,10 @@ $ErrorActionPreference = "Stop"
 # Fail if an unset variable is used
 Set-StrictMode -Version Latest
 
+Write-Host "Started"
+
+Write-Host "args: $($args[0]) and $($args[0]) "
+
 Set-Location $args[0]
 
 . ./symphony_stage_script_provider.ps1 $args[1]
