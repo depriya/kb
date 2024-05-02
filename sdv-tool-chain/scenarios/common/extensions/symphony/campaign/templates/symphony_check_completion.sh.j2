@@ -17,7 +17,7 @@ count=0
 while true; do
 
     response=$(curl -X GET -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/build_pj3_142738_activation)
-    status=$(${response} | jq -r '.status')
+    status=$($response | jq -r '.status')
 
     echo Status: "$status"
 
