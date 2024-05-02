@@ -2,15 +2,17 @@
 
 # Copyright (C) Microsoft Corporation.
 
+param(
+    [Parameter(Mandatory = $true)][string] $Arg
+)
+
 # Exit immediately if a command fails
 $ErrorActionPreference = "Stop"
 
 # Fail if an unset variable is used
 Set-StrictMode -Version Latest
 
-Set-Location $args[0]
-
-. ./symphony_stage_script_provider.ps1 $args[1]
+. $PSScriptRoot/symphony_stage_script_provider.ps1 "$($Arg)"
 
 #region Declare Constants
 $UPLOAD_COMMAND_ID = "RunPowerShellScript"
