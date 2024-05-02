@@ -38,7 +38,7 @@ function Get-ValueFromOutputDictionary {
             ValueFromPipelineByPropertyName = $true,
             Position = 0
         )]
-        [Alias("k", "Key")]
+        [Alias("k")]
         [string]$key
     )
 
@@ -69,7 +69,7 @@ function Add-KeyValuePairToOutputDictionary {
             ValueFromPipelineByPropertyName = $true,
             Position = 0
         )]
-        [Alias("k", "Key")]
+        [Alias("k")]
         [string]$key,
 
         [Parameter(
@@ -77,7 +77,7 @@ function Add-KeyValuePairToOutputDictionary {
             ValueFromPipelineByPropertyName = $true,
             Position = 1
         )]
-        [Alias("v", "Value")]
+        [Alias("v")]
         [string]$value
     )
 
@@ -165,7 +165,7 @@ function Invoke-CommandWithStatusCode {
             Position = 0
         )]
         [Alias("c", "Command")]
-        [string]$command_param,
+        [string]$input_command,
 
         [Parameter(
             Mandatory = $true,
@@ -185,14 +185,13 @@ function Invoke-CommandWithStatusCode {
     )
 
     # Execute the command and capture output
-    $base_command_output.Value = Invoke-Expression $command_param 2>&1
-    $base_command_status.Value = $LASTEXITCODE
-
-    if ($base_command_status.Value -ne 0) {
-        Add-ErrorStatusToOutputDictionary $base_command_output.Value
-    }
-    else {
+    try {
+        $base_command_output.Value = Invoke-Expression $input_command 2>&1
         Add-SuccessStatusToOutputDictionary
+    }
+    catch {
+        Write-Host $_
+        Add-ErrorStatusToOutputDictionary $base_command_output.Value
     }
 }
 
@@ -224,7 +223,7 @@ function Invoke-Command-ExitOnFailure {
             Position = 0
         )]
         [Alias("c", "Command")]
-        [string]$command_param,
+        [string]$input_command,
 
         [Parameter(
             Mandatory = $true,
@@ -243,7 +242,7 @@ function Invoke-Command-ExitOnFailure {
         [ref]$command_status
     )
 
-    Invoke-CommandWithStatusCode -c $command_param -o $command_output -s $command_status
+    Invoke-CommandWithStatusCode -c $input_command -o $command_output -s $command_status
 
     if ($command_status.Value -ne 0) {
         Write-OutputDictionaryToOutputFile

@@ -2,6 +2,10 @@
 
 # Copyright (C) Microsoft Corporation.
 
+param(
+    [Parameter(Mandatory = $true)][string] $Arg
+)
+
 # Exit immediately if a command fails
 $ErrorActionPreference = "Stop"
 
