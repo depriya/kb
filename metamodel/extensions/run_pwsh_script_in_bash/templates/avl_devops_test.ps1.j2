@@ -17,12 +17,12 @@ Write-Host "args: $Arg"
 
 
 Write-Host "Calling Command"
-$command = @"
+$input_command = @"
 Write-Host "Hello World!"
 "@
 $command_output = ""
 $command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
+Invoke-Command-ExitOnFailure -c $input_command -o $command_output -s $command_status
 
 Write-Host "Completed Calling Command"
 

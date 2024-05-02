@@ -165,14 +165,14 @@ function Invoke-CommandWithStatusCode {
             Position = 0
         )]
         [Alias("c", "Command")]
-        [string]$command,
+        [string]$command_param,
 
         [Parameter(
             Mandatory = $true,
             ValueFromPipelineByPropertyName = $true,
             Position = 1
         )]
-        [Alias("o", "OutVariable")]
+        [Alias("o")]
         [ref]$base_command_output,
 
         [Parameter(
@@ -185,7 +185,7 @@ function Invoke-CommandWithStatusCode {
     )
 
     # Execute the command and capture output
-    $base_command_output.Value = Invoke-Expression $command 2>&1
+    $base_command_output.Value = Invoke-Expression $command_param 2>&1
     $base_command_status.Value = $LASTEXITCODE
 
     if ($base_command_status.Value -ne 0) {
@@ -224,14 +224,14 @@ function Invoke-Command-ExitOnFailure {
             Position = 0
         )]
         [Alias("c", "Command")]
-        [string]$command,
+        [string]$command_param,
 
         [Parameter(
             Mandatory = $true,
             ValueFromPipelineByPropertyName = $true,
             Position = 1
         )]
-        [Alias("o", "OutVariable")]
+        [Alias("o")]
         [ref]$command_output,
 
         [Parameter(
@@ -243,7 +243,7 @@ function Invoke-Command-ExitOnFailure {
         [ref]$command_status
     )
 
-    Invoke-CommandWithStatusCode -c $command -o $command_output -s $command_status
+    Invoke-CommandWithStatusCode -c $command_param -o $command_output -s $command_status
 
     if ($command_status.Value -ne 0) {
         Write-OutputDictionaryToOutputFile
