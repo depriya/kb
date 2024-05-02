@@ -22,7 +22,7 @@ Write-Host "Hello World!"
 "@
 $command_output = ""
 $command_status = 0
-Invoke-Command-ExitOnFailure -c $input_command -o $command_output -s $command_status
+Invoke-Command-ExitOnFailure -c $input_command -o ([ref]$command_output) -s ([ref]$command_status)
 
 Write-Host "Completed Calling Command"
 
