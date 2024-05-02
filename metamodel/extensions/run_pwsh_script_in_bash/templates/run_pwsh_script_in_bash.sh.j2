@@ -17,6 +17,13 @@ arg1=$(echo $1)
 
 #region Execute the PowerShell script
 echo "Executing PowerShell script $ps_script_path, $arg1"
-pwsh -NoProfile -File $ps_script_path -Arg $arg1
+
+_command_output=""
+_command_status=0
+command="pwsh -NoProfile -File $ps_script_path -Arg $arg1"
+execute_command_exit_on_failure "$command" _command_output _command_status
+
 echo "Execution of PowerShell script $ps_script_path completed successfully."
+
+echo_output_dictionary_to_output_file
 #endregion Execute the PowerShell script
