@@ -164,7 +164,7 @@ function Invoke-CommandWithStatusCode {
             ValueFromPipelineByPropertyName = $true,
             Position = 0
         )]
-        [Alias("c", "Command")]
+        [Alias("c")]
         [string]$input_command,
 
         [Parameter(
@@ -222,7 +222,7 @@ function Invoke-Command-ExitOnFailure {
             ValueFromPipelineByPropertyName = $true,
             Position = 0
         )]
-        [Alias("c", "Command")]
+        [Alias("c")]
         [string]$input_command,
 
         [Parameter(
