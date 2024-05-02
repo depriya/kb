@@ -11,10 +11,7 @@ $ErrorActionPreference = "Stop"
 # Fail if an unset variable is used
 Set-StrictMode -Version Latest
 
-Write-Host "args: $Arg"
-
-. ./symphony_stage_script_provider.ps1 "$($Arg)"
-
+. $PSScriptRoot/symphony_stage_script_provider.ps1 "$($Arg)"
 
 Write-Host "Calling Command"
 $input_command = @"
