@@ -1,3 +1,9 @@
+[CmdletBinding()]
+param(
+    [Parameter()][string] $Arg0,
+    [Parameter()][string] $Arg1
+)
+
 #!/usr/bin/env pwsh
 
 # Copyright (C) Microsoft Corporation.
@@ -10,11 +16,11 @@ Set-StrictMode -Version Latest
 
 Write-Host "Started"
 
-Write-Host "args: $($args[0]) and $($args[0]) "
+Write-Host "args: $($Arg0) and $($Arg1) "
 
-Set-Location $args[0]
+Set-Location $($Arg0)
 
-. ./symphony_stage_script_provider.ps1 $args[1]
+. ./symphony_stage_script_provider.ps1 "$($Arg1)"
 
 #region Declare Constants
 $DOWNLOAD_REQUEST_TIMEOUT_SECONDS = 600
@@ -121,7 +127,7 @@ foreach ($item in $ARRAY_TO_PROCESS) {
     if ($item.GetType().BaseType.Name -eq "Object" ) {
         if ($item.PSObject.Properties.Name -contains "SubSys" -and $item.SubSys.GetType().BaseType.Name -eq "Array" -and $item.PSObject.Properties.Name -contains "DownloadSource") {
             if ($item.DownloadSource.Type -eq "GitHub") {
-                $github_pat_token =$(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($item.DownloadSource.Secret) --query value -o tsv)
+                $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($item.DownloadSource.Secret) --query value -o tsv)
                 $LocationURL = $item.DownloadSource.LocationURL
                 $segments = $LocationURL -split '/'
                 $repo_organisation = $segments[3]
@@ -129,8 +135,9 @@ foreach ($item in $ARRAY_TO_PROCESS) {
                 if (-not (Test-Path -LiteralPath $repo_name)) {
                     try {
                         git clone https://$($github_pat_token)@github.com/$($repo_organisation)/$($repo_name).git
-                    } catch {
-                       Write-Error "Unable to clone"
+                    }
+                    catch {
+                        Write-Error "Unable to clone"
                     }
                 }
             }
