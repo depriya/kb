@@ -8,17 +8,13 @@ $ErrorActionPreference = "Stop"
 # Fail if an unset variable is used
 Set-StrictMode -Version Latest
 
-[CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true)][string] $Arg0,
     [Parameter(Mandatory = $true)][string] $Arg1
 )
 
 Write-Host "Started"
 
-Write-Host "args: $($Arg0) and $($Arg1) "
-
-Set-Location $($Arg0)
+Write-Host "args: $($Arg1) "
 
 . ./symphony_stage_script_provider.ps1 "$($Arg1)"
 
