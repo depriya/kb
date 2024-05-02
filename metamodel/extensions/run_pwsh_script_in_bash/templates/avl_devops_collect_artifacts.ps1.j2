@@ -14,12 +14,6 @@ Set-StrictMode -Version Latest
 
 . $PSScriptRoot/symphony_stage_script_provider.ps1 "$($Arg)"
 
-#region Declare Constants
-$DOWNLOAD_REQUEST_TIMEOUT_SECONDS = 600
-$DOWNLOAD_REQUEST_MAX_REDIRECT = 5
-$DOWNLOAD_REQUEST_MAX_RETRY = 5
-#endregion Declare Constants
-
 #region Getting config from metamodel config yaml
 $configEncoded = "{{ parameters.input_parameter_to_script }}"
 $config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($configEncoded)) | ConvertFrom-Json
@@ -36,60 +30,6 @@ $PROJECT_NAME = "$($config.project_config.project_name)".ToLower()
 $PROJECT_FOLDER_PATH = "$($config.project_config.project_name)_$($config.project_config.version)"
 
 $MODEL_STACK = $config.model_stack 
-
-#TODO: Discuss, are these parameters now obselete?
-$JFROG_DOWNLOAD_URL = "$($config.jfrog.download_url)"
-$JFROG_TOKEN_SECRET_NAME = "$($config.jfrog.token_secret_name)"
-#$REPOS_TO_CLONE = $config.clone_github_repositories
-#endregion parameters - get from config
-
-az login --identity
-
-#TODO: Discuss, Is this region now obselete?
-#region clone github repositories using pat token
-# Write-Host "Cloning github repositories using pat token"
-# foreach ($repo in $REPOS_TO_CLONE) {
-#     $command = "az keyvault secret show --vault-name $STAGING_KV_NAME --name $($repo.pat_token_secret_name) --query value -o tsv "
-#     $github_pat_token = ""
-#     $command_status = 0
-#     Invoke-Command-ExitOnFailure -c $command -o $github_pat_token -s $command_status
-
-#     $repoCloneUrl = "https://$($github_pat_token)@github.com/$($repo.organisation)/$($repo.repository).git"
-#     $command = "git clone ""$($repoCloneUrl)"" --depth 1 --no-tags"
-#     $command_output = ""
-#     $command_status = 0
-#     Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
-# }
-# Write-Host "Completed cloning github repositories."
-#endregion clone github repositories using pat token
-
-#TODO: Discuss, Is this region now obselete?
-#region download jfrog artifact
-Write-Host "Downloading jfrog artifact"
-New-Item -Path $PWD -Name $ProjectFolderPath -ItemType Directory -Force
-$command = "az keyvault secret show --vault-name $STAGING_KV_NAME --name $($JFROG_TOKEN_SECRET_NAME) --query value -o tsv"
-$jfrog_edge_token = ""
-$command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o $jfrog_edge_token -s $command_status
-
-$headers = @{ "Authorization" = "Basic $([System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes("$($jfrog_edge_token)")))" }
-$command = @"
-Invoke-WebRequest `
-    -Method GET `
-    -Uri $($JFROG_DOWNLOAD_URL) `
-    -Headers $($headers)`
-    -ConnectionTimeoutSeconds $($DOWNLOAD_REQUEST_TIMEOUT_SECONDS) `
-    -PreserveAuthorizationOnRedirect `
-    -MaximumRedirection $($DOWNLOAD_REQUEST_MAX_REDIRECT) `
-    -MaximumRetryCount $($DOWNLOAD_REQUEST_MAX_RETRY) `
-    -PassThru `
-    -OutFile
-"@
-$command_output = ""
-$command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
-Write-Host "Downloaded jfrog artifact"
-#endregion download jfrog artifact
 
 #TODO: This should be rewritten to use the updated template for the path. Check if a single file can be downloaded using the secret without cloning the entire repo.
 #TODO: Should this section collect additionl artifacts? What sections should it collect?
