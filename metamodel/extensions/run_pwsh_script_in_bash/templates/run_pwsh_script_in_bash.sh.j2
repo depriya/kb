@@ -17,6 +17,6 @@ arg1=$(echo $1)
 
 #region Execute the PowerShell script
 echo "Executing PowerShell script $ps_script_path, $arg1"
-pwsh -NoProfile -File "$ps_script_path"
+pwsh -NoProfile -File "$ps_script_path" -Arg $arg1
 echo "Execution of PowerShell script $ps_script_path completed successfully."
 #endregion Execute the PowerShell script
