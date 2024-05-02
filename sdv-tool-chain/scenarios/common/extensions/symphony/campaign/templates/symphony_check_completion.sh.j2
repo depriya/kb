@@ -12,7 +12,21 @@ set -u
 # Usage: execute line by line from the symphony_campaign outuput directory
 
 token=$(curl -X POST -d '{"username":"admin", "password":""}' http://192.168.0.102:8082/v1alpha2/users/auth | jq -r '.accessToken')
+count=0
 
-curl -X GET  -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/build_pj3_142738_activation
+while true; do
 
-# TODO: ADD a loop
+    response=$(curl -X GET -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/build_pj3_142738_activation)
+    status=$(${response} | jq -r '.status')
+
+    echo Status: "$status"
+
+    ((count++))
+
+    if [[ $count -ge 5 ]]; then
+        break
+    fi
+
+    sleep 60
+
+done
