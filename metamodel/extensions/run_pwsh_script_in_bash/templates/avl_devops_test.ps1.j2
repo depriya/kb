@@ -1,0 +1,31 @@
+#!/usr/bin/env pwsh
+
+# Copyright (C) Microsoft Corporation.
+
+# Exit immediately if a command fails
+$ErrorActionPreference = "Stop"
+
+# Fail if an unset variable is used
+Set-StrictMode -Version Latest
+
+param(
+    [Parameter(Mandatory = $true)][string] $Arg
+)
+
+Write-Host "args: $Arg"
+
+. ./symphony_stage_script_provider.ps1 "$($Arg)"
+
+
+Write-Host "Calling Command"
+$command = @"
+Write-Host "Hello World!"
+"@
+$command_output = ""
+$command_status = 0
+Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
+
+Write-Host "Completed Calling Command"
+
+Write-OutputDictionaryToOutputFile
+exit 0
