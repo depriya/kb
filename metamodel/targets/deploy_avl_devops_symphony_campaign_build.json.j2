@@ -64,7 +64,7 @@
                     "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
                 },
                  "inputs": {
-                    "ps_script_path":"./avl_devops_copy_artifacts.ps1"
+                    "ps_script_path":"{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script/avl_devops_copy_artifacts.ps1"
                 },
                 "stageSelector": "execute_avl_devops_local_installer"
             },
@@ -79,7 +79,7 @@
                     "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
                 },
                  "inputs": {
-                    "ps_script_path":"./avl_devops_run_local_scripts.ps1"
+                    "ps_script_path":"{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script/avl_devops_run_local_scripts.ps1"
                 },
                 "stageSelector": "execute_avl_devops_build_project"
             },
@@ -94,7 +94,7 @@
                     "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
                 },
                  "inputs": {
-                    "ps_script_path":"./avl_devops_run_simulation_build.ps1"
+                    "ps_script_path":"{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script/avl_devops_run_simulation_build.ps1"
                 }
             }
         },
