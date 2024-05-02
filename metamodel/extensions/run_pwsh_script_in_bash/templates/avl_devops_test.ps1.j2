@@ -1,4 +1,7 @@
 #!/usr/bin/env pwsh
+param(
+    [Parameter(Mandatory = $true)][string] $Arg
+)
 
 # Copyright (C) Microsoft Corporation.
 
@@ -7,10 +10,6 @@ $ErrorActionPreference = "Stop"
 
 # Fail if an unset variable is used
 Set-StrictMode -Version Latest
-
-param(
-    [Parameter(Mandatory = $true)][string] $Arg
-)
 
 Write-Host "args: $Arg"
 

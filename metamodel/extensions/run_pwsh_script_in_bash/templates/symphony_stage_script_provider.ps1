@@ -255,6 +255,6 @@ function Invoke-Command-ExitOnFailure {
 
 $inputs_file = $args[0]
 
-$outputs = (Get-Content $inputs_file | ConvertFrom-Json | ForEach-Object { $_ | Add-Member -NotePropertyName $_.Name -NotePropertyValue $_.Value -PassThru -Force }) | ConvertTo-Json -Compress
+$outputs = Get-Content -Path $inputs_file | ConvertFrom-Json | ConvertTo-Json -Compress
 
 $output_file_path = $inputs_file -replace '\.[^.]+$', '-output.$&'
