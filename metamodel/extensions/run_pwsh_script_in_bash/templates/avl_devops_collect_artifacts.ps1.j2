@@ -8,27 +8,10 @@ $ErrorActionPreference = "Stop"
 # Fail if an unset variable is used
 Set-StrictMode -Version Latest
 
-param(
-    [Parameter(Mandatory = $true)][string] $Arg
-)
-
 Write-Host "Started"
 
-Write-Host "args: $($Arg) "
-
-. ./symphony_stage_script_provider.ps1 "$($Arg)"
-
-#region upload to staging storage account
-Write-Host "Testing"
-$command = @"
-Write-Host "Hello World"
-"@
-$command_output = ""
-$command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
 
 Write-Host "Completed upload to staging storage account."
-#endregion upload to staging storage account
 
 Write-OutputDictionaryToOutputFile
 exit 0
