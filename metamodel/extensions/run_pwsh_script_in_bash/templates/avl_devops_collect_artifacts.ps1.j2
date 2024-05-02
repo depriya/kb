@@ -1,9 +1,3 @@
-[CmdletBinding()]
-param(
-    [Parameter()][string] $Arg0,
-    [Parameter()][string] $Arg1
-)
-
 #!/usr/bin/env pwsh
 
 # Copyright (C) Microsoft Corporation.
@@ -13,6 +7,12 @@ $ErrorActionPreference = "Stop"
 
 # Fail if an unset variable is used
 Set-StrictMode -Version Latest
+
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $true)][string] $Arg0,
+    [Parameter(Mandatory = $true)][string] $Arg1
+)
 
 Write-Host "Started"
 
