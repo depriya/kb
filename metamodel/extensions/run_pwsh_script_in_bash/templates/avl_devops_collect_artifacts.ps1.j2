@@ -97,7 +97,7 @@ az storage account keys list `
 "@
 $storage_key = ""
 $command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o $storage_key -s $command_status
+Invoke-Command-ExitOnFailure -c $command -o ([ref]$storage_key) -s ([ref]$command_status)
 
 Write-Host "Got storage account key for staging storage account."
 #endregion Get Account key for staging storage account
@@ -113,7 +113,7 @@ az storage container create `
 "@
 $command_output = ""
 $command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
+Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
 
 Write-Host "Completed creating container in staging storage account."
 #endregion Creating container in staging storage account
@@ -132,7 +132,7 @@ az storage blob upload `
 "@
 $command_output = ""
 $command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
+Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
 
 Write-Host "Completed upload to staging storage account."
 #endregion upload to staging storage account
