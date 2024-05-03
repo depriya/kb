@@ -10,10 +10,10 @@ on:
             description: "Model Connect Base Version"
             required: false
             default: "2023.1"
-        #ModelConnectVersion:
-         #   description: "Model Connect Version"
-         #   required: false
-         #   default: "2023.1.2"
+        ModelConnectVersion:
+            description: "Model Connect Version"
+            required: false
+            default: "2023.1.2"
         ConcertoVersion:
             description: "Concerto Version"
             required: false
