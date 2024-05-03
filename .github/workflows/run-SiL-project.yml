@@ -5,12 +5,10 @@ on:
     metamodel_repo:
       description: "MetaModel Repository Name (ORG/REPO)"
       required: true
-      default: ""
       type: string
     metamodel_file_name:
       description: "MetaModel File Name (ABSOLUTE PATH)"
-      required: true
-      default: ""
+      required: true 
       type: string
 
 permissions:
