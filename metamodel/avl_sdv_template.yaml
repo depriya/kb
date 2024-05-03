@@ -25,7 +25,6 @@ config:
   customer_stamp_config:
     azure_region: westeurope
     target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
-
   
   ade_config:
     vmss_suffix: 007

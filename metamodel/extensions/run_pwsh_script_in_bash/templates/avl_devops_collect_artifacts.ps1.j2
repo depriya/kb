@@ -29,74 +29,52 @@ $VERSION = "$($config.project_config.version)"
 $PROJECT_NAME = "$($config.project_config.project_name)".ToLower()
 $PROJECT_FOLDER_PATH = "$($config.project_config.project_name)_$($config.project_config.version)"
 
-$MODEL_STACK = $config.model_stack 
+$MODEL_STACK = $config.model_stack.ModulesLibrary 
 
-#TODO: This should be rewritten to use the updated template for the path. Check if a single file can be downloaded using the secret without cloning the entire repo.
-#TODO: Should this section collect additionl artifacts? What sections should it collect?
-#TODO: Create a "Module_Library.yml", confirm the structure of this file.
-#region collect model stack files
+$WORKING_DIR = "$($PWD)"
+
+New-Item -Path . -Name "$($PROJECT_FOLDER_PATH)" -ItemType "directory" -Force
+Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)"
+New-Item -Path . -Name "model_stack" -ItemType "directory" -Force
+Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/model_stack"
+
 Write-Host "Collecting model stack files"
-$MODEL_STACK_PROPERTIES = $MODEL_STACK | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name
-$ARRAY_TO_PROCESS = @()
-foreach ($property in $MODEL_STACK_PROPERTIES) {
-    Write-Host "Processing property: $property, found type: $($MODEL_STACK.$property.GetType().BaseType.Name)"
-    if ($MODEL_STACK.$property.GetType().BaseType.Name -eq "Object") {
-        $nestedModuleProperties = $MODEL_STACK.$property | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name
-        foreach ($nestedModuleProperty in $nestedModuleProperties) {
-            Write-Host "Processing nested property: $nestedModuleProperty, found type: $($MODEL_STACK.$property.$nestedModuleProperty.GetType().BaseType.Name)"
-            if ($MODEL_STACK.$property.$nestedModuleProperty.GetType().BaseType.Name -eq "Array") {
-                Write-Host "Adding to array to process: $($MODEL_STACK.$property.$nestedModuleProperty)"
-                $ARRAY_TO_PROCESS += $MODEL_STACK.$property.$nestedModuleProperty
+$MODEL_STACK_LIBS = $MODEL_STACK | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name
+foreach ($library in $MODEL_STACK_LIBS) {
+    foreach ($module in $MODEL_STACK."$($library)") {
+        if ($module.DownloadSource.Type -eq "GitHub") {
+            $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($module.DownloadSource.Secret) --query value -o tsv)
+            $LocationURL = $module.DownloadSource.LocationURL
+            $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
+            if (-not (Test-Path -LiteralPath $repo_name)) {
+                Write-Host "Cloning $LocationURL"
+                git clone $LocationUrl.Replace('github.com', "$($github_pat_token)@github.com")
+                Write-Host "Cloning $LocationURL completed"
             }
-        }
-    }
-    elseif ($MODEL_STACK.$property.GetType().BaseType.Name -eq "Array") {
-        Write-Host "Adding to array to process: $property"
-        $ARRAY_TO_PROCESS += $MODEL_STACK.$property
-    }
-}
-foreach ($item in $ARRAY_TO_PROCESS) {
-    if ($item.GetType().BaseType.Name -eq "Object" ) {
-        if ($item.PSObject.Properties.Name -contains "SubSys" -and $item.SubSys.GetType().BaseType.Name -eq "Array" -and $item.PSObject.Properties.Name -contains "DownloadSource") {
-            if ($item.DownloadSource.Type -eq "GitHub") {
-                $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($item.DownloadSource.Secret) --query value -o tsv)
-                $LocationURL = $item.DownloadSource.LocationURL
-                $segments = $LocationURL -split '/'
-                $repo_organisation = $segments[3]
-                $repo_name = $segments[4] -replace '\.git$', ''
-                if (-not (Test-Path -LiteralPath $repo_name)) {
-                    try {
-                        git clone https://$($github_pat_token)@github.com/$($repo_organisation)/$($repo_name).git
-                    }
-                    catch {
-                        Write-Error "Unable to clone"
-                    }
-                }
-            }
-            foreach ($subSys in $item.SubSys) {
-                if ($subSys.GetType().BaseType.Name -eq "Object" -and $subSys.PSObject.Properties.Name -contains "ModuleFilePath" -and $null -ne $subSys.ModuleFilePath) {
-                    Write-Host "Copying from ModuleFilePath - $PWD/$($subSys.ModuleFilePath)"
-                    Copy-Item "$PWD/$($subSys.ModuleFilePath)" "$PWD" -Recurse -Force
-                    if ($subSys.PSObject.Properties.Name -contains "SubSysParam" -and $subSys.SubSysParam.GetType().BaseType.Name -eq "Array") {
-                        foreach ($subSysParam in $subSys.SubSysParam) {
-                            if ($subSysParam.GetType().BaseType.Name -eq "Object" -and $subSysParam.PSObject.Properties.Name -contains "ParamFilePath" -and $null -ne $subSysParam.ParamFilePath) {
-                                Write-Host "Copying from ParamFilePath - $PWD/$($subSysParam.ParamFilePath)"
-                                Copy-Item "$PWD/$($subSysParam.ParamFilePath)" "$PROJECT_FOLDER_PATH" -Recurse -Force
-                            }
-                        }
-                    }
-                }
-            }
-        }
+            # foreach ($subSys in $module.SubSys) {
+            #     if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
+            #         Write-Host "Copying from ModuleFilePath - $PWD/$($subSys.ModuleFilePath)"
+            #         Copy-Item "$PWD/$($subSys.ModuleFilePath)" "$PWD" -Recurse -Force
+            #         Write-Host "Copying from ModuleFilePath - $PWD/$($subSys.ModuleFilePath) completed"
+            #     }
+            #     foreach ($subSysParam in $subSys.SubSysParam) {
+            #         if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
+            #             Write-Host "Copying from ParamFilePath - $PWD/$($subSysParam.ParamFilePath)"
+            #             Copy-Item "$PWD/$($subSysParam.ParamFilePath)" "$PROJECT_FOLDER_PATH" -Recurse -Force
+            #             Write-Host "Copying from ParamFilePath - $PWD/$($subSysParam.ParamFilePath)"
+            #         }
+            #     }
+            # }
+        }       
     }
 }
-Write-Host "Completed copying model stack files"
+Write-Host "Completed collection of model stack files"
 #endregion collect model stack files
 
 #region compress project folder
 Write-Host "Compressing project folder"
-Set-Location $PROJECT_FOLDER_PATH
-Compress-Archive -Path . -DestinationPath "$($PROJECT_FOLDER_PATH).zip" -Force
+Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)"
+Compress-Archive -Path . -DestinationPath "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH).zip" -Force
 Write-Host "Completed compressing project folder"
 #endregion compress project folder
 
