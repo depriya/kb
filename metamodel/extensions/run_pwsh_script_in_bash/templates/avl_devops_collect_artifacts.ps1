@@ -125,7 +125,7 @@ foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
         if (-not (Test-Path "$($folderPath)")) {
             New-Item -Path "$($folderPath)" -ItemType "directory"
         }
-        if (-not [string]::IsNullOrWhiteSpace($software.BuildScriptPath)) {
+        if (($item | Get-Member -Name software -MemberType BuildScriptPath) -and (-not [string]::IsNullOrWhiteSpace($software.BuildScriptPath))) {
             Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath)"
             
             Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.BuildScriptPath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.BuildScriptPath)" -Force
