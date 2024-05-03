@@ -5,10 +5,12 @@ on:
     inputs:
       metamodel_repo:
         description: "MetaModel Repository Name (ORG/REPO)"
+        default: "avl-sdv/DevOpsPilot.Metamodels"
         required: true
         type: string
       metamodel_file_name:
         description: "MetaModel File Name (ABSOLUTE PATH)"
+        default: "DevOpsPilot.Metamodels/metamodel/avl_sdv_template.yaml"
         required: true 
         type: string
 
@@ -37,11 +39,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4 #TODO: Discuss if this should be triggered from this repo or external.
 
-      # - name: Checkout Metamodel Repository
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: ${{ github.event.inputs.metamodel_repo }}
-      #     path: metamodel
+      - name: Checkout Metamodel Repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.inputs.metamodel_repo }}
+          path: metamodel2
 
       - name: Test
         shell: pwsh
