@@ -47,30 +47,32 @@ Write-Host "Collecting model stack files"
 $MODEL_STACK_LIBS = $MODEL_STACK | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name
 foreach ($library in $MODEL_STACK_LIBS) {
     foreach ($module in $MODEL_STACK."$($library)") {
-        if ($null -ne $module.DownloadSource -and $module.DownloadSource.Type -eq "GitHub") {
-            $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($module.DownloadSource.Secret) --query value -o tsv)
-            $LocationURL = $module.DownloadSource.LocationURL
-            $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
-            if (-not (Test-Path -LiteralPath $repo_name)) {
-                Write-Host "Cloning $LocationURL"
-                git clone $LocationUrl.Replace('github.com', "$($github_pat_token)@github.com")
-                Write-Host "Cloning $LocationURL completed"
-            }
-            # foreach ($subSys in $module.SubSys) {
-            #     if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
-            #         Write-Host "Copying from ModuleFilePath - $PWD/$($subSys.ModuleFilePath)"
-            #         Copy-Item "$PWD/$($subSys.ModuleFilePath)" "$PWD" -Recurse -Force
-            #         Write-Host "Copying from ModuleFilePath - $PWD/$($subSys.ModuleFilePath) completed"
-            #     }
-            #     foreach ($subSysParam in $subSys.SubSysParam) {
-            #         if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
-            #             Write-Host "Copying from ParamFilePath - $PWD/$($subSysParam.ParamFilePath)"
-            #             Copy-Item "$PWD/$($subSysParam.ParamFilePath)" "$PROJECT_FOLDER_PATH" -Recurse -Force
-            #             Write-Host "Copying from ParamFilePath - $PWD/$($subSysParam.ParamFilePath)"
-            #         }
-            #     }
-            # }
-        }       
+        if ($null -ne $module.DownloadSource) {
+            if ($module.DownloadSource.Type -eq "GitHub") {
+                $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($module.DownloadSource.Secret) --query value -o tsv)
+                $LocationURL = $module.DownloadSource.LocationURL
+                $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
+                if (-not (Test-Path -LiteralPath $repo_name)) {
+                    Write-Host "Cloning $LocationURL"
+                    git clone $LocationUrl.Replace('github.com', "$($github_pat_token)@github.com")
+                    Write-Host "Cloning $LocationURL completed"
+                }
+                # foreach ($subSys in $module.SubSys) {
+                #     if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
+                #         Write-Host "Copying from ModuleFilePath - $PWD/$($subSys.ModuleFilePath)"
+                #         Copy-Item "$PWD/$($subSys.ModuleFilePath)" "$PWD" -Recurse -Force
+                #         Write-Host "Copying from ModuleFilePath - $PWD/$($subSys.ModuleFilePath) completed"
+                #     }
+                #     foreach ($subSysParam in $subSys.SubSysParam) {
+                #         if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
+                #             Write-Host "Copying from ParamFilePath - $PWD/$($subSysParam.ParamFilePath)"
+                #             Copy-Item "$PWD/$($subSysParam.ParamFilePath)" "$PROJECT_FOLDER_PATH" -Recurse -Force
+                #             Write-Host "Copying from ParamFilePath - $PWD/$($subSysParam.ParamFilePath)"
+                #         }
+                #     }
+                # }
+            }       
+        }
     }
 }
 Write-Host "Completed collection of model stack files"
