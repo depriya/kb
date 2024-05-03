@@ -31,7 +31,7 @@ $PROJECT_FOLDER_PATH = "$($config.project_config.project_name)_$($config.project
 
 $MODEL_STACK = $config.model_stack.ModulesLibrary 
 
-$WORKING_DIR = "$($PWD)"
+$WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
 
 New-Item -Path . -Name "$($PROJECT_FOLDER_PATH)" -ItemType "directory" -Force
 Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)"
@@ -42,7 +42,7 @@ Write-Host "Collecting model stack files"
 $MODEL_STACK_LIBS = $MODEL_STACK | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name
 foreach ($library in $MODEL_STACK_LIBS) {
     foreach ($module in $MODEL_STACK."$($library)") {
-        if ($module.DownloadSource.Type -eq "GitHub") {
+        if (-not [string]::IsNullOrWhiteSpace($module.DownloadSource) -and $module.DownloadSource.Type -eq "GitHub") {
             $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($module.DownloadSource.Secret) --query value -o tsv)
             $LocationURL = $module.DownloadSource.LocationURL
             $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
