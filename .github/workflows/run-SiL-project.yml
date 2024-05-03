@@ -2,14 +2,15 @@ name: Run SiL Project
 
 on:
   workflow_dispatch:
-    metamodel_repo:
-      description: "MetaModel Repository Name (ORG/REPO)"
-      required: true
-      type: string
-    metamodel_file_name:
-      description: "MetaModel File Name (ABSOLUTE PATH)"
-      required: true 
-      type: string
+    inputs:
+      metamodel_repo:
+        description: "MetaModel Repository Name (ORG/REPO)"
+        required: true
+        type: string
+      metamodel_file_name:
+        description: "MetaModel File Name (ABSOLUTE PATH)"
+        required: true 
+        type: string
 
 permissions:
   id-token: write
