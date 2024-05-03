@@ -48,6 +48,7 @@ if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging") {
 }
 
 New-Item -Path "$($WORKING_DIR)" -Name "$($PROJECT_FOLDER_PATH)_Staging" -ItemType "directory" -Force
+New-Item -Path "$($WORKING_DIR)" -Name "$($PROJECT_FOLDER_PATH)" -ItemType "directory" -Force
 Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging"
 
 #endregion Create project folder
