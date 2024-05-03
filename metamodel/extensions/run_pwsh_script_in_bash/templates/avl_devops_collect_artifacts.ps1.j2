@@ -34,6 +34,12 @@ $MODEL_STACK = $config.model_stack.ModulesLibrary
 
 $WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
 
+if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
+    Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)"
+    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+    Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)"
+}
+
 New-Item -Path . -Name "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -ItemType "directory" -Force
 Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)"
 
