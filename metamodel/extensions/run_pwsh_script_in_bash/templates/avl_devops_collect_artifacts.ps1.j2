@@ -30,13 +30,12 @@ $PROJECT_NAME = "$($config.project_config.project_name)".ToLower()
 $PROJECT_FOLDER_PATH = "$($config.project_config.project_name)_$($config.project_config.version)"
 
 $MODEL_STACK = $config.model_stack.ModulesLibrary 
+#endregion parameters - get from config
 
 $WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
 
-New-Item -Path . -Name "$($PROJECT_FOLDER_PATH)" -ItemType "directory" -Force
+New-Item -Path . -Name "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -ItemType "directory" -Force
 Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)"
-New-Item -Path . -Name "model_stack" -ItemType "directory" -Force
-Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/model_stack"
 
 Write-Host "Collecting model stack files"
 $MODEL_STACK_LIBS = $MODEL_STACK | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name
