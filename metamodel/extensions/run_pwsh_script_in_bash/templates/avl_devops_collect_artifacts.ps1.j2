@@ -20,7 +20,6 @@ $config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64Str
 #endregion Getting config from metamodel config yaml
 
 #region parameters - get from config
-$STAGING_SA_SUBSCRIPTION_ID = "$($config.customer_stamp_config.target_subscription_id)" 
 $STAGING_SA_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-rg-001" 
 $STAGING_SA_NAME = "$($config.resource_name_primary_prefix)$($config.resource_name_secondary_prefix)c$($config.project_config.oem_identifier)$($config.project_config.environment_stage[0])st" 
 $STAGING_KV_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-s-$($config.project_config.environment_stage[0])-kv-001" 
@@ -87,36 +86,54 @@ Write-Host "Completed compressing project folder"
 
 #region Get Account key for staging storage account
 Write-Host "Getting storage account key for staging storage account"
-$storage_key = 
-az storage account keys list `
-    -g $($STAGING_SA_RESOURCE_GROUP) `
-    -n $($STAGING_SA_NAME) `
-    --query "[0].value" `
+$command = @"
+az storage account keys list ``
+    -g $($STAGING_SA_RESOURCE_GROUP) ``
+    -n $($STAGING_SA_NAME) ``
+    --query "[0].value" ``
     -o tsv
+"@
+$storage_key = ""
+$command_status = 0
+Invoke-Command-ExitOnFailure -c $command -o ([ref]$storage_key) -s ([ref]$command_status)
+
 Write-Host "Got storage account key for staging storage account."
 #endregion Get Account key for staging storage account
 
 #region Creating container in staging storage account and
 Write-Host "Creating container in staging storage account"
-az storage container create `
-    --account-name $($STAGING_SA_NAME) `
-    --account-key "$($storage_key)" `
-    -n $($PROJECT_NAME) `
+$command = @"
+az storage container create ``
+    --account-name $($STAGING_SA_NAME) ``
+    --account-key "$($storage_key)" ``
+    -n $($PROJECT_NAME) ``
     --only-show-errors
+"@
+$command_output = ""
+$command_status = 0
+Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
+
 Write-Host "Completed creating container in staging storage account."
 #endregion Creating container in staging storage account
 
 #region upload to staging storage account
 Write-Host "Uploading to compressed zip to staging storage account"
-az storage blob upload `
-    --account-name $($STAGING_SA_NAME) `
-    --account-key "$($storage_key)" `
-    -c $($PROJECT_NAME) `
-    -n $($VERSION) `
-    -f "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH).zip" `
-    --overwrite `
+$command = @"
+az storage blob upload ``
+    --account-name $($STAGING_SA_NAME) ``
+    --account-key "$($storage_key)" ``
+    -c $($PROJECT_NAME) ``
+    -n "$($VERSION).zip" ``
+    -f "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH).zip" ``
+    --overwrite ``
     --only-show-errors
+"@
+$command_output = ""
+$command_status = 0
+Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
+
 Write-Host "Completed upload to staging storage account."
 #endregion upload to staging storage account
 
+Write-OutputDictionaryToOutputFile
 exit 0
