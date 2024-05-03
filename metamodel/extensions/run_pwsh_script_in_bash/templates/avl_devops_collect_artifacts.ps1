@@ -32,6 +32,7 @@ $PROJECT_FOLDER_PATH = "$($config.project_config.project_name)_$($config.project
 
 $MODEL_STACK = $config.model_stack.ModulesLibrary 
 $ADDITIONAL_SOFTWARE_STACK = $config.additional_software_stack
+$REPORTING_STACK = $config.reporting_stack.TestReportTemplateLibrary
 #endregion parameters - get from config
 
 #region Create project folder
@@ -117,6 +118,41 @@ foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
     }
 }
 Write-Host "Completed collection of additional software stack files"
+#endregion Collect additional software stack files
+
+#region Collect additional software stack files
+Write-Host "Collecting reporting stack files"
+foreach ($item in $REPORTING_STACK) {
+    if ($item.DownloadSource.Type -eq "GitHub") {
+        $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($item.DownloadSource.Secret) --query value -o tsv)
+        $LocationURL = $item.DownloadSource.LocationURL
+        $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
+        if (-not (Test-Path -LiteralPath $repo_name)) {
+            Write-Host "Cloning $LocationURL"
+            git clone $LocationUrl.Replace('github.com', "$($github_pat_token)@github.com")
+            Write-Host "Cloning $LocationURL completed"
+        }
+        if ($item | Get-Member -Name SubSys -MemberType Properties) {
+            foreach ($subSys in $item.SubSys) {
+                if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
+                    Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath)"
+                    Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+                    Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath) completed"
+                }
+                if ($subSys | Get-Member -Name SubSysParam -MemberType Properties) {
+                    foreach ($subSysParam in $subSys.SubSysParam) {
+                        if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
+                            Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
+                            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+                            Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+Write-Host "Completed collection of reporting stack files"
 #endregion Collect additional software stack files
 
 #region Compress project folder

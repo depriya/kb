@@ -74,7 +74,7 @@ config:
         DownloadSource:
           Type: GitHub # currently supported is GitHub or JFrog
           Secret: GithubPatToken
-          LocationURL: <LOCATION_URL>
+          LocationURL: https://github.com/avl-sdv/Projects_Repo.git
         SubSys:
           - Name: Next-E-Truck_v5
             ModuleFilePath: Projects_Repo/Next-E-Truck/Reporting_Layouts/Cycle_and_EnergySummary/Next-E-Truck_v5.cly
@@ -379,17 +379,6 @@ config:
                 - Param: BEV_Truck_1Spd_default
                   ParamFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/param/BEV_Truck_1Spd_default.dcm
   #endregion variations configuration
-
-  #region XCP monitor configuration
-  #TODO: Currently not used. Discuss if this has any significance.
-   # as per today's discussion with Markus, we are not using XCPSettings section.
-#  XCP_monitor_config:
-#    - module_name: BEV_Truck_1Spd
-#      XCPSettings:
-#        XCPSlave:
-#        HostIP:
-#        Port: 0
-  #endregion XCP monitor configuration
 
   #region Symphony Configuration
   symphony:
