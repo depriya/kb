@@ -125,100 +125,101 @@ foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
         if (-not (Test-Path "$($folderPath)")) {
             New-Item -Path "$($folderPath)" -ItemType "directory"
         }
-        if (($item | Get-Member -Name software -MemberType BuildScriptPath) -and (-not [string]::IsNullOrWhiteSpace($software.BuildScriptPath))) {
-            Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath)"
+        if ($software | Get-Member -Name BuildScriptPath -MemberType Property ) {
+            if ( -not [string]::IsNullOrWhiteSpace($software.BuildScriptPath)) {
+                Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath)"
             
-            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.BuildScriptPath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.BuildScriptPath)" -Force
-            Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath) completed"
+                Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.BuildScriptPath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.BuildScriptPath)" -Force
+                Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath) completed"
+            }
         }
     }
-}
-Write-Host "Completed collection of additional software stack files"
-#endregion Collect additional software stack files
+    Write-Host "Completed collection of additional software stack files"
+    #endregion Collect additional software stack files
 
-#region Collect additional software stack files
-Write-Host "Collecting reporting stack files"
-foreach ($item in $REPORTING_STACK) {
-    if ($item.DownloadSource.Type -eq "GitHub") {
-        $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($item.DownloadSource.Secret) --query value -o tsv)
-        $LocationURL = $item.DownloadSource.LocationURL
-        $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
-        if (-not (Test-Path -LiteralPath $repo_name)) {
-            Write-Host "Cloning $LocationURL"
-            git clone $LocationUrl.Replace('github.com', "$($github_pat_token)@github.com")
-            Write-Host "Cloning $LocationURL completed"
-        }
-        if ($item | Get-Member -Name SubSys -MemberType Properties) {
-            foreach ($subSys in $item.SubSys) {
-                if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
-                    Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath)"
-                    $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSys.ModuleFilePath)" -Parent
-                    if (-not (Test-Path "$($folderPath)")) {
-                        New-Item -Path "$($folderPath)" -ItemType "directory"
+    #region Collect additional software stack files
+    Write-Host "Collecting reporting stack files"
+    foreach ($item in $REPORTING_STACK) {
+        if ($item.DownloadSource.Type -eq "GitHub") {
+            $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($item.DownloadSource.Secret) --query value -o tsv)
+            $LocationURL = $item.DownloadSource.LocationURL
+            $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
+            if (-not (Test-Path -LiteralPath $repo_name)) {
+                Write-Host "Cloning $LocationURL"
+                git clone $LocationUrl.Replace('github.com', "$($github_pat_token)@github.com")
+                Write-Host "Cloning $LocationURL completed"
+            }
+            if ($item | Get-Member -Name SubSys -MemberType Properties) {
+                foreach ($subSys in $item.SubSys) {
+                    if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
+                        Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath)"
+                        $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSys.ModuleFilePath)" -Parent
+                        if (-not (Test-Path "$($folderPath)")) {
+                            New-Item -Path "$($folderPath)" -ItemType "directory"
+                        }
+                        Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSys.ModuleFilePath)" -Force
+                        Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath) completed"
                     }
-                    Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSys.ModuleFilePath)" -Force
-                    Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath) completed"
-                }
-                if ($subSys | Get-Member -Name SubSysParam -MemberType Properties) {
-                    foreach ($subSysParam in $subSys.SubSysParam) {
-                        if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
-                            Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
-                            $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSysParam.ParamFilePath)" -Parent
-                            if (-not (Test-Path "$($folderPath)")) {
-                                New-Item -Path "$($folderPath)" -ItemType "directory"
+                    if ($subSys | Get-Member -Name SubSysParam -MemberType Properties) {
+                        foreach ($subSysParam in $subSys.SubSysParam) {
+                            if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
+                                Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
+                                $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSysParam.ParamFilePath)" -Parent
+                                if (-not (Test-Path "$($folderPath)")) {
+                                    New-Item -Path "$($folderPath)" -ItemType "directory"
+                                }
+                                Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSysParam.ParamFilePath)" -Force
+                                Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
                             }
-                            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSysParam.ParamFilePath)" -Force
-                            Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
                         }
                     }
                 }
             }
         }
     }
-}
-Write-Host "Completed collection of reporting stack files"
-#endregion Collect additional software stack files
+    Write-Host "Completed collection of reporting stack files"
+    #endregion Collect additional software stack files
 
-#region Compress project folder
-Write-Host "Compressing project folder"
-Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)"
-Compress-Archive -Path . -DestinationPath "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH).zip" -Force
-Write-Host "Completed compressing project folder"
-#endregion Compress project folder
+    #region Compress project folder
+    Write-Host "Compressing project folder"
+    Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)"
+    Compress-Archive -Path . -DestinationPath "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH).zip" -Force
+    Write-Host "Completed compressing project folder"
+    #endregion Compress project folder
 
-#region Get Account key for staging storage account
-Write-Host "Getting storage account key for staging storage account"
-$command = @"
+    #region Get Account key for staging storage account
+    Write-Host "Getting storage account key for staging storage account"
+    $command = @"
 az storage account keys list ``
     -g $($STAGING_SA_RESOURCE_GROUP) ``
     -n $($STAGING_SA_NAME) ``
     --query "[0].value" ``
     -o tsv
 "@
-$storage_key = ""
-$command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o ([ref]$storage_key) -s ([ref]$command_status)
-Write-Host "Got storage account key for staging storage account."
-#endregion Get Account key for staging storage account
+    $storage_key = ""
+    $command_status = 0
+    Invoke-Command-ExitOnFailure -c $command -o ([ref]$storage_key) -s ([ref]$command_status)
+    Write-Host "Got storage account key for staging storage account."
+    #endregion Get Account key for staging storage account
 
-#region Creating container in staging storage account and
-Write-Host "Creating container in staging storage account"
-$command = @"
+    #region Creating container in staging storage account and
+    Write-Host "Creating container in staging storage account"
+    $command = @"
 az storage container create ``
     --account-name $($STAGING_SA_NAME) ``
     --account-key "$($storage_key)" ``
     -n $($PROJECT_NAME) ``
     --only-show-errors
 "@
-$command_output = ""
-$command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
-Write-Host "Completed creating container in staging storage account."
-#endregion Creating container in staging storage account
+    $command_output = ""
+    $command_status = 0
+    Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
+    Write-Host "Completed creating container in staging storage account."
+    #endregion Creating container in staging storage account
 
-#region Upload to staging storage account
-Write-Host "Uploading to compressed zip to staging storage account"
-$command = @"
+    #region Upload to staging storage account
+    Write-Host "Uploading to compressed zip to staging storage account"
+    $command = @"
 az storage blob upload ``
     --account-name $($STAGING_SA_NAME) ``
     --account-key "$($storage_key)" ``
@@ -228,23 +229,23 @@ az storage blob upload ``
     --overwrite ``
     --only-show-errors
 "@
-$command_output = ""
-$command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
-Write-Host "Completed upload to staging storage account."
-#endregion Upload to staging storage account
+    $command_output = ""
+    $command_status = 0
+    Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
+    Write-Host "Completed upload to staging storage account."
+    #endregion Upload to staging storage account
 
-if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging") {
-    Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)_Staging"
-    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging" -Recurse -Force
-    Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)_Staging"
-}
+    if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging") {
+        Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)_Staging"
+        Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging" -Recurse -Force
+        Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)_Staging"
+    }
 
-if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
-    Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)"
-    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
-    Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)"
-}
+    if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
+        Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)"
+        Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+        Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)"
+    }
 
-Write-OutputDictionaryToOutputFile
-exit 0
+    Write-OutputDictionaryToOutputFile
+    exit 0
