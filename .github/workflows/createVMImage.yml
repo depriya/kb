@@ -10,10 +10,10 @@ on:
             description: "Model Connect Base Version"
             required: false
             default: "2023.1"
-        ModelConnectVersion:
-            description: "Model Connect Version"
-            required: false
-            default: "2023.1.2"
+        #ModelConnectVersion:
+         #   description: "Model Connect Version"
+         #   required: false
+         #   default: "2023.1.2"
         ConcertoVersion:
             description: "Concerto Version"
             required: false
@@ -25,7 +25,7 @@ on:
         LicenseServer:
             description: "License server IP"
             required: false
-            default: "192.168.0.123"
+            default: "license.avl.lnk"
         VMWindowsVersion:
           description: "Windows version"
           required: false
@@ -111,7 +111,7 @@ jobs:
             
 
             # Install Model Connect Patch
-            az vm run-command invoke --resource-group $virtualMachineRGName --name $virtualMachineName --command-id $command_id --scripts "cmd.exe /c C:\Temp\ModelConnectUpdate.cmd"
+            #az vm run-command invoke --resource-group $virtualMachineRGName --name $virtualMachineName --command-id $command_id --scripts "cmd.exe /c C:\Temp\ModelConnectUpdate.cmd"
 
             # Install Concerto
             az vm run-command invoke --resource-group $virtualMachineRGName --name $virtualMachineName --command-id $command_id --scripts "cmd.exe /c C:\Temp\concertoInstall.cmd"
