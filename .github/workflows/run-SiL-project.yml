@@ -2,7 +2,7 @@ name: Run SiL Project
 
 on:
   workflow_dispatch:
-      
+
 permissions:
   id-token: write
   contents: read
@@ -17,12 +17,12 @@ jobs:
     outputs:
       is_interactive: ${{ steps.interactive-execution.outputs.EXECUTION_ENVIRONENT }}
     environment: sub-AVL_DevopsPilot #TODO: Change the Environment
-    
+
     env:
       TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
       TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
       METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
-      METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel 
+      METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel
 
     steps:
       - name: Checkout code
@@ -32,8 +32,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.11
-          cache: 'pip'
-          
+          cache: "pip"
+
       - name: Install dependencies
         run: |
           pip install yq # yq is used to parse yaml files
@@ -55,19 +55,19 @@ jobs:
             Write-Host "Setting Execution Environment to sub-AVL_DevopsPilot"
             echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot" >> $env:GITHUB_OUTPUT
           }
-      
-      - name: Validate Metamodel 
+
+      - name: Validate Metamodel
         run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel validate --from-file  ${{ env.METAMODEL_YAML }}
 
-      - name: Generate Campaign and Scripts for Metamodel 
+      - name: Generate Campaign and Scripts for Metamodel
         run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel execute --from-file  ${{ env.METAMODEL_YAML }} --output-dir  ${{ env.METAMODEL_OUTPUT_DIR }}
-      
-      - name: Zip Metamodel output 
+
+      - name: Zip Metamodel output
         working-directory: ${{ env.METAMODEL_OUTPUT_DIR }}
         run: |
           cp ${{ env.METAMODEL_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
           zip -r ${{ env.WORKFLOW_ARTIFACT_NAME }} *
-      
+
       - name: Publish Metamodel Output
         uses: actions/upload-artifact@v4
         with:
@@ -84,7 +84,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
-        
+
       - name: Unzip the output
         shell: pwsh
         run: |
@@ -109,7 +109,7 @@ jobs:
           $resource_name_shared_short = "s"
           $environment_stage = (yq '.config.project_config.environment_stage' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
           $meta_model_outputs_file_share_name = (yq '.config.shared_stamp_config.meta_model_outputs_file_share_name' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
-          
+
 
           $subscription_id = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
           $ResourceGroup =  "$($resource_name_primary_prefix)-$($resource_name_secondary_prefix)-$($resource_name_shared_short)-stamp-$($environment_stage[0])-rg-001"
@@ -124,7 +124,7 @@ jobs:
             --query "[0].value" `
             -o tsv `
             --only-show-errors
-          
+
           az storage file upload-batch `
             --account-name $storageAccount `
             --account-key $storage_key `
@@ -135,20 +135,26 @@ jobs:
           az storage file list `
             --account-name $storageAccount `
             --account-key $storage_key `
-            --share-name "$meta_model_outputs_file_share_name" 
-        
+            --share-name "$meta_model_outputs_file_share_name"
+
   Create_and_Activate_Symphony_Campaign_Build:
-    needs: [ Generate_Campaign_from_Metamodel, Upload_Campaign_and_Scripts_to_File_Share ]
-    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
-    environment: 
-      name: sub-AVL_DevopsPilot #TODO: Change the Environment
-    
+    needs:
+      [
+        Generate_Campaign_from_Metamodel,
+        Upload_Campaign_and_Scripts_to_File_Share,
+      ]
+    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner
+    # environment:
+    #   name: sub-AVL_DevopsPilot #TODO: Change the Environment
+    environment:
+      name: ${{ needs.Generate_Campaign_from_Metamodel.outputs.is_interactive }}
+
     steps:
       - name: Download output from previous job
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
-        
+
       - name: Unzip the output
         shell: pwsh
         run: |
@@ -163,23 +169,28 @@ jobs:
           cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build"
           bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build//symphony_api_calls.sh"
 
-      - name: Wait Until Campaign Completion 
+      - name: Wait Until Campaign Completion
         run: |
           cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build"
           bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build//symphony_check_completion.sh"
 
   Create_and_Activate_Symphony_Campaign_Execute:
-    needs: [ Generate_Campaign_from_Metamodel, Upload_Campaign_and_Scripts_to_File_Share, Create_and_Activate_Symphony_Campaign_Build ]
-    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner 
-    environment: 
+    needs:
+      [
+        Generate_Campaign_from_Metamodel,
+        Upload_Campaign_and_Scripts_to_File_Share,
+        Create_and_Activate_Symphony_Campaign_Build,
+      ]
+    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner
+    environment:
       name: ${{ needs.Generate_Campaign_from_Metamodel.outputs.is_interactive }}
-    
+
     steps:
       - name: Download output from previous job
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
-        
+
       - name: Unzip the output
         shell: pwsh
         run: |
@@ -194,7 +205,7 @@ jobs:
           cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_execute"
           bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_execute//symphony_api_calls.sh"
 
-      - name: Wait Until Campaign Completion 
+      - name: Wait Until Campaign Completion
         run: |
           cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_execute"
           bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_execute//symphony_check_completion.sh"
