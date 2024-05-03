@@ -73,6 +73,10 @@ foreach ($library in $MODEL_STACK_LIBS) {
                     foreach ($subSys in $module.SubSys) {
                         if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
                             Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath)"
+                            $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSys.ModuleFilePath)" -Parent
+                            if (-not (Test-Path "$($folderPath)")) {
+                                New-Item -Path "$($folderPath)" -ItemType "directory"
+                            }
                             Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSys.ModuleFilePath)" -Force
                             Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath) completed"
                         }
@@ -80,6 +84,10 @@ foreach ($library in $MODEL_STACK_LIBS) {
                             foreach ($subSysParam in $subSys.SubSysParam) {
                                 if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
                                     Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
+                                    $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSysParam.ParamFilePath)" -Parent
+                                    if (-not (Test-Path "$($folderPath)")) {
+                                        New-Item -Path "$($folderPath)" -ItemType "directory"
+                                    }
                                     Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSysParam.ParamFilePath)" -Force
                                     Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
                                 }
@@ -107,11 +115,19 @@ foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
             Write-Host "Cloning $LocationURL completed"
         }
         Write-Host "Copying from FilePath - $($software.FilePath)"
+        $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.FilePath)" -Parent
+        if (-not (Test-Path "$($folderPath)")) {
+            New-Item -Path "$($folderPath)" -ItemType "directory"
+        }
         Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.FilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.FilePath)" -Force
         Write-Host "Copying from FilePath - $($software.FilePath) completed"
-
+        $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.BuildScriptPath)" -Parent
+        if (-not (Test-Path "$($folderPath)")) {
+            New-Item -Path "$($folderPath)" -ItemType "directory"
+        }
         if (-not [string]::IsNullOrWhiteSpace($software.BuildScriptPath)) {
             Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath)"
+            
             Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.BuildScriptPath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.BuildScriptPath)" -Force
             Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath) completed"
         }
@@ -136,6 +152,10 @@ foreach ($item in $REPORTING_STACK) {
             foreach ($subSys in $item.SubSys) {
                 if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
                     Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath)"
+                    $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSys.ModuleFilePath)" -Parent
+                    if (-not (Test-Path "$($folderPath)")) {
+                        New-Item -Path "$($folderPath)" -ItemType "directory"
+                    }
                     Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSys.ModuleFilePath)" -Force
                     Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath) completed"
                 }
@@ -143,6 +163,10 @@ foreach ($item in $REPORTING_STACK) {
                     foreach ($subSysParam in $subSys.SubSysParam) {
                         if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
                             Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
+                            $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSysParam.ParamFilePath)" -Parent
+                            if (-not (Test-Path "$($folderPath)")) {
+                                New-Item -Path "$($folderPath)" -ItemType "directory"
+                            }
                             Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSysParam.ParamFilePath)" -Force
                             Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
                         }
