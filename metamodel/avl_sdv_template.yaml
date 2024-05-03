@@ -25,7 +25,7 @@ config:
   customer_stamp_config:
     azure_region: westeurope
     target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
-  
+
   ade_config:
     vmss_suffix: 007
     sku: Standard_B2als_v2
@@ -33,7 +33,7 @@ config:
     storage_account_type: Standard_LRS
     caching: ReadWrite
 
-  devbox_config:  
+  devbox_config:
     suffix: 006
     devbox_image_name: Test001
     capacity: 1
@@ -72,7 +72,7 @@ config:
     TestReportTemplateLibrary:
       - BlockName: Report
         DownloadSource:
-          Type: GitHub # currently supported is GitHub or JFrog
+          Type: GitHub
           Secret: GithubPatToken
           LocationURL: https://github.com/avl-sdv/Projects_Repo.git
         SubSys:
@@ -103,40 +103,6 @@ config:
   model_stack:
     ModulesLibrary:
       PlantModelLibrary:
-        - BlockName: BEV_Truck_Mdl
-          DownloadSource:
-            Type: GitHub # currently supported is GitHub or JFrog
-            Secret: GithubPatToken
-            LocationURL: https://github.com/avl-sdv/model_releases.git
-          SubSys:
-            - Name: BEV_Truck_1Spd
-              ModuleFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/FMU/BEV_Truck_1Spd.fmu # the path to the FMU file, must be relative to the LocationURL
-              TimeStepSize: #TODO: Discuss, Currently this is not used.
-              # XCP parameters to get defined in a separate XCP section below
-              # as per today's discussion with Markus, we are not using XCPSettings section.
-              XCPSettings:
-                XCPSlave:
-                HostIP:
-                Port:
-              SubSysParam:
-                - Param: BEV_Truck_1Spd_default
-                  ParamFilePath: model_releases/Vehicle/BEV_Truck_1Spd/v1.0/param/BEV_Truck_1Spd_default.dcm # the path to the parameter file, must be relative to the LocationURL
-        - BlockName: Driver_Mdl
-          DownloadSource:
-            Type: GitHub
-            Secret: GithubPatToken
-            LocationURL: https://github.com/avl-sdv/model_releases.git
-          SubSys:
-            - Name: Driver
-              ModuleFilePath: model_releases/Driver/v1.0/FMU/Driver.fmu
-              TimeStepSize:
-              XCPSettings: #TODO: Discuss, Comment in Line 107 conflicts with this. Currently we are not using XCPSettings section.
-                XCPSlave:
-                HostIP:
-                Port:
-              SubSysParam:
-                - Param: Driver_default
-                  ParamFilePath: model_releases/Driver/v1.0/param/Driver_default.dcm
         - BlockName: TMS_Mdl
           DownloadSource:
             Type: GitHub
@@ -153,6 +119,22 @@ config:
               SubSysParam:
                 - Param: TMS_default
                   ParamFilePath: model_releases/TMS/v3.0/param/TMS_default.dcm
+        - BlockName: BEV_Truck_Mdl
+          DownloadSource:
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/model_releases.git
+          SubSys:
+            - Name: BEV_Truck
+              ModuleFilePath: model_releases/Vehicle/BEV_Truck/v1.0/FMU/BEV_Truck.fmu
+              TimeStepSize:
+              XCPSettings:
+                XCPSlave:
+                HostIP:
+                Port:
+              SubSysParam:
+                - Param: BEV_Truck_default
+                  ParamFilePath: model_releases/Vehicle/BEV_Truck/v1.0/param/BEV_Truck_default.dcm
         - BlockName: Cabin_Mdl
           DownloadSource:
             Type: GitHub
@@ -169,6 +151,22 @@ config:
               SubSysParam:
                 - Param: Simple_Cabin_default
                   ParamFilePath: model_releases/Cabin/v2.0/Param/Simple_Cabin_default.dcm
+        - BlockName: Driver_Mdl
+          DownloadSource:
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/model_releases.git
+          SubSys:
+            - Name: Driver
+              ModuleFilePath: model_releases/Driver/v1.0/FMU/Driver.fmu
+              TimeStepSize:
+              XCPSettings:
+                XCPSlave:
+                HostIP:
+                Port:
+              SubSysParam:
+                - Param: Driver_default
+                  ParamFilePath: model_releases/Driver/v1.0/param/Driver_default.dcm
       PredefinedDriveCycleLibrary:
         - BlockName: DriveCycle_Mdl
           DownloadSource:
@@ -176,8 +174,8 @@ config:
             Secret: GithubPatToken
             LocationURL: https://github.com/avl-sdv/model_releases.git
           SubSys:
-            - Name: DriveCycle
-              ModuleFilePath: model_releases/DriveCycle/v1.1/FMU/Utrecht_Medium/Utrecht_Medium.fmu
+            - Name: Utrecht_Lucky
+              ModuleFilePath: model_releases/DriveCycle/v1.1/FMU/Utrecht_Lucky/Utrecht_Lucky.fmu
               TimeStepSize:
               XCPSettings:
                 XCPSlave:
@@ -185,22 +183,6 @@ config:
                 Port:
               SubSysParam: []
       ControllerModelLibrary:
-        - BlockName: VehicleCtrl_ECU
-          DownloadSource:
-            Type: GitHub
-            Secret: GithubPatToken
-            LocationURL: https://github.com/avl-sdv/xcu_releases.git
-          SubSys:
-            - Name: VCU
-              ModuleFilePath: xcu_releases/VehicleContrUnit/v3.0/FMU/VCU.fmu
-              TimeStepSize:
-              XCPSettings:
-                XCPSlave:
-                HostIP:
-                Port:
-              SubSysParam:
-                - Param: VehicleContr_default
-                  ParamFilePath: xcu_releases/VehicleContrUnit/v1.0/param/VehicleContr_default.dcm
         - BlockName: TransmissionCtrl_ECU
           DownloadSource:
             Type: GitHub
@@ -233,22 +215,6 @@ config:
               SubSysParam:
                 - Param: TMSContr_default
                   ParamFilePath: xcu_releases/TMSContr/v1.0/param/TMSContr_default.dcm
-        - BlockName: EAxleCtrl_ECU
-          DownloadSource:
-            Type: GitHub
-            Secret: GithubPatToken
-            LocationURL: https://github.com/avl-sdv/xcu_releases.git
-          SubSys:
-            - Name: EAxle_Controller
-              ModuleFilePath: xcu_releases/EAxleContrUnit/EAxle_Controller/v1.0/FMU/EAxle_Controller.fmu
-              TimeStepSize:
-              XCPSettings:
-                XCPSlave:
-                HostIP:
-                Port:
-              SubSysParam:
-                - Param: EAxle_Ctrl_default
-                  ParamFilePath: xcu_releases/EAxleContrUnit/EAxle_Controller/v1.1/param/EAxle_Ctrl_default.dcm
         - BlockName: ChargingCtrl_ECU
           DownloadSource:
             Type: GitHub
@@ -265,6 +231,22 @@ config:
               SubSysParam:
                 - Param: ChargingUnitContr_default
                   ParamFilePath: xcu_releases/ChargingContrUnit/v1.0/param/ChargingUnitContr_default.dcm
+        - BlockName: EAxleCtrl_ECU
+          DownloadSource:
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/xcu_releases.git
+          SubSys:
+            - Name: EAxle_Controller
+              ModuleFilePath: xcu_releases/EAxleContrUnit/EAxle_Controller/v1.0/FMU/EAxle_Controller.fmu
+              TimeStepSize:
+              XCPSettings:
+                XCPSlave:
+                HostIP:
+                Port:
+              SubSysParam:
+                - Param: EAxle_Ctrl_default
+                  ParamFilePath: xcu_releases/EAxleContrUnit/EAxle_Controller/v1.1/param/EAxle_Ctrl_default.dcm
         - BlockName: CabinContr_ECU
           DownloadSource:
             Type: GitHub
@@ -281,23 +263,23 @@ config:
               SubSysParam:
                 - Param: CabinContr_default
                   ParamFilePath: xcu_releases/CabinContrUnit/v1.0/param/CabinContr_default.dcm
+        - BlockName: VehicleCtrl_ECU
+          DownloadSource:
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/xcu_releases.git
+          SubSys:
+            - Name: VCU
+              ModuleFilePath: xcu_releases/VehicleContrUnit/v3.0/FMU/VCU.fmu
+              TimeStepSize:
+              XCPSettings:
+                XCPSlave:
+                HostIP:
+                Port:
+              SubSysParam:
+                - Param: VehicleContr_default
+                  ParamFilePath: xcu_releases/VehicleContrUnit/v1.0/param/VehicleContr_default.dcm
       StimuliLibrary:
-        - BlockName: ChargingStation
-          DownloadSource:
-            Type: GitHub
-            Secret: GithubPatToken
-            LocationURL: https://github.com/avl-sdv/Projects_Repo.git
-          SubSys:
-            - Name: ChargingStation
-              ModuleFilePath: Projects_Repo/Next-E-Truck/Stimuli/CSV/Charging_Station/ChargingStation.csv
-        - BlockName: Powertrain_Transient
-          DownloadSource:
-            Type: GitHub
-            Secret: GithubPatToken
-            LocationURL: https://github.com/avl-sdv/Projects_Repo.git
-          SubSys:
-            - Name: PowertrainTransient
-              ModuleFilePath: Projects_Repo/Next-E-Truck/Stimuli/CSV/Powertrain_Transient/PowertrainTransient.csv
         - BlockName: Cycle_Switch
           DownloadSource:
             Type: GitHub
@@ -306,6 +288,22 @@ config:
           SubSys:
             - Name: CycleSwitch
               ModuleFilePath: Projects_Repo/Next-E-Truck/Stimuli/CSV/Cycle_Switch/CycleSwitch.csv
+        - BlockName: Powertrain_Transient
+          DownloadSource:
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/Projects_Repo.git
+          SubSys:
+            - Name: PowertrainTransient
+              ModuleFilePath: Projects_Repo/Next-E-Truck/Stimuli/CSV/Powertrain_Transient/PowertrainTransient.csv
+        - BlockName: ChargingStation
+          DownloadSource:
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/Projects_Repo.git
+          SubSys:
+            - Name: ChargingStation
+              ModuleFilePath: Projects_Repo/Next-E-Truck/Stimuli/CSV/Charging_Station/ChargingStation.csv
       UserFunctionLibrary:
         - BlockName: Func_Total_PWD
           DownloadSource:
@@ -333,6 +331,16 @@ config:
             - Name: vVV_ExtAirAmbTemp_C
               Value: 50
               Unit: temperature~degC
+      TestReportTemplateLibrary:
+        - BlockName: Report
+          DownloadSource:
+            Type: GitHub
+            Secret: GithubPatToken
+            LocationURL: https://github.com/avl-sdv/Projects_Repo.git
+          SubSys:
+            - Name: Next-E-Truck_v5
+              ModuleFilePath: Projects_Repo/Next-E-Truck/Reporting_Layouts/Cycle_and_EnergySummary/Next-E-Truck_v5.cly
+
   #endregion model stack configuration
 
   #region variations configuration
