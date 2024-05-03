@@ -87,40 +87,28 @@ Write-Host "Completed compressing project folder"
 
 #region Get Account key for staging storage account
 Write-Host "Getting storage account key for staging storage account"
-$command = @"
+$storage_key = 
 az storage account keys list `
     -s $($STAGING_SA_SUBSCRIPTION_ID) `
     -g $($STAGING_SA_RESOURCE_GROUP) `
     -n $($STAGING_SA_NAME) `
     --query "[0].value" `
     -o tsv
-"@
-$storage_key = ""
-$command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o ([ref]$storage_key) -s ([ref]$command_status)
-
 Write-Host "Got storage account key for staging storage account."
 #endregion Get Account key for staging storage account
 
 #region Creating container in staging storage account and
 Write-Host "Creating container in staging storage account"
-$command = @"
 az storage container create `
     --account-name $($STAGING_SA_NAME) `
     --account-key "$($storage_key)" `
     -n $($PROJECT_NAME) `
     --only-show-errors
-"@
-$command_output = ""
-$command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
-
 Write-Host "Completed creating container in staging storage account."
 #endregion Creating container in staging storage account
 
 #region upload to staging storage account
 Write-Host "Uploading to compressed zip to staging storage account"
-$command = @"
 az storage blob upload `
     --account-name $($STAGING_SA_NAME) `
     --account-key "$($storage_key)" `
@@ -129,11 +117,6 @@ az storage blob upload `
     -f "$($PROJECT_FOLDER_PATH).zip" `
     --overwrite `
     --only-show-errors
-"@
-$command_output = ""
-$command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
-
 Write-Host "Completed upload to staging storage account."
 #endregion upload to staging storage account
 
