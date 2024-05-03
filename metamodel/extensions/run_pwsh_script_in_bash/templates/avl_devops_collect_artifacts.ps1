@@ -68,17 +68,21 @@ foreach ($library in $MODEL_STACK_LIBS) {
                     git clone $LocationUrl.Replace('github.com', "$($github_pat_token)@github.com")
                     Write-Host "Cloning $LocationURL completed"
                 }
-                foreach ($subSys in $module.SubSys) {
-                    if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
-                        Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath)"
-                        Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
-                        Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath) completed"
-                    }
-                    foreach ($subSysParam in $subSys.SubSysParam) {
-                        if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
-                            Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
-                            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
-                            Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
+                if ($module | Get-Member -Name SubSys -MemberType Properties) {
+                    foreach ($subSys in $module.SubSys) {
+                        if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
+                            Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath)"
+                            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+                            Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath) completed"
+                        }
+                        if ($subSys | Get-Member -Name SubSysParam -MemberType Properties) {
+                            foreach ($subSysParam in $subSys.SubSysParam) {
+                                if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
+                                    Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
+                                    Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+                                    Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
+                                }
+                            }
                         }
                     }
                 }
