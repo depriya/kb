@@ -90,9 +90,9 @@ config:
       Version: 1.1
       DownloadSource:
         Type: GitHub # currently supported is GitHub or JFrog
-        Secret: <UNIQUE_SECRET_NAME>
-        LocationURL: workflow_repo # e.g. JFrog://home/ModelConnect/2021.1
-      FilePath: dopapi\co_simulation.py # e.g. /python/ModelConnect.py (the path, must be relative to the LocationURL)
+        Secret: GithubPatToken
+        LocationURL: https://github.com/avl-sdv/workflow_repo.git # e.g. JFrog://home/ModelConnect/2021.1
+      FilePath: workflow_repo/dopapi/co_simulation.py # e.g. /python/ModelConnect.py (the path, must be relative to the LocationURL)
 
       # build_script can be left empty if the tool runs out of the box without any installation/building required
       BuildScriptPath: <BUILD_SCRIPT_PATH>
