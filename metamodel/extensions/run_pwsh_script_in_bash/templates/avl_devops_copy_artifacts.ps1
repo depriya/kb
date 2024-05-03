@@ -35,7 +35,7 @@ $CONTAINER_NAME = "$($config.project_config.project_name)".ToLower()
 $BLOB_NAME = "$($config.project_config.version)"
 
 $VMSS_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-rg-001" 
-$VMSS_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-$($config.project_config.project_name)-vmss-001"
+$VMSS_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-p-$($config.project_config.project_name)-$($config.project_config.environment_stage[0])-vmss-$($config.ade_config.vmss_suffix)"
 #endregion parameters - get from config
 
 #region Get Account key for staging storage account

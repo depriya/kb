@@ -24,7 +24,7 @@ $config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64Str
 #region parameters - get from config
 $ADDITIONAL_SOFTWARE_STACK = $config.additional_software_stack
 $VMSS_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-rg-001" 
-$VMSS_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-$($config.project_config.project_name)-vmss-001"
+$VMSS_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-p-$($config.project_config.project_name)-$($config.project_config.environment_stage[0])-vmss-$($config.ade_config.vmss_suffix)"
 #endregion parameters - get from config
 
 #region run each tool
