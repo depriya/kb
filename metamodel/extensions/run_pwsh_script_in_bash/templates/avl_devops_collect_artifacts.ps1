@@ -121,14 +121,13 @@ foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
         }
         Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.FilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.FilePath)" -Force
         Write-Host "Copying from FilePath - $($software.FilePath) completed"
-        $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.BuildScriptPath)" -Parent
-        if (-not (Test-Path "$($folderPath)")) {
-            New-Item -Path "$($folderPath)" -ItemType "directory"
-        }
-        if ($software | Get-Member -Name BuildScriptPath -MemberType Property ) {
+        if ($software | Get-Member -Name BuildScriptPath -MemberType Properties ) {
             if ( -not [string]::IsNullOrWhiteSpace($software.BuildScriptPath)) {
                 Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath)"
-            
+                $folderPath = Split-Path -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.BuildScriptPath)" -Parent
+                if (-not (Test-Path "$($folderPath)")) {
+                    New-Item -Path "$($folderPath)" -ItemType "directory"
+                }
                 Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.BuildScriptPath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.BuildScriptPath)" -Force
                 Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath) completed"
             }
