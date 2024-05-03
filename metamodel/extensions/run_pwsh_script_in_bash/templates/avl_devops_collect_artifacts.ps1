@@ -40,8 +40,15 @@ if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
     Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)"
 }
 
-New-Item -Path "$($WORKING_DIR)" -Name "$($PROJECT_FOLDER_PATH)" -ItemType "directory" -Force
-Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)"
+if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging") {
+    Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)_Staging"
+    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging" -Recurse -Force
+    Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)_Staging"
+}
+
+New-Item -Path "$($WORKING_DIR)" -Name "$($PROJECT_FOLDER_PATH)_Staging" -ItemType "directory" -Force
+Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging"
+
 #endregion Create project folder
 
 #region Collect model stack files
@@ -59,20 +66,20 @@ foreach ($library in $MODEL_STACK_LIBS) {
                     git clone $LocationUrl.Replace('github.com', "$($github_pat_token)@github.com")
                     Write-Host "Cloning $LocationURL completed"
                 }
-                # foreach ($subSys in $module.SubSys) {
-                #     if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
-                #         Write-Host "Copying from ModuleFilePath - $PWD/$($subSys.ModuleFilePath)"
-                #         Copy-Item "$PWD/$($subSys.ModuleFilePath)" "$PWD" -Recurse -Force
-                #         Write-Host "Copying from ModuleFilePath - $PWD/$($subSys.ModuleFilePath) completed"
-                #     }
-                #     foreach ($subSysParam in $subSys.SubSysParam) {
-                #         if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
-                #             Write-Host "Copying from ParamFilePath - $PWD/$($subSysParam.ParamFilePath)"
-                #             Copy-Item "$PWD/$($subSysParam.ParamFilePath)" "$PROJECT_FOLDER_PATH" -Recurse -Force
-                #             Write-Host "Copying from ParamFilePath - $PWD/$($subSysParam.ParamFilePath)"
-                #         }
-                #     }
-                # }
+                foreach ($subSys in $module.SubSys) {
+                    if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
+                        Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath)"
+                        Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+                        Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath) completed"
+                    }
+                    foreach ($subSysParam in $subSys.SubSysParam) {
+                        if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
+                            Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
+                            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+                            Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
+                        }
+                    }
+                }
             }       
         }
     }
@@ -134,6 +141,18 @@ $command_status = 0
 Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
 Write-Host "Completed upload to staging storage account."
 #endregion Upload to staging storage account
+
+# if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging") {
+#     Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)_Staging"
+#     Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging" -Recurse -Force
+#     Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)_Staging"
+# }
+
+# if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
+#     Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)"
+#     Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+#     Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)"
+# }
 
 Write-OutputDictionaryToOutputFile
 exit 0
