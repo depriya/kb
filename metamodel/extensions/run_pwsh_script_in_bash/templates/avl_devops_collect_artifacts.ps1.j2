@@ -40,7 +40,7 @@ if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
     Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)"
 }
 
-New-Item -Path . -Name "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -ItemType "directory" -Force
+New-Item -Path "$($WORKING_DIR)" -Name "$($PROJECT_FOLDER_PATH)" -ItemType "directory" -Force
 Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)"
 
 Write-Host "Collecting model stack files"
