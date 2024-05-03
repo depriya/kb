@@ -38,13 +38,13 @@ $REPORTING_STACK = $config.reporting_stack.TestReportTemplateLibrary
 #region Create project folder
 if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
     Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)"
-    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Force
     Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)"
 }
 
 if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging") {
     Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)_Staging"
-    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging" -Recurse -Force
+    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging" -Force
     Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)_Staging"
 }
 
@@ -73,14 +73,14 @@ foreach ($library in $MODEL_STACK_LIBS) {
                     foreach ($subSys in $module.SubSys) {
                         if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
                             Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath)"
-                            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+                            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSys.ModuleFilePath)" -Force
                             Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath) completed"
                         }
                         if ($subSys | Get-Member -Name SubSysParam -MemberType Properties) {
                             foreach ($subSysParam in $subSys.SubSysParam) {
                                 if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
                                     Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
-                                    Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+                                    Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSysParam.ParamFilePath)" -Force
                                     Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
                                 }
                             }
@@ -107,12 +107,12 @@ foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
             Write-Host "Cloning $LocationURL completed"
         }
         Write-Host "Copying from FilePath - $($software.FilePath)"
-        Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.FilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+        Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.FilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.FilePath)" -Force
         Write-Host "Copying from FilePath - $($software.FilePath) completed"
 
         if (-not [string]::IsNullOrWhiteSpace($software.BuildScriptPath)) {
             Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath)"
-            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.BuildScriptPath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.BuildScriptPath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($software.BuildScriptPath)" -Force
             Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath) completed"
         }
     }
@@ -136,14 +136,14 @@ foreach ($item in $REPORTING_STACK) {
             foreach ($subSys in $item.SubSys) {
                 if ( -not [string]::IsNullOrWhiteSpace($subSys.ModuleFilePath)) {
                     Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath)"
-                    Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+                    Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSys.ModuleFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSys.ModuleFilePath)" -Force
                     Write-Host "Copying from ModuleFilePath - $($subSys.ModuleFilePath) completed"
                 }
                 if ($subSys | Get-Member -Name SubSysParam -MemberType Properties) {
                     foreach ($subSysParam in $subSys.SubSysParam) {
                         if (-not [string]::IsNullOrWhiteSpace($subSysParam.ParamFilePath)) {
                             Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
-                            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+                            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($subSysParam.ParamFilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/$($subSysParam.ParamFilePath)" -Force
                             Write-Host "Copying from ParamFilePath - $($subSysParam.ParamFilePath)"
                         }
                     }
