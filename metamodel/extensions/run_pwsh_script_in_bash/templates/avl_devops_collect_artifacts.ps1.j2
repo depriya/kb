@@ -47,7 +47,7 @@ Write-Host "Collecting model stack files"
 $MODEL_STACK_LIBS = $MODEL_STACK | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name
 foreach ($library in $MODEL_STACK_LIBS) {
     foreach ($module in $MODEL_STACK."$($library)") {
-        if ($null -ne $module.DownloadSource) {
+        if ($module | Get-Member -Name DownloadSource -MemberType Properties) {
             if ($module.DownloadSource.Type -eq "GitHub") {
                 $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($module.DownloadSource.Secret) --query value -o tsv)
                 $LocationURL = $module.DownloadSource.LocationURL
