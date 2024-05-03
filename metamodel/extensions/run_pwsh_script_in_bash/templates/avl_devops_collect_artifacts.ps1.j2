@@ -89,7 +89,6 @@ Write-Host "Completed compressing project folder"
 Write-Host "Getting storage account key for staging storage account"
 $storage_key = 
 az storage account keys list `
-    -s $($STAGING_SA_SUBSCRIPTION_ID) `
     -g $($STAGING_SA_RESOURCE_GROUP) `
     -n $($STAGING_SA_NAME) `
     --query "[0].value" `
@@ -114,11 +113,10 @@ az storage blob upload `
     --account-key "$($storage_key)" `
     -c $($PROJECT_NAME) `
     -n $($VERSION) `
-    -f "$($PROJECT_FOLDER_PATH).zip" `
+    -f "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH).zip" `
     --overwrite `
     --only-show-errors
 Write-Host "Completed upload to staging storage account."
 #endregion upload to staging storage account
 
-Write-OutputDictionaryToOutputFile
 exit 0
