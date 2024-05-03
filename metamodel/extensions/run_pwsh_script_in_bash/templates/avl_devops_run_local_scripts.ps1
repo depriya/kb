@@ -3,7 +3,7 @@
 # Copyright (C) Microsoft Corporation.
 
 param(
-    [Parameter(Mandatory = $true)][string] $Arg
+  [Parameter(Mandatory = $true)][string] $Arg
 )
 
 # Exit immediately if a command fails
@@ -13,8 +13,6 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 . $PSScriptRoot/symphony_stage_script_provider.ps1 "$($Arg)"
-
-$WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
 
 #region Getting config from metamodel config yaml
 $configEncoded = "{{ parameters.input_parameter_to_script }}"
@@ -29,28 +27,36 @@ $VMSS_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_se
 
 #region run each tool
 foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
-  if ( -not [string]::IsNullOrEmpty($software.BuildScriptPath)) {
+  if ( -not [string]::IsNullOrWhiteSpace($software.BuildScriptPath)) {
     Write-Host "Running $($software.name)"
 
-    Set-Location "C:\Temp" 
+    Set-Location "C:\Temp\" 
     $scriptContent = Get-Content "$($software.BuildScriptPath)" -Raw 
     $command_id = "Run$($software.BuildScriptType)Script"
 
+    #region Get all instances for the VMSS 
     Write-Host "Get all instances of VMSS: $($VMSS_NAME) in resource group: $($VMSS_RESOURCE_GROUP)."
     $command = "az vmss list-instances --resource-group ""$($VMSS_RESOURCE_GROUP)"" --name ""$($VMSS_NAME)"" --query ""[].instanceId"" -o tsv"
     $instance_ids = ""
     $command_status = 0
-    Invoke-Command-ExitOnFailure -c $command -o $instance_ids -s $command_status
+    Invoke-Command-ExitOnFailure -c $command -o ([ref]$instance_ids) -s ([ref]$command_status)
     Write-Host "Got Instance IDs: $($instance_ids)."
+    #endregion Get all instances for the VMSS
 
+    #region Run command for each instance in VMSS
+    Write-Host "Running command on all VMSS instances"
     foreach ($instanceId in $instance_ids.Split("`t")) {
-      Write-Host "Running command on instance: $($instanceId)"
-      $command = "az vmss run-command invoke --resource-group ""$($VMSS_RESOURCE_GROUP)"" --name ""$($VMSS_NAME)"" --instance-id ""$($instanceId)"" --command-id ""$($command_id)"" --scripts ""$($scriptContent)"""
-      $command_output = ""
-      $command_status = 0
-      Invoke-Command-ExitOnFailure -c $command -o $command_output -s $command_status
-      Write-Host "Completed command on instance: $($instanceId)"
+      if (-not [string]::IsNullOrWhiteSpace($instanceId)) {
+        Write-Host "Running command on VMSS instance: $($instanceId)"
+        $command = "az vmss run-command invoke --resource-group ""$($VMSS_RESOURCE_GROUP)"" --name ""$($VMSS_NAME)"" --instance-id ""$($instanceId)"" --command-id ""$($command_id)"" --scripts ""$($scriptContent)"""
+        $command_output = ""
+        $command_status = 0
+        Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
+        Write-Host "Completed command on instance: $($instanceId)"
+      }
     }
+    Write-Host "Command execution completed on all VMSS instances"
+    #endregion Run command for each instance in VMSS
   }
 }
 #endregion run each tool

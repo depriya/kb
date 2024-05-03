@@ -2,7 +2,11 @@
 setlocal enabledelayedexpansion
 rmdir %cd%\simulation /s /q
 
-"%MODELCONNECT%\user_python\python3\python.exe" ModelConnect.py ^
+"%MODELCONNECT%\user_python\python3\python.exe" {% for software in
+parameters.input_parameter.additional_software_stack if software.Script == 'build_model_connect_project' -%}
+{%- set path = software.FilePath -%}
+{{ path }}
+{%- endfor %} ^
 --executeSilProject ^
 --targetProjectName {{ parameters.input_parameter.project_config.project_name }}.proj ^
 --SimStartTime 0 ^

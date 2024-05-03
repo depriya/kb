@@ -38,13 +38,13 @@ $REPORTING_STACK = $config.reporting_stack.TestReportTemplateLibrary
 #region Create project folder
 if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
     Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)"
-    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Force
+    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
     Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)"
 }
 
 if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging") {
     Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)_Staging"
-    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging" -Force
+    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging" -Recurse -Force
     Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)_Staging"
 }
 
@@ -210,17 +210,17 @@ Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$com
 Write-Host "Completed upload to staging storage account."
 #endregion Upload to staging storage account
 
-# if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging") {
-#     Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)_Staging"
-#     Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging" -Recurse -Force
-#     Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)_Staging"
-# }
+if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging") {
+    Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)_Staging"
+    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging" -Recurse -Force
+    Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)_Staging"
+}
 
-# if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
-#     Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)"
-#     Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
-#     Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)"
-# }
+if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
+    Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)"
+    Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+    Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)"
+}
 
 Write-OutputDictionaryToOutputFile
 exit 0
