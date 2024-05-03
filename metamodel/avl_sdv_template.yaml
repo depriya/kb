@@ -177,7 +177,7 @@ config:
             LocationURL: https://github.com/avl-sdv/model_releases.git
           SubSys:
             - Name: DriveCycle
-              ModuleFilePath: /DriveCycle/v2.0/DriveCycle_Built-in/FMU/DriveCycle.fmu
+              ModuleFilePath: /DriveCycle/v1.1/FMU/Utrecht_Medium/Utrecht_Medium.fmu
               TimeStepSize:
               XCPSettings:
                 XCPSlave:
