@@ -3,7 +3,7 @@
 # Copyright (C) Microsoft Corporation.
 
 param(
-  [Parameter(Mandatory = $true)][string] $Arg
+	[Parameter(Mandatory = $true)][string] $Arg
 )
 
 # Exit immediately if a command fails
@@ -14,8 +14,9 @@ Set-StrictMode -Version Latest
 
 . $PSScriptRoot/symphony_stage_script_provider.ps1 "$($Arg)"
 
-#region Declare Constants
 $WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
+
+#region Declare Constants
 $MOUNT_COMMAND_ID = "RunPowerShellScript"
 $MOUNT_SCRIPT_PATH = "$($WORKING_DIR)/mount.ps1"
 $MOUNT_SCRIPT_CONTENT = Get-Content $MOUNT_SCRIPT_PATH -Raw 
@@ -53,17 +54,21 @@ Invoke-Command-ExitOnFailure -c $command -o ([ref]$storage_key) -s ([ref]$comman
 Write-Host "Got storage account key for staging storage account."
 #endregion Get Account key for staging storage account
 
-
+#region Get all instances for the VMSS 
 Write-Host "Get all instances of VMSS: $($VMSS_NAME) in resource group: $($VMSS_RESOURCE_GROUP)."
 $command = "az vmss list-instances --resource-group ""$($VMSS_RESOURCE_GROUP)"" --name ""$($VMSS_NAME)"" --query ""[].instanceId"" -o tsv"
 $instance_ids = ""
 $command_status = 0
 Invoke-Command-ExitOnFailure -c $command -o ([ref]$instance_ids) -s ([ref]$command_status)
 Write-Host "Got Instance IDs: $($instance_ids)."
+#endregion Get all instances for the VMSS
 
-
+#region Run command for each instance in VMSS
+Write-Host "Running command on all VMSS instances"
 foreach ($instanceId in $instance_ids.Split("`t")) {
-  $command = @"
+	if (-not [string]::IsNullOrWhiteSpace($instanceId)) {
+		Write-Host "Running command on VMSS instance: $($instanceId)"
+		$command = @"
 az vmss run-command invoke ``
   --resource-group $($VMSS_RESOURCE_GROUP) ``
   --name $($VMSS_NAME) ``
@@ -72,11 +77,14 @@ az vmss run-command invoke ``
   --scripts $($MOUNT_SCRIPT_CONTENT) ``
   --parameters "StorageAccountName=$($STAGING_SA_NAME)" "ContainerName=$($CONTAINER_NAME)" "AccountKey=$($storage_key)" "FileName=$($BLOB_NAME)"
 "@
-  $command_output = ""
-  $command_status = 0
-  Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
+		$command_output = ""
+		$command_status = 0
+		Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
+		Write-Host "Run command on VMSS instance: $($instanceId) completed."
+	}
 }
-Write-Host "Run command executed on all VMSS instances"
+Write-Host "Command execution completed on all VMSS instances"
+#endregion Run command for each instance in VMSS
 
 Write-OutputDictionaryToOutputFile
 exit 0

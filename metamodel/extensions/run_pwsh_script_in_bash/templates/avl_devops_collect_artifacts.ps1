@@ -14,6 +14,8 @@ Set-StrictMode -Version Latest
 
 . $PSScriptRoot/symphony_stage_script_provider.ps1 "$($Arg)"
 
+$WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
+
 #region Getting config from metamodel config yaml
 $configEncoded = "{{ parameters.input_parameter_to_script }}"
 $config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($configEncoded)) | ConvertFrom-Json
@@ -31,8 +33,7 @@ $PROJECT_FOLDER_PATH = "$($config.project_config.project_name)_$($config.project
 $MODEL_STACK = $config.model_stack.ModulesLibrary 
 #endregion parameters - get from config
 
-$WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
-
+#region Create project folder
 if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
     Write-Host "Removing existing project folder $($PROJECT_FOLDER_PATH)"
     Remove-Item -Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
@@ -41,7 +42,9 @@ if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)") {
 
 New-Item -Path "$($WORKING_DIR)" -Name "$($PROJECT_FOLDER_PATH)" -ItemType "directory" -Force
 Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)"
+#endregion Create project folder
 
+#region Collect model stack files
 Write-Host "Collecting model stack files"
 $MODEL_STACK_LIBS = $MODEL_STACK | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name
 foreach ($library in $MODEL_STACK_LIBS) {
@@ -75,14 +78,14 @@ foreach ($library in $MODEL_STACK_LIBS) {
     }
 }
 Write-Host "Completed collection of model stack files"
-#endregion collect model stack files
+#endregion Collect model stack files
 
-#region compress project folder
+#region Compress project folder
 Write-Host "Compressing project folder"
 Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)"
 Compress-Archive -Path . -DestinationPath "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH).zip" -Force
 Write-Host "Completed compressing project folder"
-#endregion compress project folder
+#endregion Compress project folder
 
 #region Get Account key for staging storage account
 Write-Host "Getting storage account key for staging storage account"
@@ -96,7 +99,6 @@ az storage account keys list ``
 $storage_key = ""
 $command_status = 0
 Invoke-Command-ExitOnFailure -c $command -o ([ref]$storage_key) -s ([ref]$command_status)
-
 Write-Host "Got storage account key for staging storage account."
 #endregion Get Account key for staging storage account
 
@@ -112,11 +114,10 @@ az storage container create ``
 $command_output = ""
 $command_status = 0
 Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
-
 Write-Host "Completed creating container in staging storage account."
 #endregion Creating container in staging storage account
 
-#region upload to staging storage account
+#region Upload to staging storage account
 Write-Host "Uploading to compressed zip to staging storage account"
 $command = @"
 az storage blob upload ``
@@ -131,9 +132,8 @@ az storage blob upload ``
 $command_output = ""
 $command_status = 0
 Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
-
 Write-Host "Completed upload to staging storage account."
-#endregion upload to staging storage account
+#endregion Upload to staging storage account
 
 Write-OutputDictionaryToOutputFile
 exit 0

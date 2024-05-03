@@ -14,6 +14,8 @@ Set-StrictMode -Version Latest
 
 . $PSScriptRoot/symphony_stage_script_provider.ps1 "$($Arg)"
 
+$WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
+
 #region Getting config from metamodel config yaml
 $configEncoded = "{{ parameters.input_parameter_to_script }}"
 $config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($configEncoded)) | ConvertFrom-Json
