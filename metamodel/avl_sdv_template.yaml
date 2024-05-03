@@ -95,7 +95,7 @@ config:
       FilePath: workflow_repo/dopapi/co_simulation.py # e.g. /python/ModelConnect.py (the path, must be relative to the LocationURL)
 
       # build_script can be left empty if the tool runs out of the box without any installation/building required
-      BuildScriptPath: <BUILD_SCRIPT_PATH>
+      BuildScriptPath: 
       BuildScriptType: <BUILD_SCRIPT_TYPE> # ex. Powershell (or) Bash
   #endregion additional software stack configuration
 

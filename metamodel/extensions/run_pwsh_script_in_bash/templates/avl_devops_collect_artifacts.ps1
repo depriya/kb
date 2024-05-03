@@ -31,6 +31,7 @@ $PROJECT_NAME = "$($config.project_config.project_name)".ToLower()
 $PROJECT_FOLDER_PATH = "$($config.project_config.project_name)_$($config.project_config.version)"
 
 $MODEL_STACK = $config.model_stack.ModulesLibrary 
+$ADDITIONAL_SOFTWARE_STACK = $config.additional_software_stack
 #endregion parameters - get from config
 
 #region Create project folder
@@ -86,6 +87,32 @@ foreach ($library in $MODEL_STACK_LIBS) {
 }
 Write-Host "Completed collection of model stack files"
 #endregion Collect model stack files
+
+#region Collect additional software stack files
+Write-Host "Collecting additional software stack files"
+foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
+    if ($software.DownloadSource.Type -eq "GitHub") {
+        $github_pat_token = $(az keyvault secret show --vault-name $STAGING_KV_NAME --name $($software.DownloadSource.Secret) --query value -o tsv)
+        $LocationURL = $software.DownloadSource.LocationURL
+        $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
+        if (-not (Test-Path -LiteralPath $repo_name)) {
+            Write-Host "Cloning $LocationURL"
+            git clone $LocationUrl.Replace('github.com', "$($github_pat_token)@github.com")
+            Write-Host "Cloning $LocationURL completed"
+        }
+        Write-Host "Copying from FilePath - $($software.FilePath)"
+        Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.FilePath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+        Write-Host "Copying from FilePath - $($software.FilePath) completed"
+
+        if (-not [string]::IsNullOrWhiteSpace($software.BuildScriptPath)) {
+            Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath)"
+            Copy-Item "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging/$($software.BuildScriptPath)" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)" -Recurse -Force
+            Write-Host "Copying from BuildScriptPath - $($software.BuildScriptPath) completed"
+        }
+    }
+}
+Write-Host "Completed collection of additional software stack files"
+#endregion Collect additional software stack files
 
 #region Compress project folder
 Write-Host "Compressing project folder"
