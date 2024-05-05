@@ -52,7 +52,7 @@ az vmss run-command invoke ``
   --name $($VMSS_NAME) ``
   --instance-id $($instanceId) ``
   --command-id $($EXECUTE_COMMAND_ID) ``
-  --scripts $($EXECUTE_SCRIPT_CONTENT) 
+  --scripts "$($EXECUTE_SCRIPT_CONTENT)" 
 "@
     $command_output = ""
     $command_status = 0
