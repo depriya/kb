@@ -52,7 +52,7 @@ az vmss run-command invoke ``
   --name $($VMSS_NAME) ``
   --instance-id $($instanceId) ``
   --command-id $($BUILD_COMMAND_ID) ``
-  --scripts "$($BUILD_SCRIPT_CONTENT)" ``
+  --scripts $($BUILD_SCRIPT_CONTENT) ``
   --parameters "FileName=model_connect_project_build.bat"
 "@
     $command_output = ""

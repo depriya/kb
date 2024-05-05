@@ -17,8 +17,8 @@ Set-StrictMode -Version Latest
 $WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
 
 #region Declare Constants
-$EXECUTE_COMMAND_ID = "RunPowerShellScript" #TODO: Check and adjust the command id
-$EXECUTE_SCRIPT_PATH = "$($WORKING_DIR)/execute_model_connect_project.bat"
+$EXECUTE_COMMAND_ID = "RunPowerShellScript" 
+$EXECUTE_SCRIPT_PATH = "$($WORKING_DIR)/execute_remote_batch_file.ps1"
 $EXECUTE_SCRIPT_CONTENT = Get-Content $EXECUTE_SCRIPT_PATH -Raw 
 #endregion Declare Constants
 
@@ -52,7 +52,8 @@ az vmss run-command invoke ``
   --name $($VMSS_NAME) ``
   --instance-id $($instanceId) ``
   --command-id $($EXECUTE_COMMAND_ID) ``
-  --scripts "$($EXECUTE_SCRIPT_CONTENT)" 
+  --scripts "$($EXECUTE_SCRIPT_CONTENT)" ``
+  --parameters "FileName=model_connect_project_execute.bat"
 "@
     $command_output = ""
     $command_status = 0

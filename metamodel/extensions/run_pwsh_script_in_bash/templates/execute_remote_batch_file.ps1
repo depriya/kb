@@ -1,9 +1,6 @@
 param (
     [Parameter(Mandatory = $true)]
-    [string]$FileName,
-
-    [Parameter(Mandatory = $false)]
-    [string]$localTargetDirectory = "C:\Temp"
+    [string]$FileName
 )
 
-Write-Host "Hello World $($FileName)"
+Start-Process -FilePath "$($FileName)" -Wait -NoNewWindow

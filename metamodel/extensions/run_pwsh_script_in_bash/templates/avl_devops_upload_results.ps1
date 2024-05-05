@@ -75,7 +75,7 @@ az vmss run-command invoke ``
   --name $($VMSS_NAME) ``
   --instance-id $($instanceId) ``
   --command-id $($UPLOAD_COMMAND_ID) ``
-  --scripts "$($UPLOAD_SCRIPT_CONTENT)" ``
+  --scripts $($UPLOAD_SCRIPT_CONTENT) ``
   --parameters "StorageAccountName=$($STAGING_SA_NAME)" "ContainerName=$($CONTAINER_NAME)" "AccountKey=$($storage_key)" "localFolderPath=$($localFolderPath)"
 "@
     $command_output = ""

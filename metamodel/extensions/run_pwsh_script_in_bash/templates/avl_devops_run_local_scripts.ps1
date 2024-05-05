@@ -48,7 +48,7 @@ foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
     foreach ($instanceId in $instance_ids.Split("`t")) {
       if (-not [string]::IsNullOrWhiteSpace($instanceId)) {
         Write-Host "Running command on VMSS instance: $($instanceId)"
-        $command = "az vmss run-command invoke --resource-group ""$($VMSS_RESOURCE_GROUP)"" --name ""$($VMSS_NAME)"" --instance-id ""$($instanceId)"" --command-id ""$($command_id)"" --scripts ""$($scriptContent)"""
+        $command = "az vmss run-command invoke --resource-group ""$($VMSS_RESOURCE_GROUP)"" --name ""$($VMSS_NAME)"" --instance-id ""$($instanceId)"" --command-id ""$($command_id)"" --scripts $($scriptContent)"
         $command_output = ""
         $command_status = 0
         Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
