@@ -17,9 +17,8 @@ Set-StrictMode -Version Latest
 $WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
 
 #region Declare Constants
-$BUILD_COMMAND_ID = "RunPowerShellScript" #TODO: Check and adjust the command id
-$BUILD_SCRIPT_PATH = "$($WORKING_DIR)/build_model_connect_project.bat"
-$BUILD_SCRIPT_CONTENT = Get-Content $BUILD_SCRIPT_PATH -Raw 
+$BUILD_COMMAND_ID = "RunPowerShellScript"
+$BUILD_SCRIPT_CONTENT = "cmd.exe /c ""C:\Temp\build_model_connect_project.bat""" #TODO: Check and adjust the path
 #endregion Declare Constants
 
 #region Getting config from metamodel config yaml
