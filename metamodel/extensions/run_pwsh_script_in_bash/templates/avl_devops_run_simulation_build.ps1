@@ -18,7 +18,8 @@ $WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
 
 #region Declare Constants
 $BUILD_COMMAND_ID = "RunPowerShellScript"
-$BUILD_SCRIPT_CONTENT = "cmd.exe /c ""C:\Temp\build_model_connect_project.bat""" #TODO: Check and adjust the path
+$BUILD_SCRIPT_PATH = "$($WORKING_DIR)/execute_remote_batch_file.ps1"
+$BUILD_SCRIPT_CONTENT = Get-Content $BUILD_SCRIPT_PATH -Raw 
 #endregion Declare Constants
 
 #region Getting config from metamodel config yaml
@@ -51,7 +52,8 @@ az vmss run-command invoke ``
   --name $($VMSS_NAME) ``
   --instance-id $($instanceId) ``
   --command-id $($BUILD_COMMAND_ID) ``
-  --scripts "$($BUILD_SCRIPT_CONTENT)" 
+  --scripts "$($BUILD_SCRIPT_CONTENT)" ``
+  --parameters "FileName=model_connect_project_build.bat"
 "@
     $command_output = ""
     $command_status = 0
