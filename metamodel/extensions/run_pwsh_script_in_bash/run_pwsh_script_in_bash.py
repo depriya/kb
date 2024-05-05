@@ -4,6 +4,7 @@
 
 import base64
 import json
+import yaml
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -15,11 +16,13 @@ class RunPwshScriptInBashExtension(BaseMetamodelExtension):
     class Parameters(BaseMetamodelExtension.Parameters):
         input_parameter: dict[str, Any]
         input_parameter_to_script: str = field(init=False)
+        model_stack_yaml: str = field(init=False)
 
         def __post_init__(self) -> None:
             self.input_parameter_to_script = base64.b64encode(
                 json.dumps(self.input_parameter).encode("ascii")
             ).decode("ascii")
+            self.model_stack_yaml = yaml.dump(self.input_parameter["model_stack"])
 
     @property
     def _depends_on(self) -> list[str]:

@@ -48,10 +48,9 @@ if (Test-Path "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging") {
     Write-Host "Removed existing project folder $($PROJECT_FOLDER_PATH)_Staging"
 }
 
-New-Item -Path "$($WORKING_DIR)" -Name "$($PROJECT_FOLDER_PATH)_Staging" -ItemType "directory" -Force
 New-Item -Path "$($WORKING_DIR)" -Name "$($PROJECT_FOLDER_PATH)" -ItemType "directory" -Force
+New-Item -Path "$($WORKING_DIR)" -Name "$($PROJECT_FOLDER_PATH)_Staging" -ItemType "directory" -Force
 Set-Location "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)_Staging"
-
 #endregion Create project folder
 
 #region Collect model stack files
@@ -137,7 +136,7 @@ foreach ($software in $ADDITIONAL_SOFTWARE_STACK) {
 Write-Host "Completed collection of additional software stack files"
 #endregion Collect additional software stack files
 
-#region Collect additional software stack files
+#region Collect reporting stack files
 Write-Host "Collecting reporting stack files"
 foreach ($item in $REPORTING_STACK) {
     if ($item.DownloadSource.Type -eq "GitHub") {
@@ -178,7 +177,14 @@ foreach ($item in $REPORTING_STACK) {
     }
 }
 Write-Host "Completed collection of reporting stack files"
-#endregion Collect additional software stack files
+#endregion Collect reporting stack files
+
+
+#region Copy Module_Library.yml
+Write-Host "Copying Module_Library.yml"
+Copy-Item "$($WORKING_DIR)/Module_Library.yml" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/Module_Library.yml" -Force
+Write-Host "Copying Module_Library.yml completed"
+#endregion Copy Module_Library.yml
 
 #region Compress project folder
 Write-Host "Compressing project folder"
