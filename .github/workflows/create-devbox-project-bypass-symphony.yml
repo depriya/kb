@@ -191,7 +191,9 @@ jobs:
 
 
           cat ./avl_devops_create_devbox.sh
-
+          set -- "{"_test": "true"}"
+          echo fake done
+          echo $1
           source ./sdv-tool-chain/scenarios/common/extensions/symphony/campaign/common/symphony_stage_script_provider.sh
 
           # run the script
