@@ -161,6 +161,9 @@ jobs:
 
           cat ./avl_devops_create_devbox.sh
 
+          # run the script
+          source ./avl_devops_create_devbox.sh
+
 
 
 
