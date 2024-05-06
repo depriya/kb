@@ -25,7 +25,7 @@ permissions:
 
 env:
   WORKFLOW_ARTIFACT_NAME: metamodel-output-${{ github.run_id }}
-  CONFIG_FILE_YAML: avl_sdv_template.yaml
+  CONFIG_FILE_YAML: avl_sdv_template.yml
 
 jobs:
   Generate_Campaign_from_Metamodel:
