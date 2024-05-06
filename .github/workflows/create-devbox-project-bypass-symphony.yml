@@ -189,6 +189,18 @@ jobs:
             sed -i "s|^tier=.*$|tier=\"$TIER\"|" "$script_path"
             sed -i "s|^osstoragetype=.*$|osstoragetype=\"$OS_STORAGE_TYPE\"|" "$script_path"
             sed -i "s|^compute_gallery_name=.*$|compute_gallery_name=\"$COMPUTE_GALLERY_NAME\"|" "$script_path"
+
+            sed -i "s|^description=.*$|description=\"$DESCRIPTION\"|" "$script_path"
+            sed -i "s|^vmsssuffix=.*$|vmsssuffix=\"$VMSS_SUFFIX\"|" "$script_path"
+            sed -i "s|^sku=.*$|sku=\"$SKU\"|" "$script_path"
+            sed -i "s|^instances=.*$|instances=\"$INSTANCES\"|" "$script_path"
+            sed -i "s|^storage_account_type=.*$|storage_account_type=\"$STORAGE_ACCOUNT_TYPE\"|" "$script_path"
+            sed -i "s|^caching=.*$|caching=\"$CACHING\"|" "$script_path"
+            sed -i "s|^compute_gallery_managedid=.*$|compute_gallery_managedid=\"$COMPUTE_GALLERY_MANAGED_ID\"|" "$script_path"
+            sed -i "s|^class=.*$|class=\"$CLASS\"|" "$script_path"
+            sed -i "s|^osversion=.*$|osversion=\"$OS_VERSION\"|" "$script_path"
+            sed -i "s|^modelconnectversion=.*$|modelconnectversion=\"$MODEL_CONNECT_VERSION\"|" "$script_path"
+            sed -i "s|^concertoversion=.*$|concertoversion=\"$CONCERTO_VERSION\"|" "$script_path"
             }
 
             modify_script "./avl_devops_create_devbox.sh"
