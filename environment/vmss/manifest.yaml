@@ -32,6 +32,10 @@ parameters:
     name: "sharestampdresourcegroup"
     required: true
     type: "string"
+  - id: "shared_storage_account_name"
+    name: "sharedstampstorage"
+    required: true
+    type: "string"
   - id: "storage_account_type"
     name: "storageaccounttype"
     required: true

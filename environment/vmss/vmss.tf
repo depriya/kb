@@ -10,8 +10,8 @@ terraform {
   }
 
    backend "azurerm" {
-     resource_group_name  = "xmew1-dop-s-stamp-d-rg-001"
-     storage_account_name = "xmew1dopsdst"
+     resource_group_name  = var.SHARED_RESOURCE_GROUP
+     storage_account_name = var.shared_storage_account_name
      container_name       = "tfstate"
      key                  = "terraform.tfstate"
      #use_oidc             = true
@@ -36,7 +36,9 @@ variable "customerOEMsuffix" {
 variable "projectname" {
   //default = "pj2"
 }
-
+variable "shared_storage_account_name" {
+  //default = "xmew1dopsdst"
+}
 variable "admin_username" {
   //default = "avluser"
 }

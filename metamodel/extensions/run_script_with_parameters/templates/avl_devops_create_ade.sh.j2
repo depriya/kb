@@ -66,6 +66,8 @@ concertoversion=$(echo $config | jq -r '.co_simulation_stack.tools.reportings.ve
 echo "setting the variables"
 SHARED_RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-s-stamp-${environment_stage_short}-rg-001"
 echo "setting shared resource group $SHARED_RESOURCE_GROUP"
+shared_storage_account_name="${resource_name_primary_prefix}${resource_name_secondary_prefix}s${environment_stage_short}st001"
+echo "setting shared resource group $shared_storage_account_name"
 RESOURCE_GROUP="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-rg-001"
 echo "setting resource group $RESOURCE_GROUP"
 DEV_CENTER_NAME="${resource_name_primary_prefix}-${resource_name_secondary_prefix}-c-${oem_identifier}-${environment_stage_short}-dc"
@@ -196,7 +198,7 @@ command="az devcenter dev environment create \
             --project-name \"$PROJECT\" \
             --catalog-name \"$DEV_CENTER_CATALOG_NAME\" \
             --environment-definition-name \"$ENVIRONMENT_DEFINITION_NAME\" \
-            --parameters '{\"customerOEMsuffix\":\"${oem_identifier}\",\"admin_username\":\"${ADMIN_USER}\",\"environmentStage\":\"${environment_stage_short}\",\"vmss_uniquesuffix\":\"${vmsssuffix}\",\"sku\":\"${sku}\",\"instances\":\"${instances}\",\"storage_account_type\":\"${storage_account_type}\",\"caching\":\"${caching}\",\"compute_gallery_name\":\"${compute_gallery_name}\",\"SHARED_RESOURCE_GROUP\":\"${SHARED_RESOURCE_GROUP}\",\"IMAGE_NAME\":\"${IMAGE_NAME}\",\"projectname\":\"${project_name}\"}'"
+            --parameters '{\"customerOEMsuffix\":\"${oem_identifier}\",\"admin_username\":\"${ADMIN_USER}\",\"environmentStage\":\"${environment_stage_short}\",\"vmss_uniquesuffix\":\"${vmsssuffix}\",\"sku\":\"${sku}\",\"instances\":\"${instances}\",\"storage_account_type\":\"${storage_account_type}\",\"caching\":\"${caching}\",\"compute_gallery_name\":\"${compute_gallery_name}\",\"SHARED_RESOURCE_GROUP\":\"${SHARED_RESOURCE_GROUP}\",\"shared_storage_account_name\":\"${shared_storage_account_name}\",\"IMAGE_NAME\":\"${IMAGE_NAME}\",\"projectname\":\"${project_name}\"}'"
 execute_command_exit_on_failure "$command" _command_output _command_status
 echo "Created Dev Environment: $ENVIRONMENT_NAME"
 #endregion Create Dev Environment
