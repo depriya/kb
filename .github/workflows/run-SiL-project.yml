@@ -25,7 +25,7 @@ permissions:
 
 env:
   WORKFLOW_ARTIFACT_NAME: metamodel-output-${{ github.run_id }}
-  CONFIG_FILE_YAML: metamodel-config-${{ github.run_id }}.yaml
+  CONFIG_FILE_YAML: avl_sdv_template.yaml
 
 jobs:
   Generate_Campaign_from_Metamodel:
@@ -81,7 +81,7 @@ jobs:
       - name: Zip Metamodel output
         working-directory: ${{ env.METAMODEL_OUTPUT_DIR }}
         run: |
-          cp ${{ env.METAMODEL_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
+          cp ${{ env.METAMODEL_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/avl_devops_custom_powershell_script/${{ env.CONFIG_FILE_YAML }}
           zip -r ${{ env.WORKFLOW_ARTIFACT_NAME }} *
 
       - name: Publish Metamodel Output
