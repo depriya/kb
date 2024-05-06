@@ -160,38 +160,44 @@ jobs:
           #ls -R
 
           cp ./metamodel/extensions/run_script_with_parameters/templates/avl_devops_create_devbox.sh.j2 ./avl_devops_create_devbox.sh
-          
-          # prepare the script
-          echo delete
-          sed -i '/source $(dirname $0)\/symphony_stage_script_provider\.sh/d' ./avl_devops_create_devbox.sh
-          echo replace
-          sed -i 's/^config=.*$/config=\$CONFIG/' ./avl_devops_create_devbox.sh
-          #sed -i 's/config=\$(echo \$configEncoded \| base64 -d)/config=\$CONFIG/' ./avl_devops_create_devbox.sh
-          #sed -i '/$(echo $configEncoded \| base64 -d)/$CONFIG/g' ./avl_devops_create_devbox.sh
-
-          # bypass settings
-          sed -i "s|^resource_name_primary_prefix=.*$|resource_name_primary_prefix=\"$RESOURCE_NAME_PRIMARY_PREFIX\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^resource_name_secondary_prefix=.*$|resource_name_secondary_prefix=\"$RESOURCE_NAME_SECONDARY_PREFIX\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^oem_identifier=.*$|oem_identifier=\"$OEM_IDENTIFIER\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^project_name=.*$|project_name=\"$PROJECT_NAME\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^environment_stage=.*$|environment_stage=\"$ENVIRONMENT_STAGE\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^target_subscription_id=.*$|target_subscription_id=\"$TARGET_SUBSCRIPTION_ID\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^suffix=.*$|suffix=\"$SUFFIX\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^azure_region=.*$|azure_region=\"$AZURE_REGION\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^devbox_image_name=.*$|devbox_image_name=\"$DEVBOX_IMAGE_NAME\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^capacity=.*$|capacity=\"$CAPACITY\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^family=.*$|family=\"$FAMILY\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^compute=.*$|compute=\"$COMPUTE\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^size=.*$|size=\"$SIZE\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^tier=.*$|tier=\"$TIER\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^osstoragetype=.*$|osstoragetype=\"$OS_STORAGE_TYPE\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^compute_gallery_name=.*$|compute_gallery_name=\"$COMPUTE_GALLERY_NAME\"|" ./avl_devops_create_devbox.sh
+          cp ./metamodel/extensions/run_script_with_parameters/templates/avl_devops_create_ade.sh.j2 ./avl_devops_create_ade.sh
 
 
+            # prepare the script
+            function modify_script() {
+            local script_path=$1
+
+            echo delete
+            sed -i '/source $(dirname $0)\/symphony_stage_script_provider\.sh/d' "$script_path"
+            echo replace
+            sed -i 's/^config=.*$/config=$CONFIG/' "$script_path"
+
+            # bypass settings
+            sed -i "s|^resource_name_primary_prefix=.*$|resource_name_primary_prefix=\"$RESOURCE_NAME_PRIMARY_PREFIX\"|" "$script_path"
+            sed -i "s|^resource_name_secondary_prefix=.*$|resource_name_secondary_prefix=\"$RESOURCE_NAME_SECONDARY_PREFIX\"|" "$script_path"
+            sed -i "s|^oem_identifier=.*$|oem_identifier=\"$OEM_IDENTIFIER\"|" "$script_path"
+            sed -i "s|^project_name=.*$|project_name=\"$PROJECT_NAME\"|" "$script_path"
+            sed -i "s|^environment_stage=.*$|environment_stage=\"$ENVIRONMENT_STAGE\"|" "$script_path"
+            sed -i "s|^target_subscription_id=.*$|target_subscription_id=\"$TARGET_SUBSCRIPTION_ID\"|" "$script_path"
+            sed -i "s|^suffix=.*$|suffix=\"$SUFFIX\"|" "$script_path"
+            sed -i "s|^azure_region=.*$|azure_region=\"$AZURE_REGION\"|" "$script_path"
+            sed -i "s|^devbox_image_name=.*$|devbox_image_name=\"$DEVBOX_IMAGE_NAME\"|" "$script_path"
+            sed -i "s|^capacity=.*$|capacity=\"$CAPACITY\"|" "$script_path"
+            sed -i "s|^family=.*$|family=\"$FAMILY\"|" "$script_path"
+            sed -i "s|^compute=.*$|compute=\"$COMPUTE\"|" "$script_path"
+            sed -i "s|^size=.*$|size=\"$SIZE\"|" "$script_path"
+            sed -i "s|^tier=.*$|tier=\"$TIER\"|" "$script_path"
+            sed -i "s|^osstoragetype=.*$|osstoragetype=\"$OS_STORAGE_TYPE\"|" "$script_path"
+            sed -i "s|^compute_gallery_name=.*$|compute_gallery_name=\"$COMPUTE_GALLERY_NAME\"|" "$script_path"
+            }
+
+            modify_script "./avl_devops_create_devbox.sh"
+            modify_script "./avl_devops_create_ade.sh"
 
           cat ./avl_devops_create_devbox.sh
+          cat ./avl_devops_create_ade.sh
+
           echo Generate fake Symphony input
-          
           json_data='{
           "__activation": "azure_deploy_yocto_vm_activation",
           "__activationGeneration": "1",
@@ -209,7 +215,10 @@ jobs:
           echo "Fake Symphony input file generated starting provider script"
           source ./sdv-tool-chain/scenarios/common/extensions/symphony/campaign/common/symphony_stage_script_provider.sh
 
-          echo "Provider script executed successfully, starting the devbox creation script"
+          echo "ADE goes first because project is created here"
+          source ./avl_devops_create_ade.sh
+
+          echo "Starting the devbox creation script"
           source ./avl_devops_create_devbox.sh
 
 
