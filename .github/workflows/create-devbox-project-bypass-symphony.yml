@@ -140,6 +140,11 @@ jobs:
           # Encode YAML file to base64 and store it as a string
           BASE64_ENCODED_CONFIG=$(base64 config.yaml)
 
+          #decode
+          config=$(echo $BASE64_ENCODED_CONFIG | base64 -d)
+          echo "$config"
+        
+
           # Display the base64 encoded string
           #echo "Base64 encoded config file:"
           #echo "$BASE64_ENCODED_CONFIG"
