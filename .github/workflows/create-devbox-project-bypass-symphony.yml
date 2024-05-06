@@ -175,7 +175,6 @@ jobs:
           sed -i "s|^oem_identifier=.*$|oem_identifier=\"$OEM_IDENTIFIER\"|" ./avl_devops_create_devbox.sh
           sed -i "s|^project_name=.*$|project_name=\"$PROJECT_NAME\"|" ./avl_devops_create_devbox.sh
           sed -i "s|^environment_stage=.*$|environment_stage=\"$ENVIRONMENT_STAGE\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^environment_stage_short=.*$|environment_stage_short=\"$ENVIRONMENT_STAGE_SHORT\"|" ./avl_devops_create_devbox.sh
           sed -i "s|^target_subscription_id=.*$|target_subscription_id=\"$TARGET_SUBSCRIPTION_ID\"|" ./avl_devops_create_devbox.sh
           sed -i "s|^suffix=.*$|suffix=\"$SUFFIX\"|" ./avl_devops_create_devbox.sh
           sed -i "s|^azure_region=.*$|azure_region=\"$AZURE_REGION\"|" ./avl_devops_create_devbox.sh
@@ -191,7 +190,7 @@ jobs:
 
 
           cat ./avl_devops_create_devbox.sh
-          echo Generate fake file
+          echo Generate fake Symphony input
           
           json_data='{
           "__activation": "azure_deploy_yocto_vm_activation",
@@ -205,13 +204,12 @@ jobs:
           }'
           
           echo "$json_data" > fakeinput.json
-
           set -- "fakeinput.json"
-          echo fake done
-          echo $1
+
+          echo "Fake Symphony input file generated starting provider script"
           source ./sdv-tool-chain/scenarios/common/extensions/symphony/campaign/common/symphony_stage_script_provider.sh
 
-          # run the script
+          echo "Provider script executed successfully, starting the devbox creation script"
           source ./avl_devops_create_devbox.sh
 
 
