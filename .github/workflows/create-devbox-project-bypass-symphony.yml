@@ -192,6 +192,8 @@ jobs:
 
           cat ./avl_devops_create_devbox.sh
 
+          source ./sdv-tool-chain/scenarios/common/extensions/symphony/campaign/common/symphony_stage_script_provider.sh
+
           # run the script
           source ./avl_devops_create_devbox.sh
 
