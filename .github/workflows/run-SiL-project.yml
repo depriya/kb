@@ -42,11 +42,10 @@ jobs:
       - name: Checkout Metamodel repository
         shell: pwsh
         run : |
-          $github_pat_token = "${{ secrets.GITHUB_TOKEN }}"
           $LocationUrl = "${{ github.event.inputs.metamodel_repo }}"
           $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
           Write-Host "Cloning $LocationURL"
-          git clone $LocationUrl.Replace('github.com', "$($github_pat_token)@github.com")
+          git clone $LocationUrl.Replace('github.com', "${{ secrets.GITHUB_TOKEN }}@github.com")
           Write-Host "Cloning $LocationURL completed"
           ls -l
           Copy-Item "${{ github.workspace }}/$($repo_name)/metamodel/avl_sdv_template.yml" "${{ github.workspace }}/metamodel/avl_sdv_template.yml" -Force
