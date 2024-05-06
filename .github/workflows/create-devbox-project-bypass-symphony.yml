@@ -162,8 +162,10 @@ jobs:
           cp ./metamodel/extensions/run_script_with_parameters/templates/avl_devops_create_devbox.sh.j2 ./avl_devops_create_devbox.sh
           
           # prepare the script
+          echo delete
           sed -i '/source $(dirname $0)\/symphony_stage_script_provider\.sh/d' ./avl_devops_create_devbox.sh
-          sed -i '/\$(echo \$configEncoded | base64 -d)/\$CONFIG/g' ./avl_devops_create_devbox.sh
+          echo replace
+          sed -i '/$(echo $configEncoded | base64 -d)/$CONFIG/g' ./avl_devops_create_devbox.sh
 
           cat ./avl_devops_create_devbox.sh
 
