@@ -170,23 +170,23 @@ jobs:
           #sed -i '/$(echo $configEncoded \| base64 -d)/$CONFIG/g' ./avl_devops_create_devbox.sh
 
           # bypass settings
-          sed -i "s|^resource_name_primary_prefix=.*$|resource_name_primary_prefix=\"$RESOURCE_NAME_PRIMARY_PREFIX\"|" script.sh
-          sed -i "s|^resource_name_secondary_prefix=.*$|resource_name_secondary_prefix=\"$RESOURCE_NAME_SECONDARY_PREFIX\"|" script.sh
-          sed -i "s|^oem_identifier=.*$|oem_identifier=\"$OEM_IDENTIFIER\"|" script.sh
-          sed -i "s|^project_name=.*$|project_name=\"$PROJECT_NAME\"|" script.sh
-          sed -i "s|^environment_stage=.*$|environment_stage=\"$ENVIRONMENT_STAGE\"|" script.sh
-          sed -i "s|^environment_stage_short=.*$|environment_stage_short=\"$ENVIRONMENT_STAGE_SHORT\"|" script.sh
-          sed -i "s|^target_subscription_id=.*$|target_subscription_id=\"$TARGET_SUBSCRIPTION_ID\"|" script.sh
-          sed -i "s|^suffix=.*$|suffix=\"$SUFFIX\"|" script.sh
-          sed -i "s|^azure_region=.*$|azure_region=\"$AZURE_REGION\"|" script.sh
-          sed -i "s|^devbox_image_name=.*$|devbox_image_name=\"$DEVBOX_IMAGE_NAME\"|" script.sh
-          sed -i "s|^capacity=.*$|capacity=\"$CAPACITY\"|" script.sh
-          sed -i "s|^family=.*$|family=\"$FAMILY\"|" script.sh
-          sed -i "s|^compute=.*$|compute=\"$COMPUTE\"|" script.sh
-          sed -i "s|^size=.*$|size=\"$SIZE\"|" script.sh
-          sed -i "s|^tier=.*$|tier=\"$TIER\"|" script.sh
-          sed -i "s|^os_storage_type=.*$|os_storage_type=\"$OS_STORAGE_TYPE\"|" script.sh
-          sed -i "s|^compute_gallery_name=.*$|compute_gallery_name=\"$COMPUTE_GALLERY_NAME\"|" script.sh
+          sed -i "s|^resource_name_primary_prefix=.*$|resource_name_primary_prefix=\"$RESOURCE_NAME_PRIMARY_PREFIX\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^resource_name_secondary_prefix=.*$|resource_name_secondary_prefix=\"$RESOURCE_NAME_SECONDARY_PREFIX\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^oem_identifier=.*$|oem_identifier=\"$OEM_IDENTIFIER\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^project_name=.*$|project_name=\"$PROJECT_NAME\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^environment_stage=.*$|environment_stage=\"$ENVIRONMENT_STAGE\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^environment_stage_short=.*$|environment_stage_short=\"$ENVIRONMENT_STAGE_SHORT\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^target_subscription_id=.*$|target_subscription_id=\"$TARGET_SUBSCRIPTION_ID\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^suffix=.*$|suffix=\"$SUFFIX\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^azure_region=.*$|azure_region=\"$AZURE_REGION\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^devbox_image_name=.*$|devbox_image_name=\"$DEVBOX_IMAGE_NAME\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^capacity=.*$|capacity=\"$CAPACITY\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^family=.*$|family=\"$FAMILY\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^compute=.*$|compute=\"$COMPUTE\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^size=.*$|size=\"$SIZE\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^tier=.*$|tier=\"$TIER\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^os_storage_type=.*$|os_storage_type=\"$OS_STORAGE_TYPE\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^compute_gallery_name=.*$|compute_gallery_name=\"$COMPUTE_GALLERY_NAME\"|" ./avl_devops_create_devbox.sh
 
 
 
