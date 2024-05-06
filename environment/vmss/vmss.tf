@@ -10,8 +10,8 @@ terraform {
   }
 
    backend "azurerm" {
-     resource_group_name  = var.SHARED_RESOURCE_GROUP
-     storage_account_name = var.shared_storage_account_name
+     resource_group_name  = "xmew1-dop-s-stamp-d-rg-001"
+     storage_account_name = "xmew1dopsdst"
      container_name       = "tfstate"
      key                  = "terraform.tfstate"
      #use_oidc             = true
