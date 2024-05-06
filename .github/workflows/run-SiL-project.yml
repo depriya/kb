@@ -39,16 +39,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4 
 
-      - name: Checkout Metamodel repository
-        shell: pwsh
-        run : |
-          $LocationUrl = "${{ github.event.inputs.metamodel_repo }}"
-          $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
-          Write-Host "Cloning $LocationURL"
-          git clone $LocationUrl.Replace('github.com', "${{ secrets.GITHUB_TOKEN }}@github.com")
-          Write-Host "Cloning $LocationURL completed"
-          ls -l
-          Copy-Item "${{ github.workspace }}/$($repo_name)/metamodel/avl_sdv_template.yml" "${{ github.workspace }}/metamodel/avl_sdv_template.yml" -Force
+      # - name: Checkout Metamodel repository
+      #   shell: pwsh
+      #   run : |
+      #     $LocationUrl = "${{ github.event.inputs.metamodel_repo }}"
+      #     $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
+      #     Write-Host "Cloning $LocationURL"
+      #     git clone $LocationUrl.Replace('github.com', "${{ secrets.GITHUB_TOKEN }}@github.com")
+      #     Write-Host "Cloning $LocationURL completed"
+      #     ls -l
+      #     Copy-Item "${{ github.workspace }}/$($repo_name)/metamodel/avl_sdv_template.yml" "${{ github.workspace }}/metamodel/avl_sdv_template.yml" -Force
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
