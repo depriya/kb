@@ -10,14 +10,14 @@ terraform {
   }
 
    backend "azurerm" {
-     resource_group_name  = "xmew1-dop-s-stamp-d-rg-001"
-     storage_account_name = "xmew1dopsdst"
-     container_name       = "tfstate"
+     resource_group_name  = "DevopsPilot_rg"
+     storage_account_name = "devopspilotbs"
+     container_name       = "tfstatetf"
      key                  = "terraform.tfstate"
-     use_oidc             = true
-     client_id = "13b095e6-55df-4d76-9c6d-b59404e4d506"
-     tenant_id = "b4bc7e59-9a34-4622-ab54-d7a1a680f47a"
-     subscription_id = "db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+     //use_oidc             = true
+     //client_id = "13b095e6-55df-4d76-9c6d-b59404e4d506"
+     //tenant_id = "b4bc7e59-9a34-4622-ab54-d7a1a680f47a"
+     //subscription_id = "db401b47-f622-4eb4-a99b-e0cebc0ebad4"
    }
 }
 
@@ -30,20 +30,20 @@ provider "azurerm" {
 provider "random" {}
 
 variable "customerOEMsuffix" {
-  default = "avl"
+  //default = "avl"
 }
 
 variable "projectname" {
-  default = "pj2"
+  //default = "pj2"
 }
 variable "shared_storage_account_name" {
-  default = "xmew1dopsdst"
+  //default = "xmew1dopsdst"
 }
 variable "admin_username" {
-  default = "avluser"
+  //default = "avluser"
 }
 variable "vmss_uniquesuffix" {
-  default = "015"
+  //default = "015"
 }
 variable "admin_password_length" {
   description = "The length of the generated admin password"
@@ -51,34 +51,34 @@ variable "admin_password_length" {
 }
 
 variable "location" {
-  default = "westeurope"
+  //default = "westeurope"
 }
 
 variable "environmentStage" {
-  default = "d"
+  //default = "d"
 }
 
 variable "gallery_name" {
-  default = "xmew1dopsstampdcomputegallery001"
+  //default = "xmew1dopsstampdcomputegallery001"
 }
 variable "IMAGE_NAME"{
-  default = "node-sms-silver-mc-concerto-generalized"
-  // $image_name="$image_offer`ModelConnect$MCBaseVersion`Concerto$ConcertoVersion"
+  //default = "node-sms-silver-mc-concerto-generalized"
+  ///// $image_name="$image_offer`ModelConnect$MCBaseVersion`Concerto$ConcertoVersion"
 }
 variable "SHARED_RESOURCE_GROUP"{
-   default = "xmew1-dop-s-stamp-d-rg-001"
+   //default = "xmew1-dop-s-stamp-d-rg-001"
 }
 variable "storage_account_type"{
-  default = "Standard_LRS"
+  //default = "Standard_LRS"
 }
 variable "caching"{
-  default = "ReadWrite"
+  //default = "ReadWrite"
 }
 variable "sku"{
-  default = "Standard_B2als_v2"
+  //default = "Standard_B2als_v2"
 }
 variable "instances"{
-  default = "1"
+  //default = "1"
 }
 
 data "azurerm_resource_group" "example" {
