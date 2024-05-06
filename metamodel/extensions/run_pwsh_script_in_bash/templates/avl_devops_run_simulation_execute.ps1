@@ -46,18 +46,13 @@ Write-Host "Running command on all VMSS instances"
 foreach ($instanceId in $instance_ids.Split("`t")) {
   if (-not [string]::IsNullOrWhiteSpace($instanceId)) {
     Write-Host "Running command on VMSS instance: $($instanceId)"
-    $command = @"
-az vmss run-command invoke ``
-  --resource-group $($VMSS_RESOURCE_GROUP) ``
-  --name $($VMSS_NAME) ``
-  --instance-id $($instanceId) ``
-  --command-id $($EXECUTE_COMMAND_ID) ``
-  --scripts "$($EXECUTE_SCRIPT_CONTENT)" ``
-  --parameters "FileName=model_connect_project_execute.bat"
-"@
-    $command_output = ""
-    $command_status = 0
-    Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
+    az vmss run-command invoke `
+      --resource-group $($VMSS_RESOURCE_GROUP) `
+      --name $($VMSS_NAME) `
+      --instance-id $($instanceId) `
+      --command-id $($BUILD_COMMAND_ID) `
+      --parameters "FileName=model_connect_project_execute.bat" `
+      --scripts $($BUILD_SCRIPT_CONTENT) 
     Write-Host "Run command on VMSS instance: $($instanceId) completed."
   }
 }
