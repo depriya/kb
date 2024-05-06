@@ -37,7 +37,7 @@ jobs:
     env:
       TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
       TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
-      METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
+      METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yml
       METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel
 
     steps:
