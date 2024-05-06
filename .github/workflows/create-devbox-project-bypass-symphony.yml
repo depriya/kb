@@ -185,7 +185,7 @@ jobs:
           sed -i "s|^compute=.*$|compute=\"$COMPUTE\"|" ./avl_devops_create_devbox.sh
           sed -i "s|^size=.*$|size=\"$SIZE\"|" ./avl_devops_create_devbox.sh
           sed -i "s|^tier=.*$|tier=\"$TIER\"|" ./avl_devops_create_devbox.sh
-          sed -i "s|^os_storage_type=.*$|os_storage_type=\"$OS_STORAGE_TYPE\"|" ./avl_devops_create_devbox.sh
+          sed -i "s|^osstoragetype=.*$|osstoragetype=\"$OS_STORAGE_TYPE\"|" ./avl_devops_create_devbox.sh
           sed -i "s|^compute_gallery_name=.*$|compute_gallery_name=\"$COMPUTE_GALLERY_NAME\"|" ./avl_devops_create_devbox.sh
 
 
