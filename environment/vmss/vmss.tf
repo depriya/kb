@@ -14,10 +14,10 @@ terraform {
      storage_account_name = "xmew1dopsdst"
      container_name       = "tfstate"
      key                  = "terraform.tfstate"
-     #use_oidc             = true
-  #   client_id = "13b095e6-55df-4d76-9c6d-b59404e4d506"
-  #   tenant_id = "b4bc7e59-9a34-4622-ab54-d7a1a680f47a"
-  #   subscription_id = "db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+     use_oidc             = true
+     client_id = "13b095e6-55df-4d76-9c6d-b59404e4d506"
+     tenant_id = "b4bc7e59-9a34-4622-ab54-d7a1a680f47a"
+     subscription_id = "db401b47-f622-4eb4-a99b-e0cebc0ebad4"
    }
 }
 
