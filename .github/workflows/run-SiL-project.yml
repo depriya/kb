@@ -4,13 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       metamodel_repo:
-        description: "MetaModel Repository (ORG/REPO)"
-        default: "avl-sdv/DevOpsPilot.Metamodels"
-        required: true
-        type: string
-      metamodel_repo_branch:
-        description: "MetaModel Repository Branch "
-        default: "main"
+        description: "MetaModel Repository (URL)"
+        default: "https://github.com/avl-sdv/DevOpsPilot.Metamodels.git"
         required: true
         type: string
       metamodel_file_name:
@@ -42,7 +37,19 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 #TODO: Discuss if this should be triggered from this repo or external.
+        uses: actions/checkout@v4 
+
+      - name: Checkout Metamodel repository
+        shell: pwsh
+        run : |
+          $github_pat_token = "${{ secrets.GITHUB_TOKEN }}"
+          $LocationUrl = "${{ github.event.inputs.metamodel_repo }}"
+          $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
+          Write-Host "Cloning $LocationURL"
+          git clone $LocationUrl.Replace('github.com', "$($github_pat_token)@github.com")
+          Write-Host "Cloning $LocationURL completed"
+          ls -l
+          Copy-Item "${{ github.workspace }}/$($repo_name)/metamodel/avl_sdv_template.yml" "${{ github.workspace }}/metamodel/avl_sdv_template.yml" -Force
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
