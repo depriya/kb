@@ -191,7 +191,21 @@ jobs:
 
 
           cat ./avl_devops_create_devbox.sh
-          set -- "{"_test": "true"}"
+          # Generate fake file
+          cat <<EOF > fakeinput.json
+          {
+            "__activation": "azure_deploy_yocto_vm_activation",
+            "__activationGeneration": "1",
+            "__campaign": "azure_deploy_yocto_vm",
+            "__previousStage": "service_principal_auth",
+            "__status": 400
+            "__error": "Error: Some Error"
+            "__site": "laptop",
+            "__stage": "deploy_yocto_vm"
+          }
+          EOF          
+
+          set -- "fakeinput.json"
           echo fake done
           echo $1
           source ./sdv-tool-chain/scenarios/common/extensions/symphony/campaign/common/symphony_stage_script_provider.sh
