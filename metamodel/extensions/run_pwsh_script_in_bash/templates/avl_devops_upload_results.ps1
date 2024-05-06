@@ -69,18 +69,13 @@ Write-Host "Running command on all VMSS instances"
 foreach ($instanceId in $instance_ids.Split("`t")) {
   if (-not [string]::IsNullOrWhiteSpace($instanceId)) {
     Write-Host "Running command on VMSS instance: $($instanceId)"
-    $command = @"
-az vmss run-command invoke ``
-  --resource-group $($VMSS_RESOURCE_GROUP) ``
-  --name $($VMSS_NAME) ``
-  --instance-id $($instanceId) ``
-  --command-id $($UPLOAD_COMMAND_ID) ``
-  --scripts $($UPLOAD_SCRIPT_CONTENT) ``
-  --parameters "StorageAccountName=$($STAGING_SA_NAME)" "ContainerName=$($CONTAINER_NAME)" "AccountKey=$($storage_key)" "localFolderPath=$($localFolderPath)"
-"@
-    $command_output = ""
-    $command_status = 0
-    Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
+    az vmss run-command invoke `
+      --resource-group $($VMSS_RESOURCE_GROUP) `
+      --name $($VMSS_NAME) `
+      --instance-id $($instanceId) `
+      --command-id $($UPLOAD_COMMAND_ID) `
+      --scripts $($UPLOAD_SCRIPT_CONTENT) `
+      --parameters "StorageAccountName=$($STAGING_SA_NAME)" "ContainerName=$($CONTAINER_NAME)" "AccountKey=$($storage_key)" "localFolderPath=$($localFolderPath)"
     Write-Host "Run command on VMSS instance: $($instanceId) completed."
   }
 }

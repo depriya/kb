@@ -3,7 +3,7 @@
 # Copyright (C) Microsoft Corporation.
 
 param(
-	[Parameter(Mandatory = $true)][string] $Arg
+  [Parameter(Mandatory = $true)][string] $Arg
 )
 
 # Exit immediately if a command fails
@@ -66,22 +66,17 @@ Write-Host "Got Instance IDs: $($instance_ids)."
 #region Run command for each instance in VMSS
 Write-Host "Running command on all VMSS instances"
 foreach ($instanceId in $instance_ids.Split("`t")) {
-	if (-not [string]::IsNullOrWhiteSpace($instanceId)) {
-		Write-Host "Running command on VMSS instance: $($instanceId)"
-		$command = @"
-az vmss run-command invoke ``
-  --resource-group $($VMSS_RESOURCE_GROUP) ``
-  --name $($VMSS_NAME) ``
-  --instance-id $($instanceId) ``
-  --command-id $($MOUNT_COMMAND_ID) ``
-  --scripts $($MOUNT_SCRIPT_CONTENT) ``
-  --parameters "StorageAccountName=$($STAGING_SA_NAME)" "ContainerName=$($CONTAINER_NAME)" "AccountKey=$($storage_key)" "FileName=$($BLOB_NAME)"
-"@
-		$command_output = ""
-		$command_status = 0
-		Invoke-Command-ExitOnFailure -c $command -o ([ref]$command_output) -s ([ref]$command_status)
-		Write-Host "Run command on VMSS instance: $($instanceId) completed."
-	}
+  if (-not [string]::IsNullOrWhiteSpace($instanceId)) {
+    Write-Host "Running command on VMSS instance: $($instanceId)"
+    az vmss run-command invoke `
+      --resource-group $($VMSS_RESOURCE_GROUP) `
+      --name $($VMSS_NAME) `
+      --instance-id $($instanceId) `
+      --command-id $($MOUNT_COMMAND_ID) `
+      --scripts $($MOUNT_SCRIPT_CONTENT) `
+      --parameters "StorageAccountName=$($STAGING_SA_NAME)" "ContainerName=$($CONTAINER_NAME)" "AccountKey=$($storage_key)" "FileName=$($BLOB_NAME)"
+    Write-Host "Run command on VMSS instance: $($instanceId) completed."
+  }
 }
 Write-Host "Command execution completed on all VMSS instances"
 #endregion Run command for each instance in VMSS
