@@ -149,10 +149,20 @@ jobs:
 
           echo "Base64 encoded config file stored in config_base64.txt"
 
-          cat config_base64.txt
+          #cat config_base64.txt
 
-          ls -R
+          #ls -R
+
+          cp ./metamodel/extensions/run_script_with_parameters/templates/avl_devops_create_devbox.sh.j2 ./avl_devops_create_devbox.sh
           
+          # prepare the script
+          sed -i '/source $(dirname $0)\/symphony_stage_script_provider\.sh/d' ./avl_devops_create_devbox.sh
+          sed -i 's/{{ parameters.input_parameter_to_script }}/$(base64 config.yaml)/g' ./avl_devops_create_devbox.sh
+
+          cat ./avl_devops_create_devbox.sh
+
+
+
 
           
 
