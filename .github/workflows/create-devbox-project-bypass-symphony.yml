@@ -191,19 +191,20 @@ jobs:
 
 
           cat ./avl_devops_create_devbox.sh
-          # Generate fake file
-          cat <<EOF > fakeinput.json
-          {
-            "__activation": "azure_deploy_yocto_vm_activation",
-            "__activationGeneration": "1",
-            "__campaign": "azure_deploy_yocto_vm",
-            "__previousStage": "service_principal_auth",
-            "__status": 400
-            "__error": "Error: Some Error"
-            "__site": "laptop",
-            "__stage": "deploy_yocto_vm"
-          }
-          EOF          
+          echo Generate fake file
+          
+          json_data='{
+          "__activation": "azure_deploy_yocto_vm_activation",
+          "__activationGeneration": "1",
+          "__campaign": "azure_deploy_yocto_vm",
+          "__previousStage": "service_principal_auth",
+          "__status": 400,
+          "__error": "Error: Some Error",
+          "__site": "laptop",
+          "__stage": "deploy_yocto_vm"
+          }'
+          
+          echo "$json_data" > fakeinput.json
 
           set -- "fakeinput.json"
           echo fake done
