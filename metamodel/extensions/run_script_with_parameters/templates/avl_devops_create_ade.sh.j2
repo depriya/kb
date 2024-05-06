@@ -164,12 +164,19 @@ execute_command_exit_on_failure "$command" _command_output _command_status
 echo "Assigned Contributor role to the Project Environment Type Object Id on the subscription"
 #endregion Create Environment Type for the Project, assign Contributor role on the subscription
 
-echo "Assigning Key Vault Secrets Officer role to the Project Environment Type Object Id on the subscription"
+echo "Assigning Key Vault Secrets Officer role to the Project Environment Type Object Id on the keyvault"
 clear_command_variables
 command="az role assignment create --role \"Key Vault Secrets Officer\" --assignee-object-id $commandCreateProjectEnvType_output --scope \"/subscriptions/$target_subscription_id/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.KeyVault/vaults/$KEY_VAULT_NAME\""
 execute_command_exit_on_failure "$command" _command_output _command_status
-echo "Assigned Key Vault Secrets Officer role to the Project Environment Type Object Id on the subscription"
-#endregion Create Environment Type for the Project, assign Contributor role on the subscription
+echo "Assigned Key Vault Secrets Officer role to the Project Environment Type Object Id on the keyvault"
+#endregion Assigned Key Vault Secrets Officer role to the Project Environment Type Object Id on the keyvault
+
+echo "Assigning Key Vault Secrets Officer role to the aks Object Id on the keyvault"
+clear_command_variables
+command="az role assignment create --assignee \"$MYOID\" --role \"Key Vault Secrets Officer\" --scope \"/subscriptions/$target_subscription_id/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.KeyVault/vaults/$KEY_VAULT_NAME\""
+execute_command_exit_on_failure "$command" _command_output _command_status
+echo "Assigned Key Vault Secrets Officer role to the aks Object Id on the keyvault"
+#endregion Assigned Key Vault Secrets Officer role to the aks Object Id on the keyvault
 
 
 #region Assign Dev Center Project Admin role, Deployment Environments User to MYOID
