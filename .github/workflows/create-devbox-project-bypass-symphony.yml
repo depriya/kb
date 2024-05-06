@@ -165,7 +165,8 @@ jobs:
           echo delete
           sed -i '/source $(dirname $0)\/symphony_stage_script_provider\.sh/d' ./avl_devops_create_devbox.sh
           echo replace
-          sed -i '/$(echo $configEncoded \| base64 -d)/$CONFIG/g' ./avl_devops_create_devbox.sh
+          sed -i 's/config=\$(echo \$configEncoded \| base64 -d)/config=\$CONFIG/' ./avl_devops_create_devbox.sh
+          #sed -i '/$(echo $configEncoded \| base64 -d)/$CONFIG/g' ./avl_devops_create_devbox.sh
 
           cat ./avl_devops_create_devbox.sh
 
