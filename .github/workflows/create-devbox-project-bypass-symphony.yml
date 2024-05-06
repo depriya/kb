@@ -1,0 +1,153 @@
+name: Create project for DevBox
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_environment:
+        type: choice
+        description: "Choose the environment (with access rights to target subscription):"
+        options:
+          - sub-AVL_DevopsPilot
+          - sub-AVL_DevopsPilot_Test
+          - sub-DCP_SIL
+        required: true
+
+      target_subscription_id:
+        description: "Enter the subscription ID to deploy the resources for the customer stamp"
+        required: true
+        default: "db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+  
+      customerOEMsuffix:
+        description: "suffix required for customer OEM in lowercase"
+        required: true
+      environmentStage:
+        type: choice
+        description: "Choose the environment: d for dev, p for Prod"
+        options:
+          - d
+          - p
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.deploy_environment }}
+
+    steps:
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: CheckoutRepo
+        uses: actions/checkout@v2
+      
+      - name: Switch to target subscription
+        run: az account set --subscription ${{ inputs.target_subscription_id }}
+      
+      - name: Prepare Symphony bypass
+        run: |
+          # Define variables (same as before)
+          RESOURCE_NAME_PRIMARY_PREFIX="xmew1"
+          RESOURCE_NAME_SECONDARY_PREFIX="dop"
+          PROJECT_NAME="pj3"
+          DESCRIPTION="pj3 description"
+          VERSION="0.1.0"
+          AUTHOR="pj3 author"
+          ENVIRONMENT_STAGE="development"
+          OEM_IDENTIFIER="tstoem"
+          AZURE_REGION="westeurope"
+          TARGET_SUBSCRIPTION_ID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+          VMSS_SUFFIX="007"
+          SKU="Standard_B2als_v2"
+          INSTANCES=1
+          STORAGE_ACCOUNT_TYPE="Standard_LRS"
+          CACHING="ReadWrite"
+          SUFFIX="006"
+          DEVBOX_IMAGE_NAME="Test001"
+          CAPACITY=1
+          FAMILY="Standard"
+          COMPUTE="general_i_8c32gb256ssd_v2"
+          SIZE="Standard_DS1_v2"
+          TIER="Standard"
+          OS_STORAGE_TYPE="ssd_256gb"
+          COMPUTE_GALLERY_NAME="xmew1dopsstampdcomputegallery001"
+          COMPUTE_GALLERY_MANAGED_ID="Computegalleryid"
+          META_MODEL_OUTPUTS_FILE_SHARE_NAME="avldevops"
+
+          # Generate YAML file
+          cat <<EOF > config.yaml
+          #region Configuration
+          config:
+            resource_name_primary_prefix: $RESOURCE_NAME_PRIMARY_PREFIX
+            resource_name_secondary_prefix: $RESOURCE_NAME_SECONDARY_PREFIX
+
+            #region project configuration
+            project_config:
+              project_name: $PROJECT_NAME
+              description: $DESCRIPTION
+              version: $VERSION
+              author: $AUTHOR
+              environment_stage: $ENVIRONMENT_STAGE
+              oem_identifier: $OEM_IDENTIFIER
+            #endregion project configuration
+
+            workflow_run_config:
+              job_id: 142738 #example value
+              build_id:
+              interactive_execution: true
+
+            #region customer stamp configuration
+            customer_stamp_config:
+              azure_region: $AZURE_REGION
+              target_subscription_id: $TARGET_SUBSCRIPTION_ID
+
+            ade_config:
+              vmss_suffix: $VMSS_SUFFIX
+              sku: $SKU
+              instances: $INSTANCES
+              storage_account_type: $STORAGE_ACCOUNT_TYPE
+              caching: $CACHING
+
+            devbox_config:
+              suffix: $SUFFIX
+              devbox_image_name: $DEVBOX_IMAGE_NAME
+              capacity: $CAPACITY
+              family: $FAMILY
+              compute: $COMPUTE
+              size: $SIZE
+              tier: $TIER
+              os_storage_type: $OS_STORAGE_TYPE
+            #endregion customer stamp configuration
+
+            #region shared stamp configuration
+            shared_stamp_config:
+              compute_gallery_name: $COMPUTE_GALLERY_NAME
+              compute_gallery_managed_id: $COMPUTE_GALLERY_MANAGED_ID
+              meta_model_outputs_file_share_name: $META_MODEL_OUTPUTS_FILE_SHARE_NAME
+            #endregion shared stamp configuration
+          EOF
+
+          # Encode YAML file to base64 and store it as a string
+          BASE64_ENCODED_CONFIG=$(base64 config.yaml)
+
+          # Display the base64 encoded string
+          echo "Base64 encoded config file:"
+          echo "$BASE64_ENCODED_CONFIG"
+
+          # Optionally, you can also store it in a file
+          echo "$BASE64_ENCODED_CONFIG" > config_base64.txt
+
+          echo "Base64 encoded config file stored in config_base64.txt"
+
+          cat config_base64.txt
+
+
+
+
