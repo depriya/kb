@@ -1,161 +1,211 @@
 #!/bin/bash
 
+# Copyright (C) Microsoft Corporation.
+
 # Exit immediately if a command fails
 set -e
 
 # Fail if an unset variable is used
 set -u
 
-source $(dirname $0)/symphony_stage_script_provider.sh
+# Enable tracing for debugging
+set -x
 
-# Function to execute commands and handle errors
-execute_command_with_status_code() {
-    local command="$1"
-    local output_var="$2"
-    local status_var="$3"
-    eval "$command" > "$output_var" 2>&1
-    status_var="$?"
-    if [ "$status_var" -ne 0 ]; then
-        echo "Error executing command: $command"
-        echo "Command output: $(<"$output_var")"
-        exit "$status_var"
-    fi
-}
+# Change the current directory to the location of the script
+cd "$(dirname "$0")"
+
+
+#!/bin/bash
+
+# Copyright (C) Microsoft Corporation.
+
+# The name of your Azure dev center.
+customerOEMsuffix="avl" #comes from metamodel
+
+projectname="pj2" #comes from metamodel
+
+projectdescription="mydevboxproj" #comes from metamodel
+
+RESOURCE_GROUP="xmew1-dop-c-${customerOEMsuffix}-d-rg-001"
+
+SUBID="db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+
+MYOID="f0e04b27-58c5-49a7-b142-5cc5296a4261" #comes from metamodel
+
+DEV_CENTER_NAME="xmew1-dop-c-${customerOEMsuffix}-d-dc"
+
+# The name to use for the new environment to be created.
+ENVIRONMENT_NAME="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-db-001"
+
+# The environment type to use for this environment.
+ENVIRONMENT_TYPE="Test"
+
+# The name of your Azure dev center project.
+project="xmew1-dop-c-${customerOEMsuffix}-p-${projectname}-001"
+
+# The name of your catalog.
+DEV_CENTER_CATALOG_NAME="catalog"
+
+# The name of the ARM template to deploy (specified in the evironment.yaml).
+ENVIRONMENT_DEFINITION_NAME="devbox"
+
+# The name of the ARM template parameters file to use for the deployment.
+#PARAMETERS_FILE="parameters.json"
+
+# Load the variables from the config file
+#source create_environment.config.sh
 
 # Function to handle errors
 handle_error() {
-    local error_message="$1"
-    echo "$error_message"
+    echo "ERROR: $1"
     exit 1
 }
 
- #region Getting config from metamodel config yaml
- configEncoded="{{ parameters.input_parameter_to_script }}"
- config=$(echo $configEncoded | base64 -d)
- #endregion Getting config from metamodel config yaml
+set +x  # Disable tracing for this section
 
- #region parameters - get from config
- customer_OEM_suffix=$(echo $config | jq -r '.customer_OEM_suffix')
- project_name=$(echo $config | jq -r '.project_name')
- environment_stage_short=$(echo $config | jq -r '.environment_stage_short')
- #endregion parameters - get from config
+echo "Starting environment creation process..."
 
-# Set variables
-location="westeurope"
-project="xmew1-dop-c-${customer_OEM_suffix}-p-${project_name}-001"
-image="microsoftwindowsdesktop_windows-ent-cpc_win11-21h2-ent-cpc-os"
-DEV_CENTER_NAME="xmew1-dop-c-${customer_OEM_suffix}-d-dc"
-RESOURCE_GROUP="xmew1-dop-c-${customer_OEM_suffix}-d-rg-001"
-devbox_definition_name="xmew1-dop-c-${customer_OEM_suffix}-devboxdef"
 
-# Install the devcenter extension
+# # # Retrieve your own Object ID
+#  MYOID=$(az ad signed-in-user show --query id -o tsv)
+#  echo $MYOID
+
+
+
 echo "Installing the devcenter extension..."
-commandInstallDevCenterExt="az extension add --name devcenter --upgrade"
-commandInstallDevCenterExt_output=""
-commandInstallDevCenterExt_status=0
-execute_command_with_status_code "$commandInstallDevCenterExt" commandInstallDevCenterExt_output commandInstallDevCenterExt_status || handle_error "Failed to install the devcenter extension."
-if [ $commandInstallDevCenterExt_status -ne 0 ]; then
-  echo_output_dictionary_to_output_file
-  exit 0
-fi
+az extension add --name devcenter --upgrade || handle_error "Failed to install the devcenter extension."
 echo "Extension installation complete!"
 
 
-##Parameter details##
-capacity=1
-family="Standard"
-compute="general_i_8c32gb256ssd_v2"
-size="Standard_DS1_v2"
-tier="Standard"
-osstoragetype="ssd_256gb"
+# Start of new commands
 
-# Create devbox definition
-echo "Creating devbox definition..."
-commandCreateDevboxDef="az devcenter admin devbox-definition create \
-    --dev-center $DEV_CENTER_NAME \
-    --devbox-definition-name $devbox_definition_name \
-    --image-reference \"{\\\"id\\\": \\\"/subscriptions/db401b47-f622-4eb4-a99b-e0cebc0ebad4/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.DevCenter/devcenters/$DEV_CENTER_NAME/galleries/default/images/$image\\\"}\" \
-    --os-storage-type $osstoragetype \
-    --resource-group $RESOURCE_GROUP \
-    --sku \"{\\\"capacity\\\": $capacity, \\\"family\\\": \\\"$family\\\", \\\"name\\\": \\\"$compute\\\", \\\"size\\\": \\\"$size\\\", \\\"tier\\\": \\\"$tier\\\"}\" \
-    --hibernate-support \"Enabled\" \
-    --location \"$location\""
-commandCreateDevboxDef_output=""
-commandCreateDevboxDef_status=0
-execute_command_with_status_code "$commandCreateDevboxDef" commandCreateDevboxDef_output commandCreateDevboxDef_status
-if [ $commandCreateDevboxDef_status -ne 0 ]; then
-    echo "Failed to create devbox definition."
-    exit 0
-fi
-echo "Devbox definition created successfully."
+az configure --defaults group=$RESOURCE_GROUP
 
-# Fetch subnet ID
-echo "Fetching subnet ID..."
-subnet_id=$(az network vnet subnet show --name OEMSubnet --vnet-name xmew1-dop-c-${customer_OEM_suffix}-d-vnet-001 --resource-group xmew1-dop-c-${customer_OEM_suffix}-d-rg-001 --query id --output tsv)
-if [ $? -ne 0 ]; then
-    echo "Failed to fetch subnet ID."
-    exit 0
-fi
-echo "Subnet ID fetched successfully."
+# Retrieve dev center resource ID
+DEVCID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query id -o tsv)
+echo $DEVCID
 
-# Create network connection
-echo "Creating network connection..."
-commandCreateNetworkConnection="az devcenter admin network-connection create \
-    --domain-join-type \"AzureADJoin\" \
-    --name \"xmew1-dop-c-${customer_OEM_suffix}-ntwkcon-001\" \
-    --resource-group $RESOURCE_GROUP \
-    --subnet-id \"$subnet_id\" \
-    --location \"$location\" \
-    --networking-resource-group-name \"xmew1-dop-c-${customer_OEM_suffix}-d-rg-networkconnection-001\""
-commandCreateNetworkConnection_output=""
-commandCreateNetworkConnection_status=0
-execute_command_with_status_code "$commandCreateNetworkConnection" commandCreateNetworkConnection_output commandCreateNetworkConnection_status
-if [ $commandCreateNetworkConnection_status -ne 0 ]; then
-    echo "Failed to create network connection."
-    exit 0
-fi
-echo "Network connection created successfully."
+# # Retrieve the Object ID of the dev center's identity
+DEVC_OBJ_ID=$(az devcenter admin devcenter show -n $DEV_CENTER_NAME --query identity.principalId -o tsv)
+echo "DevCenter Object ID: $DEVC_OBJ_ID"
 
-# Fetch network connection ID
-echo "Fetching network connection ID..."
-network_connection_id=$(az devcenter admin network-connection show --name "xmew1-dop-c-${customer_OEM_suffix}-ntwkcon-001" --resource-group "$RESOURCE_GROUP" --query id --output tsv)
-if [ $? -ne 0 ]; then
-    echo "Failed to fetch network connection ID."
-    exit 0
-fi
-echo "Network connection ID fetched successfully."
 
-# Create attached network
-echo "Creating attached network..."
-commandCreateAttachedNetwork="az devcenter admin attached-network create \
-    --attached-network-connection-name \"xmew1-dop-c-${customer_OEM_suffix}-ntwk-001\" \
-    --network-connection-id \"$network_connection_id\" \
-    --resource-group $RESOURCE_GROUP \
-    --dev-center $DEV_CENTER_NAME"
-commandCreateAttachedNetwork_output=""
-commandCreateAttachedNetwork_status=0
-execute_command_with_status_code "$commandCreateAttachedNetwork" commandCreateAttachedNetwork_output commandCreateAttachedNetwork_status
-if [ $commandCreateAttachedNetwork_status -ne 0 ]; then
-    echo "Failed to create attached network."
-    exit 0
-fi
-echo "Attached network created successfully."
+# Retrieve the user-assigned identity resource ID
+IDENTITY_RESOURCE_ID=$(az identity show --name Computegalleryid --resource-group xmew1-dop-s-stamp-d-rg-001 --query id -o tsv)
 
-# Create pool
-echo "Creating pool..."
-commandCreatePool="az devcenter admin pool create \
-    --devbox-definition-name $devbox_definition_name \
-    --local-administrator \"Enabled\" \
-    --name \"xmew1-dop-c-${customer_OEM_suffix}-pools-001\" \
-    --project \"$project\" \
-    --resource-group $RESOURCE_GROUP \
-    --location \"$location\" \
-    --network-connection-name \"xmew1-dop-c-${customer_OEM_suffix}-ntwk-001\""
-commandCreatePool_output=""
-commandCreatePool_status=0
-execute_command_with_status_code "$commandCreatePool" commandCreatePool_output commandCreatePool_status
-if [ $commandCreatePool_status -ne 0 ]; then
-    echo "Failed to create pool."
-    exit 0
-fi
-echo "Pool created successfully."
+# Retrieve the object ID of the user-assigned identity
+USER_ASSIGNED_IDENTITY_OBJ_ID=$(az resource show --ids $IDENTITY_RESOURCE_ID --query properties.principalId -o tsv)
+echo "User Assigned Identity Object ID: $USER_ASSIGNED_IDENTITY_OBJ_ID"
+
+# Create project in dev center
+az devcenter admin project create -n $project \
+--description $projectdescription \
+--dev-center-id $DEVCID
+
+# Confirm project creation
+az devcenter admin project show -n $project
+
+# Assign the Owner role to a managed identity
+
+# # Retrieve the Object ID of the dev center's identity
+# OID=$(az ad sp list --display-name $DEV_CENTER_NAME --query [].id -o tsv)
+# echo $OID
+
+
+ # Assign the role of Owner to the dev center on the subscription
+ az role assignment create \
+  --role "Owner" \
+  --assignee-object-id $DEVC_OBJ_ID \
+  --scope "/subscriptions/$SUBID"
+
+az role assignment create \
+  --role "Owner" \
+  --assignee-object-id $USER_ASSIGNED_IDENTITY_OBJ_ID \
+  --scope "/subscriptions/$SUBID"
+
+# Configure a project
+
+# Remove group default scope for next command. Leave blank for group.
+az configure --defaults group=
+
+# Retrieve the Role ID for the Owner of the subscription
+ROID=$(az role definition list -n "Owner" --scope /subscriptions/$SUBID --query [].name -o tsv)
+echo $ROID
+
+# Set default resource group again
+az configure --defaults group=$RESOURCE_GROUP
+
+# Show allowed environment type for the project
+az devcenter admin project-allowed-environment-type list --project $project --query [].name
+
+# # Choose an environment type and create it for the project
+# az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
+# --project $DEV_CENTER_PROJECT_NAME \
+# --identity-type "SystemAssigned" \
+# --roles "{\"${ROID}\":{}}" \
+# --deployment-target-id "/subscriptions/${SUBID}" \
+# --status Enabled
+
+# # Choose an environment type and create it for the project
+objectId=$(az devcenter admin project-environment-type create -n $ENVIRONMENT_TYPE \
+--project $project \
+--identity-type "SystemAssigned" \
+--roles "{\"${ROID}\":{}}" \
+--deployment-target-id "/subscriptions/${SUBID}" \
+--status Enabled \
+--query 'identity.principalId' \
+--output tsv)
+echo Test objectid is $objectId
+
+
+az role assignment create \
+    --role "Contributor" \
+    --assignee-object-id $objectId \
+    --scope /subscriptions/$SUBID
+    #----assignee-principal-type "ServicePrincipal" \
+echo "role sucessfully added"
+
+# Assign environment access
+
+ # Assign admin access
+ az role assignment create --assignee $MYOID \
+ --role "DevCenter Project Admin" \
+ --scope "/subscriptions/$SUBID"
+
+# Optionally, assign the Dev Environment User role
+az role assignment create --assignee $MYOID \
+ --role "Deployment Environments User" \
+ --scope "/subscriptions/$SUBID"
+
+
+# End of new commands
+
+ echo "List all the Azure Deployment Environments projects you have access to:"
+ az graph query -q "Resources | where type =~ 'microsoft.devcenter/projects'" -o table || handle_error "Failed to list projects."
+
+ az account set --subscription $SUBID
+
+# # Remove group default scope for next command. Leave blank for group.
+ az configure --defaults group=
+
+# # Set default resource group again
+ az configure --defaults group=$RESOURCE_GROUP
+ echo "Configure the default resource group as the resource group that contains the project:"
+
+
+ echo "Creating environment..."
+ az devcenter dev environment create \
+     --environment-name $ENVIRONMENT_NAME \
+     --environment-type $ENVIRONMENT_TYPE \
+     --dev-center-name $DEV_CENTER_NAME \
+     --project-name $project \
+     --catalog-name $DEV_CENTER_CATALOG_NAME \
+     --environment-definition-name $ENVIRONMENT_DEFINITION_NAME \
+     #--parameters $PARAMETERS_FILE || handle_error "Failed to create environment." \
+     #--debug
+    
+
+ echo "Environment creation complete!"
+
+# # Disable tracing
+ set +x
