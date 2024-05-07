@@ -1,0 +1,243 @@
+name: Create project for DevBox
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_environment:
+        type: choice
+        description: "Choose the environment (with access rights to target subscription):"
+        options:
+          - sub-AVL_DevopsPilot
+          - sub-AVL_DevopsPilot_Test
+          - sub-DCP_SIL
+        required: true
+
+      target_subscription_id:
+        description: "Enter the subscription ID to deploy the resources for the customer stamp"
+        required: true
+        default: "db401b47-f622-4eb4-a99b-e0cebc0ebad4"
+  
+      customerOEMsuffix:
+        description: "suffix required for customer OEM in lowercase"
+        required: true
+      projectName:
+        description: "name of the project to create"
+        required: true
+      environmentStage:
+        type: choice
+        description: "Choose the environment: d for dev, p for Prod"
+        options:
+          - d
+          - p
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.deploy_environment }}
+
+    steps:
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: CheckoutRepo
+        uses: actions/checkout@v2
+      
+      - name: Switch to target subscription
+        run: az account set --subscription ${{ inputs.target_subscription_id }}
+      
+      - name: Prepare Symphony bypass
+        run: |
+          # Define variables (same as before)
+          RESOURCE_NAME_PRIMARY_PREFIX="xmew1"
+          RESOURCE_NAME_SECONDARY_PREFIX="dop"
+          PROJECT_NAME="${{ inputs.projectName }}"
+          DESCRIPTION="mytestproject description"
+          VERSION="0.1.0"
+          AUTHOR="pj3 author"
+          ENVIRONMENT_STAGE="development"
+          OEM_IDENTIFIER="${{ inputs.customerOEMsuffix }}"
+          AZURE_REGION="westeurope"
+          TARGET_SUBSCRIPTION_ID="${{ inputs.target_subscription_id }}"
+          VMSS_SUFFIX="007"
+          SKU="Standard_B2als_v2"
+          INSTANCES=1
+          STORAGE_ACCOUNT_TYPE="Standard_LRS"
+          CACHING="ReadWrite"
+          SUFFIX="006"
+          DEVBOX_IMAGE_NAME="BasicImage"
+          CAPACITY=1
+          FAMILY="Standard"
+          COMPUTE="general_i_8c32gb256ssd_v2"
+          SIZE="Standard_DS1_v2"
+          TIER="Standard"
+          OS_STORAGE_TYPE="ssd_256gb"
+          COMPUTE_GALLERY_NAME="xmew1dopsstampdcomputegallery001"
+          COMPUTE_GALLERY_MANAGED_ID="Computegalleryid"
+          META_MODEL_OUTPUTS_FILE_SHARE_NAME="avldevops"
+
+          # Generate YAML file
+          cat <<EOF > config.yaml
+          #region Configuration
+          config:
+            resource_name_primary_prefix: $RESOURCE_NAME_PRIMARY_PREFIX
+            resource_name_secondary_prefix: $RESOURCE_NAME_SECONDARY_PREFIX
+
+            #region project configuration
+            project_config:
+              project_name: $PROJECT_NAME
+              description: $DESCRIPTION
+              version: $VERSION
+              author: $AUTHOR
+              environment_stage: $ENVIRONMENT_STAGE
+              oem_identifier: $OEM_IDENTIFIER
+            #endregion project configuration
+
+            workflow_run_config:
+              job_id: 142738 #example value
+              build_id:
+              interactive_execution: true
+
+            #region customer stamp configuration
+            customer_stamp_config:
+              azure_region: $AZURE_REGION
+              target_subscription_id: $TARGET_SUBSCRIPTION_ID
+
+            ade_config:
+              vmss_suffix: $VMSS_SUFFIX
+              sku: $SKU
+              instances: $INSTANCES
+              storage_account_type: $STORAGE_ACCOUNT_TYPE
+              caching: $CACHING
+
+            devbox_config:
+              suffix: $SUFFIX
+              devbox_image_name: $DEVBOX_IMAGE_NAME
+              capacity: $CAPACITY
+              family: $FAMILY
+              compute: $COMPUTE
+              size: $SIZE
+              tier: $TIER
+              os_storage_type: $OS_STORAGE_TYPE
+            #endregion customer stamp configuration
+
+            #region shared stamp configuration
+            shared_stamp_config:
+              compute_gallery_name: $COMPUTE_GALLERY_NAME
+              compute_gallery_managed_id: $COMPUTE_GALLERY_MANAGED_ID
+              meta_model_outputs_file_share_name: $META_MODEL_OUTPUTS_FILE_SHARE_NAME
+            #endregion shared stamp configuration
+          EOF
+
+          # Encode YAML file to base64 and store it as a string
+          BASE64_ENCODED_CONFIG=$(base64 config.yaml)
+
+          echo decode
+          config=$(echo "$BASE64_ENCODED_CONFIG" | base64 -d)
+          echo "$config"
+
+          CONFIG=$(cat config.yaml)
+
+          # Display the base64 encoded string
+          #echo "Base64 encoded config file:"
+          #echo "$BASE64_ENCODED_CONFIG"
+
+          # Optionally, store it in a file
+          echo "$BASE64_ENCODED_CONFIG" > config_base64.txt
+
+          echo "Base64 encoded config file stored in config_base64.txt"
+
+          #cat config_base64.txt
+
+          #ls -R
+
+          cp ./metamodel/extensions/run_script_with_parameters/templates/avl_devops_create_devbox.sh.j2 ./avl_devops_create_devbox.sh
+          cp ./metamodel/extensions/run_script_with_parameters/templates/avl_devops_create_ade.sh.j2 ./avl_devops_create_ade.sh
+
+
+            # prepare the script
+            function modify_script() {
+            local script_path=$1
+
+            echo delete
+            sed -i '/source $(dirname $0)\/symphony_stage_script_provider\.sh/d' "$script_path"
+            echo replace
+            sed -i 's/^config=.*$/config=$CONFIG/' "$script_path"
+
+            # bypass settings
+            sed -i "s|^resource_name_primary_prefix=.*$|resource_name_primary_prefix=\"$RESOURCE_NAME_PRIMARY_PREFIX\"|" "$script_path"
+            sed -i "s|^resource_name_secondary_prefix=.*$|resource_name_secondary_prefix=\"$RESOURCE_NAME_SECONDARY_PREFIX\"|" "$script_path"
+            sed -i "s|^oem_identifier=.*$|oem_identifier=\"$OEM_IDENTIFIER\"|" "$script_path"
+            sed -i "s|^project_name=.*$|project_name=\"$PROJECT_NAME\"|" "$script_path"
+            sed -i "s|^environment_stage=.*$|environment_stage=\"$ENVIRONMENT_STAGE\"|" "$script_path"
+            sed -i "s|^target_subscription_id=.*$|target_subscription_id=\"$TARGET_SUBSCRIPTION_ID\"|" "$script_path"
+            sed -i "s|^suffix=.*$|suffix=\"$SUFFIX\"|" "$script_path"
+            sed -i "s|^azure_region=.*$|azure_region=\"$AZURE_REGION\"|" "$script_path"
+            sed -i "s|^devbox_image_name=.*$|devbox_image_name=\"$DEVBOX_IMAGE_NAME\"|" "$script_path"
+            sed -i "s|^capacity=.*$|capacity=\"$CAPACITY\"|" "$script_path"
+            sed -i "s|^family=.*$|family=\"$FAMILY\"|" "$script_path"
+            sed -i "s|^compute=.*$|compute=\"$COMPUTE\"|" "$script_path"
+            sed -i "s|^size=.*$|size=\"$SIZE\"|" "$script_path"
+            sed -i "s|^tier=.*$|tier=\"$TIER\"|" "$script_path"
+            sed -i "s|^osstoragetype=.*$|osstoragetype=\"$OS_STORAGE_TYPE\"|" "$script_path"
+            sed -i "s|^compute_gallery_name=.*$|compute_gallery_name=\"$COMPUTE_GALLERY_NAME\"|" "$script_path"
+
+            sed -i "s|^description=.*$|description=\"$DESCRIPTION\"|" "$script_path"
+            sed -i "s|^vmsssuffix=.*$|vmsssuffix=\"$VMSS_SUFFIX\"|" "$script_path"
+            sed -i "s|^sku=.*$|sku=\"$SKU\"|" "$script_path"
+            sed -i "s|^instances=.*$|instances=\"$INSTANCES\"|" "$script_path"
+            sed -i "s|^storage_account_type=.*$|storage_account_type=\"$STORAGE_ACCOUNT_TYPE\"|" "$script_path"
+            sed -i "s|^caching=.*$|caching=\"$CACHING\"|" "$script_path"
+            sed -i "s|^compute_gallery_managedid=.*$|compute_gallery_managedid=\"$COMPUTE_GALLERY_MANAGED_ID\"|" "$script_path"
+            sed -i "s|^class=.*$|class=\"$CLASS\"|" "$script_path"
+            sed -i "s|^osversion=.*$|osversion=\"$OS_VERSION\"|" "$script_path"
+            sed -i "s|^modelconnectversion=.*$|modelconnectversion=\"$MODEL_CONNECT_VERSION\"|" "$script_path"
+            sed -i "s|^concertoversion=.*$|concertoversion=\"$CONCERTO_VERSION\"|" "$script_path"
+            }
+
+            modify_script "./avl_devops_create_devbox.sh"
+            modify_script "./avl_devops_create_ade.sh"
+
+          cat ./avl_devops_create_devbox.sh
+          cat ./avl_devops_create_ade.sh
+
+          echo Generate fake Symphony input
+          json_data='{
+          "__activation": "azure_deploy_yocto_vm_activation",
+          "__activationGeneration": "1",
+          "__campaign": "azure_deploy_yocto_vm",
+          "__previousStage": "service_principal_auth",
+          "__status": 400,
+          "__error": "Error: Some Error",
+          "__site": "laptop",
+          "__stage": "deploy_yocto_vm"
+          }'
+          
+          echo "$json_data" > fakeinput.json
+          set -- "fakeinput.json"
+
+          echo "Fake Symphony input file generated starting provider script"
+          source ./sdv-tool-chain/scenarios/common/extensions/symphony/campaign/common/symphony_stage_script_provider.sh
+
+          echo "ADE goes first because project is created here"
+          source ./avl_devops_create_ade.sh
+
+          echo "Starting the devbox creation script"
+          source ./avl_devops_create_devbox.sh
+
+
+
+
+          
+
+
+
+
