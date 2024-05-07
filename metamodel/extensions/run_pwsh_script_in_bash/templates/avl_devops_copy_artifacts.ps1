@@ -18,8 +18,6 @@ $WORKING_DIR = Split-Path -Path "$($Arg)" -Parent
 
 #region Declare Constants
 $MOUNT_COMMAND_ID = "RunPowerShellScript"
-$MOUNT_SCRIPT_PATH = "$($WORKING_DIR)/mount.ps1"
-$MOUNT_SCRIPT_CONTENT = Get-Content $MOUNT_SCRIPT_PATH -Raw 
 #endregion Declare Constants
 
 #region Getting config from metamodel config yaml
@@ -33,6 +31,7 @@ $STAGING_SA_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.
 $STAGING_SA_NAME = "$($config.resource_name_primary_prefix)$($config.resource_name_secondary_prefix)c$($config.project_config.oem_identifier)$($config.project_config.environment_stage[0])st" 
 $CONTAINER_NAME = "$($config.project_config.project_name)".ToLower()
 $BLOB_NAME = "$($config.project_config.version)"
+$fileToDownload = "$BLOB_NAME.zip"
 
 $VMSS_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-rg-001" 
 $VMSS_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-p-$($config.project_config.project_name)-$($config.project_config.environment_stage[0])-vmss-$($config.ade_config.vmss_suffix)"
@@ -40,17 +39,7 @@ $VMSS_NAME = "$($config.resource_name_primary_prefix)-$($config.resource_name_se
 
 #region Get Account key for staging storage account
 Write-Host "Getting storage account key for staging storage account"
-$command = @"
-az storage account keys list ``
-    -s $($STAGING_SA_SUBSCRIPTION_ID) ``
-    -g $($STAGING_SA_RESOURCE_GROUP) ``
-    -n $($STAGING_SA_NAME) ``
-    --query "[0].value" ``
-    -o tsv
-"@
-$storage_key = ""
-$command_status = 0
-Invoke-Command-ExitOnFailure -c $command -o ([ref]$storage_key) -s ([ref]$command_status)
+$storage_key=$(az storage account keys list --subscription $STAGING_SA_SUBSCRIPTION_ID -g $STAGING_SA_RESOURCE_GROUP -n $STAGING_SA_NAME --query "[0].value" -o tsv)
 Write-Host "Got storage account key for staging storage account."
 #endregion Get Account key for staging storage account
 
@@ -68,13 +57,7 @@ Write-Host "Running command on all VMSS instances"
 foreach ($instanceId in $instance_ids.Split("`t")) {
   if (-not [string]::IsNullOrWhiteSpace($instanceId)) {
     Write-Host "Running command on VMSS instance: $($instanceId)"
-    az vmss run-command invoke `
-      --resource-group $($VMSS_RESOURCE_GROUP) `
-      --name $($VMSS_NAME) `
-      --instance-id $($instanceId) `
-      --command-id $($MOUNT_COMMAND_ID) `
-      --scripts $($MOUNT_SCRIPT_CONTENT) `
-      --parameters "StorageAccountName=$($STAGING_SA_NAME)" "ContainerName=$($CONTAINER_NAME)" "AccountKey=$($storage_key)" "FileName=$($BLOB_NAME)"
+    az vmss run-command invoke --resource-group "$VMSS_RESOURCE_GROUP" --name "$VMSS_NAME" --instance-id "$instanceId" --command-id $MOUNT_COMMAND_ID --scripts "@mount.ps1" --parameters "StorageAccountName=$STAGING_SA_NAME" "ContainerName=$CONTAINER_NAME" "AccountKey=$storage_key" "FileName=$fileToDownload"
     Write-Host "Run command on VMSS instance: $($instanceId) completed."
   }
 }
