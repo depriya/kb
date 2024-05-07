@@ -1,5 +1,6 @@
 set AVLAST_HOME=C:\Program Files (x86)\AVL\R2022.2
 
+cd "C:\Temp_Extracted\{{ parameters.input_parameter.project_config.project_name }}_{{ parameters.input_parameter.project_config.version }}"
 
 "C:\Program Files (x86)\AVL\R2022.2\user_python\python3\python.exe" {% for software in
 parameters.input_parameter.additional_software_stack if software.Script == 'build_model_connect_project' -%}
@@ -12,4 +13,3 @@ parameters.input_parameter.additional_software_stack if software.Script == 'buil
 --SimStartTime 0 ^
 --SimEndTime 100 ^
 --SimTimeStep 0.005
-pause
