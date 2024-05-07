@@ -70,13 +70,15 @@ jobs:
             #enable-AzPSSession: true
         - name: Checkout code
           uses: actions/checkout@v3
+        - name: Run Script
+          run: |
+            AZ_DIST=$(lsb_release -cs)
+            AZ_VER=2.58.0
+            sudo apt-get install azure-cli=${AZ_VER}-1~${AZ_DIST} -y
         
         - name: Run Script
           shell: pwsh
           run: |
-            $AZ_DIST=$(grep -oP 'VERSION_ID="\K[^"]+' /etc/os-release)
-            $AZ_VER=2.58.0
-            sudo apt-get install azure-cli=${AZ_VER}-1~${AZ_DIST} -y
             $subscriptionID = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
             $storageAccount = "${{ vars.STORAGEACCOUNT }}"
             $containerName = "${{ vars.CONTAINERNAME }}".ToLower()
