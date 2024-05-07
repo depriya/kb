@@ -48,10 +48,6 @@ parameters:
     name: "sku"
     required: true
     type: "string"
-  - id: "location"
-    name: "location"
-    required: true
-    type: "string"
   - id: "IMAGE_NAME"
     name: "imagename"
     required: true

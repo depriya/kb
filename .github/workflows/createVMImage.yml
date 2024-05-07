@@ -41,7 +41,7 @@ on:
             - "Windows_Server"
         Deploy_environment:
         type: choice
-        description: "Choose the environment (with access rights to customer stamp subscription):"
+        description: "Choose the environment"
         options:
           - sub-AVL_DevopsPilot
           - sub-AVL_DevopsPilot_Test
