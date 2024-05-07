@@ -9,7 +9,7 @@ parameters.input_parameter.additional_software_stack if software.Script == 'buil
 {%- endfor %} ^
 --generateSilProject ^
 --targetProjectName {{ parameters.input_parameter.project_config.project_name }}.proj ^
---sdvMetamodelPath avl_sdv_template.yml ^
+--sdvMetamodelFilePath avl_sdv_template.yml ^
 --SimStartTime 0 ^
 --SimEndTime 100 ^
 --SimTimeStep 0.005
