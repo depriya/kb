@@ -50,9 +50,9 @@ foreach ($instanceId in $instance_ids.Split("`t")) {
       --resource-group $($VMSS_RESOURCE_GROUP) `
       --name $($VMSS_NAME) `
       --instance-id $($instanceId) `
-      --command-id $($BUILD_COMMAND_ID) `
+      --command-id $($EXECUTE_COMMAND_ID) `
       --parameters "FileName=model_connect_project_execute.bat" `
-      --scripts $($BUILD_SCRIPT_CONTENT) 
+      --scripts $($EXECUTE_SCRIPT_CONTENT) 
     Write-Host "Run command on VMSS instance: $($instanceId) completed."
   }
 }

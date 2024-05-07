@@ -182,7 +182,7 @@ Write-Host "Completed collection of reporting stack files"
 
 #region Copy Dependencies
 Write-Host "Copying Files for Project"
-Copy-Item "$($WORKING_DIR)/Module_Library.yml" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/Module_Library.yml" -Force
+Copy-Item "$($WORKING_DIR)/avl_sdv_template.yml" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/avl_sdv_template.yml" -Force
 Copy-Item "$($WORKING_DIR)/model_connect_project_build.bat" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/model_connect_project_build.bat" -Force
 Copy-Item "$($WORKING_DIR)/model_connect_project_execute.bat" "$($WORKING_DIR)/$($PROJECT_FOLDER_PATH)/model_connect_project_execute.bat" -Force
 Write-Host "Copying Files for Project completed"

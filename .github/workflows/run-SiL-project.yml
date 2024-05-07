@@ -4,13 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       metamodel_repo:
-        description: "MetaModel Repository (ORG/REPO)"
-        default: "avl-sdv/DevOpsPilot.Metamodels"
-        required: true
-        type: string
-      metamodel_repo_branch:
-        description: "MetaModel Repository Branch "
-        default: "main"
+        description: "MetaModel Repository (URL)"
+        default: "https://github.com/avl-sdv/DevOpsPilot.Metamodels.git"
         required: true
         type: string
       metamodel_file_name:
@@ -25,7 +20,7 @@ permissions:
 
 env:
   WORKFLOW_ARTIFACT_NAME: metamodel-output-${{ github.run_id }}
-  CONFIG_FILE_YAML: metamodel-config-${{ github.run_id }}.yaml
+  CONFIG_FILE_YAML: avl_sdv_template.yml
 
 jobs:
   Generate_Campaign_from_Metamodel:
@@ -37,12 +32,23 @@ jobs:
     env:
       TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
       TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
-      METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template.yaml
+      METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template1.yml
       METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 #TODO: Discuss if this should be triggered from this repo or external.
+        uses: actions/checkout@v4 
+
+      # - name: Checkout Metamodel repository
+      #   shell: pwsh
+      #   run : |
+      #     $LocationUrl = "${{ github.event.inputs.metamodel_repo }}"
+      #     $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
+      #     Write-Host "Cloning $LocationURL"
+      #     git clone $LocationUrl.Replace('github.com', "${{ secrets.GITHUB_TOKEN }}@github.com")
+      #     Write-Host "Cloning $LocationURL completed"
+      #     ls -l
+      #     Copy-Item "${{ github.workspace }}/$($repo_name)/metamodel/avl_sdv_template.yml" "${{ github.workspace }}/metamodel/avl_sdv_template.yml" -Force
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -82,6 +88,7 @@ jobs:
         working-directory: ${{ env.METAMODEL_OUTPUT_DIR }}
         run: |
           cp ${{ env.METAMODEL_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
+          cp ${{ env.METAMODEL_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/avl_devops_custom_powershell_script/${{ env.CONFIG_FILE_YAML }}
           zip -r ${{ env.WORKFLOW_ARTIFACT_NAME }} *
 
       - name: Publish Metamodel Output
