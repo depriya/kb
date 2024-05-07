@@ -45,7 +45,7 @@ jobs:
             subscriptionID="${{ secrets.AZURE_SUBSCRIPTION_ID }}"
             ResourceGroup="${{ vars.VIRTUALMACHINERGNAME }}"
             storage_key=$(az storage account keys list --subscription "$subscriptionID" -g "$ResourceGroup" -n "$storageAccount" --query "[0].value" -o tsv)
-            az storage container create --name $containerName --account-name $storageAccount --account-key '$storage_key'
-            #az storage blob upload --account-name "$storageAccount" --container-name $containerName --name ModelConnectInstall.cmd --file ModelConnectInstall.cmd --account-key '$storage_key'
-            #az storage blob upload --account-name "$storageAccount" --container-name $containerName --name ModelConnectUpdate.cmd --file ModelConnectUpdate.cmd --account-key '$storage_key'
-            #az storage blob upload --account-name "$storageAccount" --container-name $containerName --name concertoInstall.cmd --file concertoInstall.cmd --account-key '$storage_key'
+            az storage container create --name $containerName --account-name $storageAccount --account-key $storage_key
+            #az storage blob upload --account-name "$storageAccount" --container-name $containerName --name ModelConnectInstall.cmd --file ModelConnectInstall.cmd --account-key $storage_key
+            #az storage blob upload --account-name "$storageAccount" --container-name $containerName --name ModelConnectUpdate.cmd --file ModelConnectUpdate.cmd --account-key $storage_key
+            #az storage blob upload --account-name "$storageAccount" --container-name $containerName --name concertoInstall.cmd --file concertoInstall.cmd --account-key $storage_key
