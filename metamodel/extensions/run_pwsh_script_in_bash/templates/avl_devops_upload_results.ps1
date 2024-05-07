@@ -42,6 +42,7 @@ $storage_key = $(az storage account keys list --subscription $STAGING_SA_SUBSCRI
 Write-Host "Got storage account key for staging storage account."
 #endregion Get Account key for staging storage account
 
+Copy-Item "$($WORKING_DIR)/upload.ps1" -Force
 
 #region Get all instances for the VMSS 
 Write-Host "Get all instances of VMSS: $($VMSS_NAME) in resource group: $($VMSS_RESOURCE_GROUP)."
