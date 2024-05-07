@@ -36,9 +36,7 @@ variable "customerOEMsuffix" {
 variable "projectname" {
   //default = "pj2"
 }
-variable "shared_storage_account_name" {
-  //default = "xmew1dopsdst"
-}
+
 variable "admin_username" {
   //default = "avluser"
 }
@@ -58,7 +56,7 @@ variable "environmentStage" {
   //default = "d"
 }
 
-variable "gallery_name" {
+variable "compute_gallery_name" {
   //default = "xmew1dopsstampdcomputegallery001"
 }
 variable "IMAGE_NAME"{
@@ -102,13 +100,13 @@ data "azurerm_subnet" "internal" {
 }
 data "azurerm_shared_image_gallery" "example"{
       resource_group_name = var.SHARED_RESOURCE_GROUP
-      name        = var.gallery_name
+      name        = var.compute_gallery_name
 }
 
 data "azurerm_shared_image" "all" {
   name                = var.IMAGE_NAME
   resource_group_name = var.SHARED_RESOURCE_GROUP
-  gallery_name        = var.gallery_name
+  gallery_name        = var.compute_gallery_name
 }
 
 //data "azurerm_shared_image" "all" {
