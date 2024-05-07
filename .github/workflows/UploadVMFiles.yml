@@ -41,7 +41,7 @@ jobs:
           run: |
             cd .github
             storageAccount="${{ vars.STORAGEACCOUNT }}"
-            containerName="${{ vars.CONTAINERNAME }}".ToLower()
+            containerName="${{ vars.CONTAINERNAME }}"
             subscriptionID="${{ secrets.AZURE_SUBSCRIPTION_ID }}"
             ResourceGroup="${{ vars.VIRTUALMACHINERGNAME }}"
             storage_key=$(az storage account keys list --subscription "$subscriptionID" -g "$ResourceGroup" -n "$storageAccount" --query "[0].value" -o tsv)
