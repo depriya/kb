@@ -1,4 +1,4 @@
-name: Create VM Image
+name: Upload Files to Storage
 
 on:
   workflow_dispatch:
