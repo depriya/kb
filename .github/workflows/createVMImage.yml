@@ -40,14 +40,14 @@ on:
             - "Windows_Client"
             - "Windows_Server"
         Deploy_environment:
-        type: choice
-        description: "Choose the environment"
-        options:
-          - sub-AVL_DevopsPilot
-          - sub-AVL_DevopsPilot_Test
-          - sub-DevOpsPilot_Test
-          - sub-DCP_SIL
-        required: true
+          type: choice
+          description: "Choose the environment"
+          options:
+            - sub-AVL_DevopsPilot
+            - sub-AVL_DevopsPilot_Test
+            - sub-DevOpsPilot_Test
+            - sub-DCP_SIL
+          required: true
    
 
 
