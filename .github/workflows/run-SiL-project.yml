@@ -10,7 +10,22 @@ on:
         type: string
       metamodel_file_name:
         description: "MetaModel File Name (ABSOLUTE PATH)"
-        default: "metamodel/avl_sdv_template.yaml"
+        default: "metamodel/avl_sdv_template1.yml"
+        required: true
+        type: string
+      non_interactive_environment:
+        description: "Non Interactive Environment"
+        default: "sub-AVL_DevopsPilot"
+        required: true
+        type: string
+      interactive_environment:
+        description: "Interactive Environment"
+        default: "sub-AVL_DevopsPilot_Interactive"
+        required: true
+        type: string
+      runner_name:
+        description: "Runner to trigger Symphony"
+        default: "xmew1-dop-s-stamp-d-vm-003"
         required: true
         type: string
 
@@ -24,21 +39,23 @@ env:
 
 jobs:
   Generate_Campaign_from_Metamodel:
-    runs-on: ubuntu-latest #TODO: Change the Runner Type
+    runs-on: ubuntu-latest
     outputs:
       is_interactive: ${{ steps.interactive-execution.outputs.EXECUTION_ENVIRONENT }}
-    environment: sub-AVL_DevopsPilot #TODO: Change the Environment
+    environment: 
+      name: ${{ github.event.inputs.non_interactive_environment }}
 
     env:
       TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
       TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
-      METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template1.yml
+      METAMODEL_YAML: ${{ github.workspace }}/${{ github.event.inputs.metamodel_file_name }}
       METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4 
 
+      # TODO: Fix this once the ext repo is available for metamodel
       # - name: Checkout Metamodel repository
       #   shell: pwsh
       #   run : |
@@ -48,7 +65,7 @@ jobs:
       #     git clone $LocationUrl.Replace('github.com', "${{ secrets.GITHUB_TOKEN }}@github.com")
       #     Write-Host "Cloning $LocationURL completed"
       #     ls -l
-      #     Copy-Item "${{ github.workspace }}/$($repo_name)/metamodel/avl_sdv_template.yml" "${{ github.workspace }}/metamodel/avl_sdv_template.yml" -Force
+      #     Copy-Item "${{ github.workspace }}/$($repo_name)/${{ github.event.inputs.metamodel_file_name }}" "${{ env.METAMODEL_YAML }}" -Force
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -71,11 +88,11 @@ jobs:
           $interactive_execution = (yq '.config.workflow_run_config.interactive_execution' "${{ env.METAMODEL_YAML }}").Trim('"')
           Write-Host "Interactive Execution: $interactive_execution"
           if ($interactive_execution -eq "true") {
-            Write-Host "Setting Execution Environment to sub-AVL_DevopsPilot_Interactive"
-            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot_Interactive" >> $env:GITHUB_OUTPUT
+            Write-Host "Setting Execution Environment to Interactive"
+            echo "EXECUTION_ENVIRONENT=${{ github.event.inputs.interactive_environment }}" >> $env:GITHUB_OUTPUT
           } else {
-            Write-Host "Setting Execution Environment to sub-AVL_DevopsPilot"
-            echo "EXECUTION_ENVIRONENT=sub-AVL_DevopsPilot" >> $env:GITHUB_OUTPUT
+            Write-Host "Setting Execution Environment to Non-Interactive"
+            echo "EXECUTION_ENVIRONENT=${{ github.event.inputs.non_interactive_environment }}" >> $env:GITHUB_OUTPUT
           }
 
       - name: Validate Metamodel
@@ -99,8 +116,9 @@ jobs:
 
   Upload_Campaign_and_Scripts_to_File_Share:
     needs: Generate_Campaign_from_Metamodel
-    runs-on: ubuntu-latest #TODO: Change the Runner Type
-    environment: sub-AVL_DevopsPilot #TODO: Change the Environment
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ github.event.inputs.non_interactive_environment }}
 
     steps:
       - name: Download output from previous job
@@ -166,9 +184,7 @@ jobs:
         Generate_Campaign_from_Metamodel,
         Upload_Campaign_and_Scripts_to_File_Share,
       ]
-    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner
-    # environment:
-    #   name: sub-AVL_DevopsPilot #TODO: Change the Environment
+    runs-on: ${{ github.event.inputs.runner_name }}
     environment:
       name: ${{ needs.Generate_Campaign_from_Metamodel.outputs.is_interactive }}
 
@@ -204,7 +220,7 @@ jobs:
         Upload_Campaign_and_Scripts_to_File_Share,
         Create_and_Activate_Symphony_Campaign_Build,
       ]
-    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner
+    runs-on: ${{ github.event.inputs.runner_name }}
     environment:
       name: ${{ needs.Generate_Campaign_from_Metamodel.outputs.is_interactive }}
 
