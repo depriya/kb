@@ -51,7 +51,7 @@ variable "admin_password_length" {
 }
 
 variable "location" {
-  //default = "westeurope"
+  default = "westeurope"
 }
 
 variable "environmentStage" {
