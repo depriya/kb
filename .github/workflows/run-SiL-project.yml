@@ -10,7 +10,7 @@ on:
         type: string
       metamodel_file_name:
         description: "MetaModel File Name (ABSOLUTE PATH)"
-        default: "metamodel/avl_sdv_template.yaml"
+        default: "metamodel/avl_sdv_template1.yml"
         required: true
         type: string
       non_interactive_environment:
@@ -21,6 +21,11 @@ on:
       interactive_environment:
         description: "Interactive Environment"
         default: "sub-AVL_DevopsPilot_Interactive"
+        required: true
+        type: string
+      runner_name:
+        description: "Runner to trigger Symphony"
+        default: "xmew1-dop-s-stamp-d-vm-003"
         required: true
         type: string
 
@@ -43,13 +48,14 @@ jobs:
     env:
       TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
       TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
-      METAMODEL_YAML: ${{ github.workspace }}/metamodel/avl_sdv_template1.yml
+      METAMODEL_YAML: ${{ github.workspace }}/${{ github.event.inputs.metamodel_file_name }}
       METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4 
 
+      # TODO: Fix this once the ext repo is available for metamodel
       # - name: Checkout Metamodel repository
       #   shell: pwsh
       #   run : |
@@ -178,7 +184,7 @@ jobs:
         Generate_Campaign_from_Metamodel,
         Upload_Campaign_and_Scripts_to_File_Share,
       ]
-    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner
+    runs-on: ${{ github.event.inputs.runner_name }}
     environment:
       name: ${{ needs.Generate_Campaign_from_Metamodel.outputs.is_interactive }}
 
@@ -214,7 +220,7 @@ jobs:
         Upload_Campaign_and_Scripts_to_File_Share,
         Create_and_Activate_Symphony_Campaign_Build,
       ]
-    runs-on: xmew1-dop-s-stamp-d-vm-003 #TODO: Change the Runner
+    runs-on: ${{ github.event.inputs.runner_name }}
     environment:
       name: ${{ needs.Generate_Campaign_from_Metamodel.outputs.is_interactive }}
 
