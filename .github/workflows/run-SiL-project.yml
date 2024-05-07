@@ -65,7 +65,7 @@ jobs:
       #     git clone $LocationUrl.Replace('github.com', "${{ secrets.GITHUB_TOKEN }}@github.com")
       #     Write-Host "Cloning $LocationURL completed"
       #     ls -l
-      #     Copy-Item "${{ github.workspace }}/$($repo_name)/metamodel/avl_sdv_template.yml" "${{ github.workspace }}/metamodel/avl_sdv_template.yml" -Force
+      #     Copy-Item "${{ github.workspace }}/$($repo_name)/${{ github.event.inputs.metamodel_file_name }}" "${{ env.METAMODEL_YAML }}" -Force
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
