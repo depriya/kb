@@ -26,7 +26,11 @@ Write-Host "Mount Script - Installing modules completed"
 $ConnectionString = "DefaultEndpointsProtocol=https;AccountName=$StorageAccountName;AccountKey=$AccountKey"
 $Ctx = New-AzStorageContext -ConnectionString $ConnectionString
 
-Remove-Item "$localTargetDirectory\*"
+if (Test-Path "$($localTargetDirectory)") {
+    Write-Host "Removing existing folder $($localTargetDirectory)"
+    Remove-Item -Path "$($localTargetDirectory)" -Recurse -Force
+    Write-Host "Removed existing project folder $($localTargetDirectory)"
+}
 
 Write-Host "Mount Script - Downloading Blob to the Destination Path - $($localTargetDirectory)"
 Get-AzStorageBlobContent -Blob $FileName -Container $ContainerName -Destination $localTargetDirectory -Context $Ctx -Force
