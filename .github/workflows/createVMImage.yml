@@ -39,6 +39,15 @@ on:
           options:
             - "Windows_Client"
             - "Windows_Server"
+        Deploy_environment:
+        type: choice
+        description: "Choose the environment"
+        options:
+          - sub-AVL_DevopsPilot
+          - sub-AVL_DevopsPilot_Test
+          - sub-DevOpsPilot_Test
+          - sub-DCP_SIL
+        required: true
    
 
 
@@ -48,8 +57,9 @@ permissions:
 
 jobs:
     build-and-deploy:
-      runs-on: xmew1-dop-s-stamp-d-vm-003
-      environment: sub-AVL_DevopsPilot
+      #runs-on: xmew1-dop-s-stamp-d-vm-003
+      runs-on: ubuntu-latest
+      environment: ${{ inputs.Deploy_environment }}
       steps:
         - name: 'Az CLI login'
           uses: azure/login@v1
