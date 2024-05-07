@@ -9,7 +9,7 @@ config:
   project_config:
     project_name: pj3
     description: pj3 description
-    version: 0.1.0
+    version: 0.1.2
     author: pj3 author
 
     environment_stage: development
@@ -27,14 +27,14 @@ config:
     target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
 
   ade_config:
-    vmss_suffix: "017"
+    vmss_suffix: "020"
     sku: Standard_B2als_v2
     instances: 1
     storage_account_type: Standard_LRS
     caching: ReadWrite
 
   devbox_config:
-    suffix: "006"
+    suffix: "010"
     devbox_image_name: Test001
     capacity: 1
     family: Standard

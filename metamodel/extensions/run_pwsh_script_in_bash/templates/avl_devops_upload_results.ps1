@@ -26,6 +26,7 @@ $config = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64Str
 #endregion Getting config from metamodel config yaml
 
 #region parameters - get from config
+$STAGING_SA_SUBSCRIPTION_ID = "$($config.customer_stamp_config.target_subscription_id)" 
 $STAGING_SA_RESOURCE_GROUP = "$($config.resource_name_primary_prefix)-$($config.resource_name_secondary_prefix)-c-$($config.project_config.oem_identifier)-$($config.project_config.environment_stage[0])-rg-001" 
 $STAGING_SA_NAME = "$($config.resource_name_primary_prefix)$($config.resource_name_secondary_prefix)c$($config.project_config.oem_identifier)$($config.project_config.environment_stage[0])st" 
 $CONTAINER_NAME = "$($config.project_config.project_name)".ToLower()
