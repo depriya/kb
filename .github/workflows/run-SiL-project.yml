@@ -186,7 +186,7 @@ jobs:
       ]
     runs-on: ${{ github.event.inputs.runner_name }}
     environment:
-      name: ${{ needs.Generate_Campaign_from_Metamodel.outputs.is_interactive }}
+      name: ${{ github.event.inputs.non_interactive_environment }}
 
     steps:
       - name: Download output from previous job
