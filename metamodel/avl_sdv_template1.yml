@@ -9,7 +9,7 @@ config:
   project_config:
     project_name: pj3
     description: pj3 description
-    version: 0.1.0
+    version: 0.1.2
     author: pj3 author
 
     environment_stage: development
