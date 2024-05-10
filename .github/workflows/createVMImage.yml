@@ -148,7 +148,7 @@ jobs:
             inlineScript: |
               subscriptionID="${{ secrets.AZURE_SUBSCRIPTION_ID }}"
               storageAccount="${{ vars.STORAGEACCOUNT }}"
-              containerName="${{ vars.CONTAINERNAME,, }}"
+              containerName="${{ vars.CONTAINERNAME }}"
               virtualMachineName="${{ inputs.virtualMachineName }}"
               virtualMachineRGName="${{ vars.VIRTUALMACHINERGNAME }}"
               vnetName="${{ vars.SHAREDSTAMPVNETNAME }}"
