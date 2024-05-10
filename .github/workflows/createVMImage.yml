@@ -70,20 +70,10 @@ jobs:
             #enable-AzPSSession: true
         - name: Checkout code
           uses: actions/checkout@v3
-        # - name: Run Script
-        #   run: |
-        #     sudo apt-get update -y
-        #     sudo apt upgrade -y
-        #     az --version
-        - name: Azure CLI script
-          uses: azure/cli@v2
-          with:
-            azcliversion: latest
-            shell: pwsh
-            inlineScript: |
-              az login --identity
-              Write-Host "Test"
-        
+        - name: Run Script
+          run: |
+            sudo apt-get install azure-cli=2.58.0-1~bionic -y
+            az --version        
         # - name: Run Script
         #   shell: pwsh
         #   run: |
