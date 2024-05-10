@@ -70,10 +70,10 @@ jobs:
             #enable-AzPSSession: true
         - name: Checkout code
           uses: actions/checkout@v3
-        - name: Run Script
-          run: |
-            sudo apt-get install azure-cli=2.58.0-1~bionic -y
-            az --version        
+        # - name: Run Script
+        #   run: |
+        #     sudo apt-get install azure-cli=2.58.0-1~bionic -y
+        #     az --version        
         # - name: Run Script
         #   shell: pwsh
         #   run: |
@@ -140,3 +140,86 @@ jobs:
         #     $image_definition_result=$(az sig image-definition create --resource-group "$virtualMachineRGName" --gallery-name "$gallery_name" --gallery-image-definition "$image_name" --publisher "$image_publisher" --offer "$image_offer" --sku "$image_name" --os-type Windows --os-state Generalized --features SecurityType=TrustedLaunch --hyper-v-generation V2 --architecture x64)
         #     $image_version_result=$(az sig image-version create --resource-group "$virtualMachineRGName" --gallery-name "$gallery_name" --gallery-image-definition "$image_name" --gallery-image-version "$image_version" --virtual-machine "$vm_id")
         #     $delete_result=$(az vm delete -g $virtualMachineRGName -n $virtualMachineName --yes)
+
+        - name: Azure CLI script
+          uses: azure/cli@v2
+          with:
+            azcliversion: 2.58.0
+            inlineScript: |
+              subscriptionID="${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+              storageAccount="${{ vars.STORAGEACCOUNT }}"
+              containerName="${{ vars.CONTAINERNAME,, }}"
+              virtualMachineName="${{ inputs.virtualMachineName }}"
+              virtualMachineRGName="${{ vars.VIRTUALMACHINERGNAME }}"
+              vnetName="${{ vars.SHAREDSTAMPVNETNAME }}"
+              subnetName="${{ vars.SHAREDSTAMPVMSUBNET }}"
+              AdminUserName="${{ vars.VMIMAGEUSER }}"
+              AdminUserPassword="${{ secrets.VMIMAGEUSERPASSWORD }}"
+              gallery_name="${{ vars.IMAGEGALLERYNAME }}"
+              command_id="RunPowerShellScript"
+              JfrogToken="${{ secrets.JFROG_EDGE_TOKEN }}"
+              MCBaseVersion="${{ inputs.ModelConnectBaseVersion }}"
+              MCVersion="${{ inputs.ModelConnectVersion }}"
+              ConcertoVersion="${{ inputs.ConcertoVersion }}"
+              ConcertoVersionR="${{ inputs.ConcertoReleaseVersion }}"
+              LicenseServer="${{ inputs.LicenseServer }}"
+              LicenceServerPort="27000"
+              LicenceType="${{ inputs.LicenceType }}"
+              WindowsImage="${{ inputs.VMWindowsVersion }}"
+              parts=(${WindowsImage//:/ })
+              image_publisher="${parts[0]}"
+              image_offer="${parts[1]}"
+              sku="${parts[2]}"
+              version="${parts[3]}"
+              image_name="${image_offer}ModelConnect${MCBaseVersion}Concerto${ConcertoVersion}"
+              image_version=$(date '+%Y.%m%d.%H%M')
+            
+              echo "$image_name"
+            
+              # storage_key=$(az storage account keys list --subscription "$subscriptionID" -g "$virtualMachineRGName" -n "$storageAccount" --query "[0].value" -o tsv)
+            
+              # # Create VM
+              # az vm create --name "$virtualMachineName" --resource-group "$virtualMachineRGName" --image "$WindowsImage" --license-type "$LicenceType" --nic-delete-option "Delete" --nsg "" --public-ip-address "" --vnet-name "$vnetName" --admin-username "$AdminUserName" --admin-password "$AdminUserPassword" --subnet "$subnetName" --security-type "TrustedLaunch"
+            
+              # cd "${{ github.workspace }}/.github"
+            
+              # # Copy scripts from Storage account required for SoftwareInstallation
+              # sleep 240
+              # az vm run-command invoke --resource-group "$virtualMachineRGName" --name "$virtualMachineName" --command-id "$command_id" --scripts "@scriptcopy.ps1" --parameters "StorageAccountName=$storageAccount" "ContainerName=$containerName" "AccountKey=$storage_key" "JfrogToken=$JfrogToken" "MCBaseVersion=$MCBaseVersion" "MCVersion=$MCVersion" "ConcertoVersion=$ConcertoVersion" "ConcertoVersionR=$ConcertoVersionR" "LicenseServer=$LicenseServer" "LicenceServerPort=$LicenceServerPort"
+            
+              # # Model Connect Installation
+              # az vm run-command invoke --resource-group "$virtualMachineRGName" --name "$virtualMachineName" --command-id "$command_id" --scripts "cmd.exe /c C:\Temp\ModelConnectInstall.cmd"
+            
+              # # Restart Virtual Machine after Model Connect Installation
+              # az vm restart -n "$virtualMachineName" -g "$virtualMachineRGName" --verbose
+            
+              # sleep 60
+            
+              # # Install Concerto
+              # az vm run-command invoke --resource-group "$virtualMachineRGName" --name "$virtualMachineName" --command-id "$command_id" --scripts "cmd.exe /c C:\Temp\concertoInstall.cmd"
+            
+              # # Run Sysprep on the virtual machine
+              # az vm run-command invoke --resource-group "$virtualMachineRGName" --name "$virtualMachineName" --command-id "$command_id" --scripts "@sysprep.ps1"
+            
+              # sleep 60
+              # # Get VM instance view
+              # vm_states=$(az vm get-instance-view -g "$virtualMachineRGName" -n "$virtualMachineName" --query "instanceView.statuses[].displayStatus" -o tsv)
+
+              # # Deallocate VM
+              # deallocateresult=$(az vm deallocate -g "$virtualMachineRGName" -n "$virtualMachineName")
+
+              # # Generalize VM
+              # generalizeresult=$(az vm generalize -g "$virtualMachineRGName" -n "$virtualMachineName")
+
+              # # Get VM ID
+              # vm_id=$(az vm show -g "$virtualMachineRGName" -n "$virtualMachineName" --query "id" -o tsv)
+
+              # # Create image definition
+              # image_definition_result=$(az sig image-definition create --resource-group "$virtualMachineRGName" --gallery-name "$gallery_name" --gallery-image-definition "$image_name" --publisher "$image_publisher" --offer "$image_offer" --sku "$image_name" --os-type Windows --os-state Generalized --features SecurityType=TrustedLaunch --hyper-v-generation V2 --architecture x64)
+
+              # # Create image version
+              # image_version_result=$(az sig image-version create --resource-group "$virtualMachineRGName" --gallery-name "$gallery_name" --gallery-image-definition "$image_name" --gallery-image-version "$image_version" --virtual-machine "$vm_id")
+
+              # # Delete VM
+              # delete_result=$(az vm delete -g "$virtualMachineRGName" -n "$virtualMachineName" --yes) 
+            
