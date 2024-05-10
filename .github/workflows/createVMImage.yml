@@ -179,21 +179,21 @@ jobs:
               storage_key=$(az storage account keys list --subscription "$subscriptionID" -g "$virtualMachineRGName" -n "$storageAccount" --query "[0].value" -o tsv)
             
               # Create VM
-              az vm create --name "$virtualMachineName" --resource-group "$virtualMachineRGName" --image "$WindowsImage" --license-type "$LicenceType" --nic-delete-option "Delete" --nsg "" --public-ip-address "" --vnet-name "$vnetName" --admin-username "$AdminUserName" --admin-password "$AdminUserPassword" --subnet "$subnetName" --security-type "TrustedLaunch"
+              #az vm create --name "$virtualMachineName" --resource-group "$virtualMachineRGName" --image "$WindowsImage" --license-type "$LicenceType" --nic-delete-option "Delete" --nsg "" --public-ip-address "" --vnet-name "$vnetName" --admin-username "$AdminUserName" --admin-password "$AdminUserPassword" --subnet "$subnetName" --security-type "TrustedLaunch"
             
               cd "${{ github.workspace }}/.github"
             
               # Copy scripts from Storage account required for SoftwareInstallation
-              sleep 240
-              az vm run-command invoke --resource-group "$virtualMachineRGName" --name "$virtualMachineName" --command-id "$command_id" --scripts "@scriptcopy.ps1" --parameters "StorageAccountName=$storageAccount" "ContainerName=$containerName" "AccountKey=$storage_key" "JfrogToken=$JfrogToken" "MCBaseVersion=$MCBaseVersion" "MCVersion=$MCVersion" "ConcertoVersion=$ConcertoVersion" "ConcertoVersionR=$ConcertoVersionR" "LicenseServer=$LicenseServer" "LicenceServerPort=$LicenceServerPort"
+              #sleep 240
+              #az vm run-command invoke --resource-group "$virtualMachineRGName" --name "$virtualMachineName" --command-id "$command_id" --scripts "@scriptcopy.ps1" --parameters "StorageAccountName=$storageAccount" "ContainerName=$containerName" "AccountKey=$storage_key" "JfrogToken=$JfrogToken" "MCBaseVersion=$MCBaseVersion" "MCVersion=$MCVersion" "ConcertoVersion=$ConcertoVersion" "ConcertoVersionR=$ConcertoVersionR" "LicenseServer=$LicenseServer" "LicenceServerPort=$LicenceServerPort"
             
               # Model Connect Installation
               az vm run-command invoke --resource-group "$virtualMachineRGName" --name "$virtualMachineName" --command-id "$command_id" --scripts "cmd.exe /c C:\Temp\ModelConnectInstall.cmd"
             
               # Restart Virtual Machine after Model Connect Installation
-              az vm restart -n "$virtualMachineName" -g "$virtualMachineRGName" --verbose
+              #az vm restart -n "$virtualMachineName" -g "$virtualMachineRGName" --verbose
             
-              sleep 240
+              #sleep 240
             
               # Install Concerto
               az vm run-command invoke --resource-group "$virtualMachineRGName" --name "$virtualMachineName" --command-id "$command_id" --scripts "cmd.exe /c C:\Temp\concertoInstall.cmd"
