@@ -27,14 +27,14 @@ config:
     target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
 
   ade_config:
-    vmss_suffix: "023"
+    vmss_suffix: "024"
     sku: Standard_B2als_v2
     instances: 1
     storage_account_type: Standard_LRS
     caching: ReadWrite
 
   devbox_config:
-    suffix: "010"
+    suffix: "012"
     devbox_image_name: Test001
     capacity: 1
     family: Standard
@@ -97,6 +97,15 @@ config:
       # build_script can be left empty if the tool runs out of the box without any installation/building required
       # BuildScriptPath: <BUILD_SCRIPT_PATH>
       # BuildScriptType: <BUILD_SCRIPT_TYPE> # ex. Powershell (or) Bash
+    - Name: Auto_Report.csf
+      Script: execute_model_connect_project
+      Version: 1.1
+      DownloadSource:
+        Type: GitHub # currently supported is GitHub or JFrog
+        Secret: GithubPatToken
+        LocationURL: https://github.com/avl-sdv/workflow_repo.git # e.g. JFrog://home/ModelConnect/2021.1
+      FilePath: workflow_repo/Auto_Report.csf # e.g. /python/ModelConnect.py (the path, must be relative to the LocationURL)
+
   #endregion additional software stack configuration
 
   #region model stack configuration

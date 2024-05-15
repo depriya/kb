@@ -37,7 +37,11 @@ set ARG3=%%TestReportPath=%cd%\{{ parameters.input_parameter.project_config.proj
 set ARG4=%%LayoutPath=%cd%\{{ parameters.input_parameter.reporting_stack.TestReportTemplateLibrary[0].SubSys[0].ModuleFilePath | replace('/', '\\') }}
 set ARGall="%ARG1%,%ARG2%,%ARG3%,%ARG4%"
 
-set SCRIPT_PATH="%cd%\Auto_Report.csf"
+set SCRIPT_PATH="%cd%\{% for software in
+parameters.input_parameter.additional_software_stack if software.Script == 'execute_model_connect_project' -%}
+{%- set path = software.FilePath -%}
+{{ path | replace('/', '\\')}}
+{%- endfor %}"
 
 echo %ARG1%
 echo %ARG2%
