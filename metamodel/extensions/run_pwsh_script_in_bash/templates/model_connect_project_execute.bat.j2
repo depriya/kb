@@ -1,19 +1,12 @@
+set AVLAST_HOME=C:\Program Files (x86)\AVL\R2022.2
+set CONCERTO_HOME=C:\Program Files\AVL\CONCERTO 5\bin
+
 cd "C:\Temp_Extracted\{{ parameters.input_parameter.project_config.project_name }}_{{ parameters.input_parameter.project_config.version }}"
 
 @echo off
 setlocal enabledelayedexpansion
-rmdir %cd%\simulation /s /q
 
-"%MODELCONNECT%\user_python\python3\python.exe" {% for software in
-parameters.input_parameter.additional_software_stack if software.Script == 'build_model_connect_project' -%}
-{%- set path = software.FilePath -%}
-{{ path }}
-{%- endfor %} ^
---executeSilProject ^
---targetProjectName {{ parameters.input_parameter.project_config.project_name }}.proj ^
---SimStartTime 0 ^
---SimEndTime 100 ^
---SimTimeStep 0.005
+echo %AVLAST_HOME%
 
 for /r ".\simulation" %%i in (*.mf4) do (
 	set "recorderfile=%%i"
@@ -41,7 +34,7 @@ set ARG1=%%WorkEnvPath=%dxvPath%
 set ARG2=%%RecorderFilePath=%recorderfile%
 for /f "usebackq" %%i in (`powershell -Command "(Get-Date).ToUniversalTime().Ticks"` ) do set UTCTicks=%%i
 set ARG3=%%TestReportPath=%cd%\{{ parameters.input_parameter.project_config.project_name }}_%UTCTicks%.pdf
-set ARG4=%%LayoutPath=%cd%\{{ parameters.input_parameter.reporting_stack.TestReportTemplateLibrary[0].SubSys[0].ModuleFilePath}}"
+set ARG4=%%LayoutPath=%cd%\{{ parameters.input_parameter.reporting_stack.TestReportTemplateLibrary[0].SubSys[0].ModuleFilePath}}
 set ARGall="%ARG1%,%ARG2%,%ARG3%,%ARG4%"
 
 set SCRIPT_PATH="%cd%\Auto_Report.csf"
