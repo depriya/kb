@@ -14,7 +14,7 @@ set -u
 token=$(curl -X POST -d '{"username":"admin", "password":""}' http://192.168.0.102:8082/v1alpha2/users/auth | jq -r '.accessToken')
 
 while : ; do
-    response=$(curl -X GET -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/build_pj3_142738_activation)
+    response=$(curl -X GET -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/{{parameters.campaign_activation_name|e}})
 
     echo "Response: $response"
 
