@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       is_interactive: ${{ steps.interactive-execution.outputs.EXECUTION_ENVIRONENT }}
-    environment: 
+    environment:
       name: ${{ github.event.inputs.non_interactive_environment }}
 
     env:
@@ -53,7 +53,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 
+        uses: actions/checkout@v4
 
       # TODO: Fix this once the ext repo is available for metamodel
       # - name: Checkout Metamodel repository
@@ -117,7 +117,7 @@ jobs:
   Upload_Campaign_and_Scripts_to_File_Share:
     needs: Generate_Campaign_from_Metamodel
     runs-on: ubuntu-latest
-    environment: 
+    environment:
       name: ${{ github.event.inputs.non_interactive_environment }}
 
     steps:
@@ -179,10 +179,10 @@ jobs:
             --share-name "$meta_model_outputs_file_share_name"
 
   Create_and_Activate_Symphony_Campaign_Build:
-    needs:
-      [
+    needs: [
         Generate_Campaign_from_Metamodel,
         Upload_Campaign_and_Scripts_to_File_Share,
+        Create_and_Activate_Symphony_Campaign_Execute, #TODO: Remove this once testing is done
       ]
     runs-on: ${{ github.event.inputs.runner_name }}
     environment:
@@ -218,7 +218,7 @@ jobs:
       [
         Generate_Campaign_from_Metamodel,
         Upload_Campaign_and_Scripts_to_File_Share,
-        Create_and_Activate_Symphony_Campaign_Build,
+        # Create_and_Activate_Symphony_Campaign_Build, #TODO: Uncomment this once testing is done
       ]
     runs-on: ${{ github.event.inputs.runner_name }}
     environment:
