@@ -34,7 +34,7 @@ set ARG1=%%WorkEnvPath=%dxvPath%
 set ARG2=%%RecorderFilePath=%recorderfile%
 for /f "usebackq" %%i in (`powershell -Command "(Get-Date).ToUniversalTime().Ticks"` ) do set UTCTicks=%%i
 set ARG3=%%TestReportPath=%cd%\{{ parameters.input_parameter.project_config.project_name }}_%UTCTicks%.pdf
-set ARG4=%%LayoutPath=%cd%\{{ parameters.input_parameter.reporting_stack.TestReportTemplateLibrary[0].SubSys[0].ModuleFilePath}}
+set ARG4=%%LayoutPath=%cd%\{{ parameters.input_parameter.reporting_stack.TestReportTemplateLibrary[0].SubSys[0].ModuleFilePath | replace('/', '\\') }}
 set ARGall="%ARG1%,%ARG2%,%ARG3%,%ARG4%"
 
 set SCRIPT_PATH="%cd%\Auto_Report.csf"
