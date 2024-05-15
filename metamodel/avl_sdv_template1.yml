@@ -77,7 +77,7 @@ config:
           LocationURL: https://github.com/avl-sdv/Projects_Repo.git
         SubSys:
           - Name: Next-E-Truck_v5
-            ModuleFilePath: Projects_Repo/Next-E-Truck/Reporting_Layouts/Cycle_and_EnergySummary/Next-E-Truck_v5.cly
+            ModuleFilePath: Projects_Repo\Next-E-Truck\Reporting_Layouts\Cycle_and_EnergySummary\Next-E-Truck_v5.cly
     # everything in or below this path gets copied to the shared location
     #TODO: Discuss what below in this context means? Can there be multiple? Current implementation supports only one.
     ResultsReturnPath: Projects_Repo/ReturnPath
