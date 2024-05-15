@@ -25,7 +25,7 @@
                     "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
                 },
                  "inputs": {
-                    "ps_script_path":"./avl_devops_run_simulation_execute.ps1" 
+                    "ps_script_path":"{{ parameters.toolchain_output_path }}/avl_devops_run_simulation_execute.ps1" 
                 },
                 "stageSelector": "execute_avl_devops_upload_results"
             },
@@ -40,7 +40,7 @@
                     "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
                 },
                  "inputs": {
-                    "ps_script_path":"./avl_devops_upload_results.ps1"
+                    "ps_script_path":"{{ parameters.toolchain_output_path }}/avl_devops_upload_results.ps1"
                 }
             }
         },
