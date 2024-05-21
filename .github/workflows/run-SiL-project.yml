@@ -181,12 +181,11 @@ jobs:
   Create_and_Activate_Symphony_Campaign_Build:
     needs: [
         Generate_Campaign_from_Metamodel,
-        Upload_Campaign_and_Scripts_to_File_Share,
-        Create_and_Activate_Symphony_Campaign_Execute, #TODO: Remove this once testing is done
+        Upload_Campaign_and_Scripts_to_File_Share
       ]
     runs-on: ${{ github.event.inputs.runner_name }}
     environment:
-      name: ${{ github.event.inputs.interactive_environment }}
+      name: ${{ github.event.inputs.non_interactive_environment }}
 
     steps:
       - name: Download output from previous job
@@ -218,7 +217,7 @@ jobs:
       [
         Generate_Campaign_from_Metamodel,
         Upload_Campaign_and_Scripts_to_File_Share,
-        # Create_and_Activate_Symphony_Campaign_Build, #TODO: Uncomment this once testing is done
+        Create_and_Activate_Symphony_Campaign_Build
       ]
     runs-on: ${{ github.event.inputs.runner_name }}
     environment:
