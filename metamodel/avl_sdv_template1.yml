@@ -105,6 +105,13 @@ config:
         Secret: GithubPatToken
         LocationURL: https://github.com/avl-sdv/workflow_repo.git # e.g. JFrog://home/ModelConnect/2021.1
       FilePath: workflow_repo/Auto_Report.csf # e.g. /python/ModelConnect.py (the path, must be relative to the LocationURL)
+    - Name: Concerto_Enviornments
+      Version: 1.0
+      DownloadSource:
+        Type: GitHub # currently supported is GitHub or JFrog
+        Secret: GithubPatToken
+        LocationURL: https://github.com/avl-sdv/Projects_Repo.git # e.g. JFrog://home/ModelConnect/2021.1
+      FilePath: Projects_Repo/Next-E-Truck/Concerto_Enviornments # e.g. /python/ModelConnect.py (the path, must be relative to the LocationURL)
 
   #endregion additional software stack configuration
 
