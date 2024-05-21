@@ -27,14 +27,14 @@ config:
     target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
 
   ade_config:
-    vmss_suffix: "035"
+    vmss_suffix: "038"
     sku: Standard_B2als_v2
     instances: 1
     storage_account_type: Standard_LRS
     caching: ReadWrite
 
   devbox_config:
-    suffix: "018"
+    suffix: "019"
     devbox_image_name: Test001
     capacity: 1
     family: Standard
@@ -80,7 +80,7 @@ config:
             ModuleFilePath: Projects_Repo/Next-E-Truck/Reporting_Layouts/Cycle_and_EnergySummary/Next-E-Truck_v5.cly
     # everything in or below this path gets copied to the shared location
     #TODO: Discuss what below in this context means? Can there be multiple? Current implementation supports only one.
-    ResultsReturnPath: Projects_Repo/ReturnPath
+    ResultsReturnPath: ReturnPath
   #endregion reporting stack configuration
 
   #region additional software stack configuration
