@@ -1,4 +1,4 @@
-name: Upload Files to Storage
+name: Upload.Files.ToStorage
 
 on:
   workflow_dispatch:
