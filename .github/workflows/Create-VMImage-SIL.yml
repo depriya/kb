@@ -1,4 +1,4 @@
-name: Create VM Image
+name: Create.SIL.VMImage
 
 on:
   workflow_dispatch:
