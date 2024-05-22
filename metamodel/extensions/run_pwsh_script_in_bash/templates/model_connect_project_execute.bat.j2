@@ -45,7 +45,7 @@ echo No ".dxv" file found in or above the directory of the ".cly" file.Can't cre
 goto end
 
 :found
-set ARG1=%%WorkEnvPath=%dxvPath%
+set ARG1=%%WorkEnvPath=%dxvPath%\..\
 set ARG2=%%RecorderFilePath=%recorderfile%
 for /f "usebackq" %%i in (`powershell -Command "(Get-Date).ToUniversalTime().Ticks"` ) do set UTCTicks=%%i
 set ARG3=%%TestReportPath=%cd%\{{ parameters.input_parameter.project_config.project_name }}_%UTCTicks%.pdf
