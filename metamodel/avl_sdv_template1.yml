@@ -27,14 +27,14 @@ config:
     target_subscription_id: db401b47-f622-4eb4-a99b-e0cebc0ebad4
 
   ade_config:
-    vmss_suffix: "039"
+    vmss_suffix: "040"
     sku: Standard_B2als_v2
     instances: 1
     storage_account_type: Standard_LRS
     caching: ReadWrite
 
   devbox_config:
-    suffix: "020"
+    suffix: "021"
     devbox_image_name: Test001
     capacity: 1
     family: Standard
