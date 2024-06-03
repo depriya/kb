@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "OEM": {
+        "value": "",
+        "metadata": {
+          "description": "The OEM value."
+        }
+      },
+      "project": {
+        "value": "",
+        "metadata": {
+          "description": "The project value."
+        }
+      },
+      "location": {
+        "value": "west europe",
+        "metadata": {
+          "description": "The location/region in which to create the Dev Center project."
+        }
+      },
+      "project_description": {
+        "value": "The description of the Dev Center project.",
+        "metadata": {
+          "description": "The description of the Dev Center project."
+        }
+      },
+      "project_members": {
+        "value": [
+          "b9082dac-d369-4435-a4b9-9779f666c1e0"
+        ],
+        "metadata": {
+          "description": "The members of the Dev Center project."
+        }
+      },
+      "target_subscription_id": {
+        "value": "db401b47-f622-4eb4-a99b-e0cebc0ebad4",
+        "metadata": {
+          "description": "The subscription ID of the target subscription."
+        }
+      }
+    }
+  }
+  

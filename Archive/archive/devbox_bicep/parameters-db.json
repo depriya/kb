@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+
+        "devcentername": {
+            "value": "$(devcenter)"
+        },
+        
+        "location": {
+            "value": "westeurope"
+        },
+        
+        "nameseed": {
+            "value": "xmew1-dop-c-tstoem-d-dbox"
+        },
+        "projectTeamName":{
+            "value": "$(projectteamname)"
+        },
+        "shutdownTime":{
+            "value": "18:00"
+        }
+    }
+}

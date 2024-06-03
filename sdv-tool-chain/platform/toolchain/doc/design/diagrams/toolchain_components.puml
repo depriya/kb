@@ -1,0 +1,15 @@
+' Copyright (C) Microsoft Corporation
+
+@startuml
+
+node "Toolchain App" {
+    [core]
+}
+
+node "Extensions" {
+    [extension]
+}
+
+extension <-> core
+
+@enduml

@@ -1,0 +1,52 @@
+' Copyright (C) Microsoft Corporation
+
+@startuml
+title Yocto Deployment Campaign
+start
+
+:Symphony Activation;
+:Service Principal Auth;
+
+if (Is SP login successful?) then (yes)
+    :Deploy Yocto VM;
+    if (Is Deployment Successful?) then (yes)
+        :Secure Copy to VM;
+        if (Is Copy Successful?) then (yes)
+            :Run Install on VM via SSH;
+            if (Is Install Successful?) then (yes)
+                #lightGreen:(P)
+                detach
+            else (no)
+                #tomato:(F)
+                detach
+            endif
+        else (no)
+            #tomato:(F)
+            detach
+        endif
+    else (no)
+        #tomato:(F)
+        detach
+    endif
+else (no)
+    #tomato:(F)
+    detach
+endif
+
+fork
+#lightGreen:(P)
+:Outputs passed: _previousStage, _status=200;
+fork again
+#tomato:(F)
+:Outputs passed: _previousStage, _status, _error;
+end merge
+:Send Email;
+if (Is _status ok?) then (yes)
+    :Email Body:\nSuccessfully deployed your Yocto VM;
+else (no)
+    :Email Body:\nFailed at stage {_previousStage}\nwith status {_status} due to {_error};
+endif
+:User receives email;
+stop
+
+@enduml

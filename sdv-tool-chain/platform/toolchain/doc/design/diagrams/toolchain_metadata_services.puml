@@ -1,0 +1,14 @@
+' Copyright (C) Microsoft Corporation
+
+@startuml
+
+package "Toolchain Metadata Services" {
+    node "Toolchain Metadata Services CLI Tool" {
+        CLI -- [Toolchain App (CLI)]
+    }
+    node "Toolchain Metadata Services REST Service" {
+        REST -- [Toolchain App (REST)]
+    }
+}
+
+@enduml

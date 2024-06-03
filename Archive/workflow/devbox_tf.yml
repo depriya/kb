@@ -1,0 +1,52 @@
+name: Deploy.environment.devbox.terraform
+
+on:
+  workflow_dispatch:
+    inputs:
+        customerOEMsuffix:
+          description: "suffix required for customer OEM in lowercase"
+          required: true
+        projectname:
+          description: "ente the project name"
+          required: true
+
+# #on:
+#   push:
+#     tags:
+#       - '*'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: sub-AVL_DevopsPilot
+
+    steps:
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Initialize Terraform
+        run: |
+          cd Archive/devbox
+          terraform init
+
+      - name: Plan Terraform changes
+        run: |
+          cd Archive/devbox
+          terraform plan -out=tfplan
+          #terraform plan -out=tfplan -var="customerOEMsuffix=${{ github.event.inputs.customerOEMsuffix }}" -var="projectname=${{ github.event.inputs.projectname }}"
+
+      - name: Apply Terraform changes
+        run: |
+          cd Archive/devbox
+          terraform apply -auto-approve tfplan

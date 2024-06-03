@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="672px" preserveAspectRatio="none" style="width:654px;height:672px;background:#FEFEFE;" version="1.1" viewBox="0 0 654 672" width="654px" zoomAndPan="magnify"><defs><filter height="300%" id="f1ww5j9akrki2r" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[b5faf0bc5595a0eb60a8db1b2feec10f]
+cluster Toolchain App--><polygon fill="#FEFEFE" filter="url(#f1ww5j9akrki2r)" points="142,487,152,477,426,477,426,650,416,660,142,660,142,487" style="stroke: #000000; stroke-width: 1.5;"/><line style="stroke: #000000; stroke-width: 1.5;" x1="416" x2="425" y1="487" y2="478"/><line style="stroke: #000000; stroke-width: 1.5;" x1="142" x2="416" y1="487" y2="487"/><line style="stroke: #000000; stroke-width: 1.5;" x1="416" x2="416" y1="487" y2="660"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="112" x="224" y="502.9951">Toolchain App</text><!--MD5=[553a350223477fa726b3cf3409a726c3]
+cluster coreexts--><rect fill="#FEFEFE" filter="url(#f1ww5j9akrki2r)" height="106" style="stroke: #000000; stroke-width: 1.5;" width="144" x="258" y="530"/><line style="stroke: #000000; stroke-width: 1.5;" x1="258" x2="402" y1="550.2969" y2="550.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="128" x="266" y="544.9951">core extensions</text><!--MD5=[9fb939e1fcef72b3bb3bc94b65e93f13]
+cluster scenario--><rect fill="#FEFEFE" filter="url(#f1ww5j9akrki2r)" height="240" style="stroke: #000000; stroke-width: 1.5;" width="621" x="22" y="188"/><path d="M100,189 L100,197.2969 L90,207.2969 L22,207.2969 " fill="none" style="stroke: #000000; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="68" x="25" y="201.9951">scenario</text><!--MD5=[9334935552d4be9f1119fee87bd9c090]
+cluster metamodel--><rect fill="#FEFEFE" filter="url(#f1ww5j9akrki2r)" height="173" style="stroke: #000000; stroke-width: 1.5;" width="264" x="355" y="231"/><path d="M452,232 L452,240.2969 L442,250.2969 L355,250.2969 " fill="none" style="stroke: #000000; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="87" x="358" y="244.9951">metamodel</text><!--MD5=[3a828f8bfe276acd824726b72656b4bf]
+cluster mext--><rect fill="#FEFEFE" filter="url(#f1ww5j9akrki2r)" height="106" style="stroke: #000000; stroke-width: 1.5;" width="216" x="379" y="274"/><line style="stroke: #000000; stroke-width: 1.5;" x1="379" x2="595" y1="294.2969" y2="294.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="87" x="443.5" y="288.9951">extensions</text><!--MD5=[8a509646a725e4b29ac3346bf48b9d0c]
+cluster local--><polygon fill="#FEFEFE" filter="url(#f1ww5j9akrki2r)" points="46,274,88,274,95,296.2969,166,296.2969,166,380,46,380,46,274" style="stroke: #000000; stroke-width: 1.5;"/><line style="stroke: #000000; stroke-width: 1.5;" x1="46" x2="95" y1="296.2969" y2="296.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="36" x="50" y="288.9951">local</text><!--MD5=[c429691f2fe3ffc642d3e6ed879a8b4b]
+cluster remote--><path d="M206.2913,283.1025 C208.8625,277.4223 212.6457,277.3238 217.0525,280.9888 C219.5114,274.9422 224.0468,274.6856 228.2335,279.1511 C231.2726,273.311 234.7715,272.6601 239.6584,277.097 C242.4626,270.7653 246.4452,269.616 251.7381,274.3899 C255.9154,270.8774 260.614,270.8096 262.3932,277.0183 C267.1341,273.2644 270.6041,273.9612 273.1971,279.5122 C276.9482,275.3524 281.1806,275.1541 283.8183,280.7272 C292.9967,273.1713 301.7529,276.9272 302,289 C303.1034,288.4319 303.8726,288.8073 303.8163,290.12 C309.3051,293.5247 309.833,298.8447 304.2894,302.6655 C310.1515,305.2998 310.9824,310.0028 306.1536,314.3438 C314.4051,317.1286 315.1447,322.6548 309.3139,328.5682 C313.9292,333.8883 312.367,337.2407 306.454,339.9048 C312.8295,344.0921 311.5757,350.0169 305.1958,352.9764 C310.6139,362.4405 308.1254,372.4743 295,372 C295.8031,371.2221 296.6715,371.4343 296.9696,372.5307 C295.1371,379.7409 290.855,379.9892 285.734,375.7607 C283.854,382.6274 277.7035,383.5775 273.1202,378.6524 C270.133,384.5053 266.4292,384.6851 262.7341,379.3069 C260.0716,385.3085 256.5326,385.6315 252.1374,381.0403 C247.4696,386.2904 243.4526,386.0088 239.8107,379.9247 C235.2864,385.8166 229.4068,384.4873 227.7927,377.2591 C224.3632,381.3345 219.4125,381.4353 217.5269,375.6515 C206.5999,381.4897 198.6392,378.0221 198,365 C199.1574,365.3731 199.6563,366.0787 198.8165,367.1948 C193.0551,364.0694 191.7181,357.6845 197.6784,353.5794 C192.379,349.9424 192.4754,344.0574 198.3281,340.9963 C191.8596,337.4537 189.87,333.5332 195.5085,327.4674 C190.9778,322.2904 190.8665,318.0835 197.4683,314.6023 C191.5201,310.8711 191.6522,306.685 197.1639,302.6617 C188.7377,291.9896 193.173,284.9909 205,282 C205.933,281.772 206.339,282.182 206.2913,283.1025 " fill="#FEFEFE" style="stroke: #000000; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="57" x="221.5" y="299.9951">remote</text><!--MD5=[0d482ad21d5c7c11aa976e45da5ecfe6]
+entity core--><rect fill="#FEFECE" filter="url(#f1ww5j9akrki2r)" height="36.2969" style="stroke: #A80036; stroke-width: 1.5;" width="51" x="158.5" y="584"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="153.5" y="589"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="153.5" y="610.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="31" x="168.5" y="606.9951">core</text><!--MD5=[52894c385021727ee889c531b66d78df]
+entity cext--><rect fill="#FEFECE" filter="url(#f1ww5j9akrki2r)" height="36.2969" style="stroke: #A80036; stroke-width: 1.5;" width="88" x="298" y="584"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="293" y="589"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="293" y="610.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="68" x="308" y="606.9951">extension</text><!--MD5=[f3ab0fa85679350d167e724f16d87847]
+entity ldmext--><rect fill="#FEFECE" filter="url(#f1ww5j9akrki2r)" height="36.2969" style="stroke: #A80036; stroke-width: 1.5;" width="75" x="504.5" y="328"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="499.5" y="333"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="499.5" y="354.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="55" x="514.5" y="350.9951">config 1</text><!--MD5=[c1c49d0b6acbf08df653644c838812dd]
+entity rdmext--><rect fill="#FEFECE" filter="url(#f1ww5j9akrki2r)" height="36.2969" style="stroke: #A80036; stroke-width: 1.5;" width="75" x="394.5" y="328"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="389.5" y="333"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="389.5" y="354.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="55" x="404.5" y="350.9951">config 2</text><!--MD5=[1cb3df1c73b5dda55699f49ecd052f5a]
+entity lext--><rect fill="#FEFECE" filter="url(#f1ww5j9akrki2r)" height="36.2969" style="stroke: #A80036; stroke-width: 1.5;" width="88" x="62" y="328"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="57" y="333"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="57" y="354.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="68" x="72" y="350.9951">extension</text><!--MD5=[447af3705aa3dc34bf52608fe3981f8f]
+entity rext--><rect fill="#FEFECE" filter="url(#f1ww5j9akrki2r)" height="36.2969" style="stroke: #A80036; stroke-width: 1.5;" width="88" x="206" y="328"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="201" y="333"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="201" y="354.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="68" x="216" y="350.9951">extension</text><!--MD5=[c872a2b6dc5d379911a57ab99c417dd7]
+link ldmext to lext--><path d="M541.46,327.75 C539.4,295.21 529.88,227.81 487,198 C432.81,160.33 247.04,164.79 190,198 C143.4,225.13 120.55,288.81 111.27,323.13 " fill="none" id="ldmext-&gt;lext" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="110,327.97,116.1599,320.2852,111.2732,323.1348,108.4236,318.2481,110,327.97" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="64" x="295" y="168.0669">Reference</text><!--MD5=[c035f7bb381f6d8359986372a71a344b]
+link rdmext to rext--><path d="M394.5,346 C366.92,346 329.18,346 299.18,346 " fill="none" id="rdmext-&gt;rext" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="294.06,346,303.06,350,299.06,346,303.06,342,294.06,346" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="64" x="312.25" y="339.0669">Reference</text><!--MD5=[9f3aed07a148fdb58f63593078ff07b3]
+link lext to core--><path d="M111.24,364.06 C124.94,408.69 161.85,528.87 177.18,578.79 " fill="none" id="lext-&gt;core" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="178.68,583.68,179.8851,573.9051,177.2236,578.8968,172.232,576.2353,178.68,583.68" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="52" x="141" y="457.0669">Register</text><!--MD5=[0a220f3acda8b7122168fb61a77c7c5c]
+link rext to core--><path d="M245.57,364.06 C233.97,408.69 202.74,528.87 189.77,578.79 " fill="none" id="rext-&gt;core" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="188.5,583.68,194.633,575.9738,189.7563,578.8404,186.8897,573.9637,188.5,583.68" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="52" x="223" y="457.0669">Register</text><!--MD5=[78cf6a508d473ac9e03763769b6dae58]
+link cext to core--><path d="M297.74,602 C271.36,602 238.53,602 214.93,602 " fill="none" id="cext-&gt;core" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="209.74,602,218.74,606,214.74,602,218.74,598,209.74,602" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="52" x="227.75" y="595.0669">Register</text><!--MD5=[2f65acc8a701d2fe946b065da67fc32d]
+@startuml
+skinparamlocked backgroundColor fefefe
+node "Toolchain App" {
+    component core
+    card "core extensions" as coreexts {
+        component "extension" as cext
+    }
+}
+
+frame "scenario" {
+
+    frame "metamodel" {
+        card "extensions" as mext {
+            component "config 1" as ldmext
+            component "config 2" as rdmext
+        }
+    }
+
+    folder "local" {
+        component "extension" as lext
+    }
+
+    cloud "remote" {
+        component "extension" as rext
+    }
+
+}
+
+ldmext .right.> lext : Reference
+rdmext .right.> rext : Reference
+lext -down-> core : Register
+rext -down-> core : Register
+cext -> core : Register
+
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 10:22:07 UTC 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 11.0.22+7
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: null
+--></g></svg>

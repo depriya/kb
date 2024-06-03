@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# Copyright (C) Microsoft Corporation.
+
+# Exit immediately if a command fails
+set -e
+
+# Fail if an unset variable is used
+set -u
+
+source $(dirname $0)/symphony_stage_script_provider.sh
+
+# Get github PAT from Azure KeyVault
+get_github_token_command="az keyvault secret show \
+                            --name {{parameters.keyvault_key}} \
+                            --vault-name {{parameters.keyvault_name}} | jq -r '.value'"
+get_github_token_command_output=""
+status=0
+execute_command_exit_on_failure "$get_github_token_command" get_github_token_command_output status
+
+# Login to github CLI using github PAT (PAT must have 'repo' scope)
+github_token=$get_github_token_command_output
+gh_login_command="echo $github_token | gh auth login --with-token"
+gh_login_command_output=""
+execute_command_exit_on_failure "$gh_login_command" gh_login_command_output status
+
+# Trigger workflow with unique run name
+uuid=$(uuidgen -r)
+run_name="{{parameters.workflow_id}} run $uuid"
+echo "Run name: $run_name"
+workflow_params=$(echo '{{parameters.inputs|default("{}",true)|tojson}}' | jq --arg key "run_name" --arg value "$run_name" '.[$key] = $value')
+trigger_workflow_command="echo '$workflow_params' | gh workflow run {{parameters.workflow_id}} \
+                            --repo {{parameters.repo_owner}}/{{parameters.repo_name}} \
+                            --ref {{parameters.ref}} \
+                            --json"
+trigger_workflow_command_output=""
+execute_command_exit_on_failure "$trigger_workflow_command" trigger_workflow_command_output status
+
+# Wait for workflow to start and get Run ID
+timestamp=$(date --utc +%FT%TZ --date='30 minutes ago')
+response_body_filter='[ .[] | select( .name == "'"$run_name"'") ] | sort_by(.createdAt) | reverse | .[0].databaseId'
+for i in $(seq 1 5) ; do
+    echo "Waiting for run to start..."
+    sleep 5
+
+    # To protect against potential conflicts, assume there could be multiple runs with run_name and look at most recent
+    get_run_id_command="gh run list \
+                        --repo {{parameters.repo_owner}}/{{parameters.repo_name}} \
+                        --workflow {{parameters.workflow_id}} \
+                        --branch {{parameters.ref}} \
+                        --created '>=$timestamp' \
+                        --json name,databaseId,createdAt \
+                        --jq '$response_body_filter'"
+    get_run_id_command_output=""
+    execute_command_exit_on_failure "$get_run_id_command" get_run_id_command_output status
+
+    if [ ! -z "$get_run_id_command_output" ]; then
+        run_id=$get_run_id_command_output
+        echo "Run started with run ID: $run_id"
+        break
+    fi
+done
+
+if [ -z "$run_id" ]; then
+    error="TIMEOUT: Could not determine workflow run ID."
+    echo_error_to_output_dictionary "$error"
+    echo_output_dictionary_to_output_file
+    exit 1
+fi
+
+# Wait for run to complete
+echo "Waiting for run to complete..."
+watch_run_command="gh run watch $run_id --repo {{parameters.repo_owner}}/{{parameters.repo_name}}"
+watch_run_command_output=""
+execute_command_exit_on_failure "$watch_run_command" watch_run_command_output status
+
+# Get run conclusion
+get_run_conclusion_command="gh run view $run_id \
+                            --repo {{parameters.repo_owner}}/{{parameters.repo_name}} \
+                            --exit-status"
+get_run_conclusion_command_output=""
+execute_command_exit_on_failure "$get_run_conclusion_command" get_run_conclusion_command_output status
+
+# Write the updated key-value pairs to the output file
+echo_output_dictionary_to_output_file
+exit 0

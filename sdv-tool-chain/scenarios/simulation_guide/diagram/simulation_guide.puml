@@ -1,0 +1,21 @@
+@startuml
+title Cognata Simulation Scenario
+participant "Cognata UI Dashboard" as CognataFrontend
+participant "Simulation Proxy" as SimulationProxy
+box "Cognata Simulation Symphony"
+participant Symphony
+participant "Simulation Scripts" as SimulationScripts
+end box
+participant "Cognata Backend" as CognataBackend
+participant "Azure Cosmos DB" as AzCosmosDB
+
+autonumber
+
+CognataFrontend -> SimulationProxy: Run a new simulation
+SimulationProxy -> Symphony: Registers the simulation campaign
+SimulationProxy -> Symphony: Runs the simulation campaign
+Symphony -> SimulationScripts: Executes the simulation campaign
+SimulationScripts -> CognataBackend: Calls into Cognata's backend to run a simulation
+SimulationScripts -> AzCosmosDB: Stores the newly created simulation details
+
+@enduml

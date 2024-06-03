@@ -1,0 +1,5 @@
+# Copyright (C) Microsoft Corporation.
+
+config:
+  mock:
+    message: hi world

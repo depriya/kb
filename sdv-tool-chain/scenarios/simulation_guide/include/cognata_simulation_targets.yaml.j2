@@ -1,0 +1,105 @@
+# Copyright (C) Microsoft Corporation.
+
+azure_login:
+  description: Login to Azure
+  type: azure login
+
+cognata_simulation_symphony_campaign:
+  description: The Symphony campaign that defines the simulation steps
+  type: symphony campaign
+  depends_on:
+    - azure_login
+
+  parameters:
+    campaign_name: cognata_simulation_symphony_campaign
+    campaign_activation_name: simulation_campaign_activation
+    campaign_start_stage_inputs:
+
+    symphony_campaign_parameters_file: ./include/cognata_simulation_symphony_campaign.json.j2
+    symphony_campaign_parameters_file_input:
+      # Empty stage will use the default stage as defined in symphony-campaign.json
+      campaign_start_stage: {{ config.simulation.start_step }}
+      toolchain_output_path: {{ config.symphony.toolchain_output_path }}
+    symphony_base_url: {{ config.symphony.base_url }}
+
+notification_email:
+  description: Configuration of Azure Communication service for sending an email
+  type: azure communication email send
+  depends_on:
+    - azure_login
+  parameters:
+    keyvault_name: {{ config.notification.keyvault_name }}
+    keyvault_key: {{ config.notification.keyvault_key }}
+    # The sender email address must be a verified email address in the Azure Communication service.
+    sender: {{ config.notification.email.sender }}
+    subject: EURONCAP Simulation Execution status
+    recepients:
+      {{ config.notification.email.recepients }}
+    text:
+      success:
+        Simulation Sucessfully Executed [{{ config.simulation.test_plan_sku ~ "-" ~ config.simulation.environment }}].
+      failure:
+        Simulation Failed [{{ config.simulation.test_plan_sku ~ "-" ~ config.simulation.environment }}].
+
+cognata_simulation_scripts:
+  description: The scripts that are needed by Cognata's Simulation Symphony campaign.
+  type: cognata simulation scripts
+
+  parameters:
+    username: {{ config.virtual_environment.username }}
+    password: {{ config.virtual_environment.password }}
+    environment: {{ config.virtual_environment.environment }}
+    cognata_api_studio_url: {{ config.virtual_environment.studio_url }}
+    toolchain_output_path: {{ config.symphony.toolchain_output_path }}
+    azure_cosmos_db_primary_key: {{ config.virtual_environment.azure_cosmos_db_primary_key }}
+    azure_cosmos_db_uri: {{ config.virtual_environment.azure_cosmos_db_uri }}
+    database_id: {{ config.virtual_environment.database_id }}
+    jobs_container: {{ config.virtual_environment.jobs_container }}
+    projects_container: {{ config.virtual_environment.projects_container }}
+    symphony_port: {{ config.application.cognata_simulation_symphony.port }}
+    symphony_version: {{ config.symphony.version }}
+
+cognata_simulation_proxy:
+  description: The Cognata Simulation Proxy is a proxy that calls Symphony to run its campaign.
+  type: cognata simulation proxy
+
+  parameters:
+    host_authority: {{ config.application.cognata_simulation_proxy.host_authority }}
+    port: {{ config.application.cognata_simulation_proxy.port }}
+    toolchain_output_path: {{ config.symphony.toolchain_output_path }}
+
+
+cognata_ui_dashboard:
+  description: The backend for the simulation dashboard.
+  type: cognata ui dashboard backend
+
+  parameters:
+    environment: {{ config.virtual_environment.environment }}
+    azure_cosmos_db_primary_key: {{ config.virtual_environment.azure_cosmos_db_primary_key }}
+    azure_cosmos_db_uri: {{ config.virtual_environment.azure_cosmos_db_uri }}
+    database_id: {{ config.virtual_environment.database_id }}
+    jobs_container: {{ config.virtual_environment.jobs_container }}
+    users_container: {{ config.virtual_environment.users_container }}
+    projects_container: {{ config.virtual_environment.projects_container }}
+    jwt_secret: {{ config.virtual_environment.jwt_secret }}
+    toolchain_output_path: {{ config.symphony.toolchain_output_path }}
+    port: {{ config.application.cognata_ui_dashboard_backend.port }}
+    simulation_proxy_alias: {{ config.application.cognata_simulation_proxy.alias }}
+    simulation_proxy_port: {{ config.application.cognata_simulation_proxy.port }}
+    simulation_ui_backend_port: {{ config.application.cognata_ui_dashboard_backend.port }}
+
+cognata_ui_dashboard_deploy:
+  description: Creates a startup script to run the e2e scenario in a containerized environment
+  type: cognata ui dashboard deploy
+
+  parameters:
+    toolchain_output_path: {{ config.symphony.toolchain_output_path }}
+    user_docker_defined_network: simulation
+    simulation_proxy_alias: {{ config.application.cognata_simulation_proxy.alias }}
+    simulation_proxy_port: {{ config.application.cognata_simulation_proxy.port }}
+    simulation_symphony_alias: {{ config.application.cognata_simulation_symphony.alias }}
+    simulation_symphony_port: {{ config.application.cognata_simulation_symphony.port }}
+    simulation_ui_frontend_alias: {{ config.application.cognata_ui_dashboard.alias }}
+    simulation_ui_frontend_port: {{ config.application.cognata_ui_dashboard.port }}
+    simulation_ui_backend_alias: {{ config.application.cognata_ui_dashboard_backend.alias }}
+    simulation_ui_backend_port: {{ config.application.cognata_ui_dashboard_backend.port }}

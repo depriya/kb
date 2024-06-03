@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Copyright (C) Microsoft Corporation.
+
+# Exit immediately if a command fails
+set -e
+
+# Fail if an unset variable is used
+set -u
+
+# This script is used to test the Symphony API
+# Usage: execute line by line from the symphony_campaign outuput directory
+
+token=$(curl -X POST -d '{"username":"admin", "password":""}' http://192.168.0.102:8082/v1alpha2/users/auth | jq -r '.accessToken')
+
+while : ; do
+    response=$(curl -X GET -H "Authorization: Bearer $token" http://192.168.0.102:8082/v1alpha2/activations/registry/{{parameters.campaign_activation_name|e}})
+
+    echo "Response: $response"
+
+    status=$(echo $response | jq -r '.status.status')
+
+    if [[ $status -ne 9994 ]]; then
+        echo "Exiting."
+        exit 0
+    fi
+
+    echo "Waiting for 1 minute..."
+    sleep 1m
+    echo "Wait Completed. Checking Status again..."
+done

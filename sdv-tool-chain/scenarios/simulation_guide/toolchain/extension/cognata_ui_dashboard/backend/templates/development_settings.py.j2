@@ -1,0 +1,9 @@
+# Copyright (C) Microsoft Corporation
+# Templated development settings Python file
+
+from base_settings import BaseSettings
+
+class Development(BaseSettings):
+    LISTENING_URL = "0.0.0.0"
+    LISTENING_PORT = "{{ parameters.port }}"
+    SIMULATION_PROXY = "http://{{ parameters.simulation_proxy_alias }}:{{ parameters.simulation_proxy_port }}/execute"

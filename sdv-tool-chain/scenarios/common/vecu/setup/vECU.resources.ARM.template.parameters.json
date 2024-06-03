@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "userPrincipalId": {
+            "value": "<USER_PRINCIPAL_ID>"
+        },
+        "emailCommunicationServiceName": {
+            "value": "<EMAIL_COMMUNICATION_SERVICE_NAME>"
+        },
+        "communicationServiceDataLocation": {
+            "value": "<COMMUNICATION_SERVICE_DATA_LOCATION>"
+        },
+        "emailCommunicationServiceSenderUsername": {
+            "value": "<EMAIL_COMMUNICATION_SERVICE_SENDER_USERNAME>"
+        },
+        "communicationServiceName":{
+            "value": "<COMMUNICATION_SERVICE_NAME>"
+        },
+        "keyVaultName": {
+            "value": "<KEY_VAULT_NAME>"
+        },
+        "workflowGithubPATSecretValue": {
+            "value": "<WORKFLOW_GITHUB_PAT_SECRET_VALUE>"
+        },
+        "workflowGithubPATSecretExpiry":{
+            "value": "<WORKFLOW_GITHUB_PAT_SECRET_EXPIRY>"
+        }
+    }
+}

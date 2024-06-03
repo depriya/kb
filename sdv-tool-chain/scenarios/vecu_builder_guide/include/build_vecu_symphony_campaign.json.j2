@@ -1,0 +1,31 @@
+{
+    "spec": {
+        "firstStage": "{{ parameters.campaign_start_stage or 'azure_login' }}",
+        "stages": {
+            "azure_login": {
+                "name": "azure_login",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "azure_login",
+                    "script": "azure_login.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/azure_login",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/azure_login"
+                },
+                "stageSelector": "build_yocto"
+            },
+            "build_yocto": {
+                "name": "build_yocto",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "build a vecu by dispatching the Github workflow",
+                    "script": "github_dispatch_workflow.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/build_yocto",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/build_yocto"
+                }
+            }
+        },
+        "selfDriving": true
+    }
+}

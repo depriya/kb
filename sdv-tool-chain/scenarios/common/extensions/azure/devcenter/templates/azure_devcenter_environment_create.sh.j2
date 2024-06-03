@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Copyright (C) Microsoft Corporation.
+
+# Exit immediately if a command fails
+set -e
+
+# Fail if an unset variable is used
+set -u
+
+source $(dirname $0)/symphony_stage_script_provider.sh
+
+# For reference:
+# https://learn.microsoft.com/en-us/cli/azure/devcenter/dev/environment?view=azure-cli-latest#az-devcenter-dev-environment-create
+
+parameters_file_path=$(realpath $(dirname $0)/"{{parameters.azuredeploy_parameters_file}}")
+
+command="az devcenter dev environment create \
+        --name {{parameters.azure_devcenter_environment_name}} \
+        --environment-type {{parameters.azure_devcenter_environment_type}} \
+        --dev-center {{parameters.azure_devcenter_name}} \
+        --project {{parameters.azure_devcenter_project_name}} \
+        --catalog-name {{parameters.azure_devcenter_catalog_name}} \
+        --environment-definition-name {{parameters.azure_devcenter_environment_definition_name}} \
+        --parameters '$parameters_file_path' \
+        --only-show-errors"
+
+command_status=0
+command_output=""
+execute_command_with_status_code "$command" command_output command_status
+
+# If an Azure Dev Center environment is successfully created, then store the VM's name and resource group
+# in the output dictionary.
+if [ $command_status -eq 0 ]; then
+    # Resource Group Id looks similar to the following:
+    # /subscriptions/<guid>/resourceGroup/<resourceGroupName>
+    virtualMachineResourceGroupId=$(echo "$command_output" | jq -r '.resourceGroupId')
+    virtualMachineResourceGroup=$(basename "$virtualMachineResourceGroupId")
+
+    echo "Virtual Machine Resource Group: $virtualMachineResourceGroup"
+    echo_key_value_to_output_dictionary "virtualMachineResourceGroup" "$virtualMachineResourceGroup"
+
+    virtualMachineName=$(echo "$command_output" | jq -r '.parameters.virtualMachineName')
+    echo "Virtual Machine Name: $virtualMachineName"
+
+    echo_key_value_to_output_dictionary "virtualMachineName" "$virtualMachineName"
+fi
+
+# Write the updated key-value pairs to the output file
+echo_output_dictionary_to_output_file

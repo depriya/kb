@@ -1,0 +1,46 @@
+{
+  "name": "cgn-sdv-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@fluentui-contrib/react-data-grid-react-window": "^1.1.2",
+    "@fluentui/react-charting": "^5.19.8",
+    "@fluentui/react-components": "^9.43.3",
+    "@reduxjs/toolkit": "^2.0.1",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "env-cmd": "^10.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^9.0.4",
+    "react-router-dom": "^6.21.1",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "env-cmd -f .env.dev react-scripts start ",
+    "build:qa": "env-cmd -f .env.qa react-scripts build",
+    "build:dev": "env-cmd -f .env.dev react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -1,0 +1,102 @@
+{
+    "spec": {
+        "firstStage": "{{ parameters.campaign_start_stage or 'cognata_simulation_scripts_requirements' }}",
+        "stages": {
+            "cognata_simulation_scripts_requirements": {
+                "name": "cognata_simulation_scripts_requirements",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "cognata_simulation_scripts_requirements",
+                    "script": "requirements.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/cognata_simulation_scripts",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/cognata_simulation_scripts"
+                },
+                "stageSelector":
+                {%- raw -%}
+                "${{$if($equal($output(cognata_simulation_scripts_requirements, __status), 200), create_project, notification_email)}}"
+                {%- endraw -%}
+            },
+            "create_project": {
+                "name": "create_project",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "create_project",
+                    "script": "create_project.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/cognata_simulation_scripts",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/cognata_simulation_scripts"
+                },
+                "stageSelector":
+                {%- raw -%}
+                "${{$if($equal($output(create_project, __status), 200), scenarios_details_from_test, notification_email)}}"
+                {%- endraw -%}
+            },
+            "scenarios_details_from_test": {
+                "name": "scenarios_details_from_test",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "scenarios_details_from_test",
+                    "script": "scenarios_details_from_test_plan.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/cognata_simulation_scripts",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/cognata_simulation_scripts"
+                },
+                "stageSelector":
+                {%- raw -%}
+                "${{$if($equal($output(scenarios_details_from_test, __status), 200), launch_test_plan, notification_email)}}"
+                {%- endraw -%}
+            },
+            "launch_test_plan": {
+                "name": "launch_test_plan",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "launch_test_plan",
+                    "script": "launch_test_plan.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/cognata_simulation_scripts",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/cognata_simulation_scripts"
+                },
+                "stageSelector":
+                {%- raw -%}
+                "${{$if($equal($output(launch_test_plan, __status), 200), query_test_plan, notification_email)}}"
+                {%- endraw -%}
+            },
+            "query_test_plan": {
+                "name": "query_test_plan",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "query_test_plan",
+                    "script": "query_test_plan.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/cognata_simulation_scripts",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/cognata_simulation_scripts"
+                },
+                "stageSelector": "notification_email"
+            },
+            "notification_email": {
+                "name": "notification_email",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "send email",
+                    "script": "azure_communication_email_send.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/notification_email",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/notification_email"
+                },
+                "inputs": {
+                    "callerStatusCode":
+                    {%- raw -%}
+                    "${{$output($input(__previousStage), __status)}}"
+                    {%- endraw -%},
+                    "callerErrorMessage":
+                    {%- raw -%}
+                    "${{$if($equal($output($input(__previousStage), __status), 200), '', '$output($input(__previousStage), __error)')}}"
+                    {%- endraw -%}
+                },
+                "handleErrors": true
+            }
+        },
+        "selfDriving": true
+    }
+}

@@ -1,0 +1,56 @@
+# Copyright (C) Microsoft Corporation.
+# Copyright (C) Cognata.
+
+CIRCUITS = [
+    "Super Premium",
+    "Premium",
+    "Value"
+    ]
+
+LOCATIONS = [
+    "EU",
+    "LAT",
+    "NA",
+    "APAC"
+    ]
+
+LETTERS = [
+    "A",
+    "B",
+    "C",
+    "D",
+    ]
+
+TESTS = [
+    "Euro NCAP 3.0.2",
+    "Euro NCAP LSS 2.0",
+    "Euro NCAP 3.0.4",
+    "Euro NCAP – Highway Assist Systems",
+    "ADVL - H1: Highway basic rides",
+    "ADVL - U1: Urban basic rides",
+    ]
+
+STAGES = [
+    "Complete",
+    "Blocked",
+    "Processing"
+    ]
+
+# Cognata SimCloud Credentials - refactor to output
+studio_url = "{{parameters.cognata_api_studio_url}}"
+username = "{{parameters.username}}"
+password = "{{parameters.password}}"
+
+# hack to be able to share projectID across symphony stages
+PROJECT_ID_TEMP_FILE = "project_id.txt"
+
+def write_project_id(projectId):
+    temp_file = open(PROJECT_ID_TEMP_FILE, "w")
+    temp_file.write(str(projectId))
+    temp_file.close()
+
+def get_project_id():
+    temp_file = open(PROJECT_ID_TEMP_FILE, "r")
+    project_id = temp_file.read()
+    temp_file.close()
+    return project_id

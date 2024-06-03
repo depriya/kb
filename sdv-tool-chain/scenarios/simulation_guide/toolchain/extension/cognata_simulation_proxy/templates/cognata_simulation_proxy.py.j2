@@ -1,0 +1,12 @@
+from flask import Flask, jsonify
+import subprocess
+
+app = Flask(__name__)
+
+@app.route('/execute')
+def execute():
+    subprocess.Popen(["/bin/bash", "{{ parameters.toolchain_output_path }}/cognata_simulation_symphony_campaign/symphony_api_calls.sh"], cwd="{{ parameters.toolchain_output_path }}/cognata_simulation_symphony_campaign/")
+    return jsonify(msg="ok")
+
+if __name__ == '__main__':
+    app.run(port={{ parameters.port }})

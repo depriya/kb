@@ -1,0 +1,249 @@
+name: Run SiL Project
+
+on:
+  workflow_dispatch:
+    inputs:
+      metamodel_repo:
+        description: "MetaModel Repository (URL)"
+        default: "https://github.com/avl-sdv/DevOpsPilot.Metamodels.git"
+        required: true
+        type: string
+      metamodel_file_name:
+        description: "MetaModel File Name (ABSOLUTE PATH)"
+        default: "metamodel/avl_sdv_template1.yml"
+        required: true
+        type: string
+      non_interactive_environment:
+        description: "Non Interactive Environment"
+        default: "sub-AVL_DevopsPilot"
+        required: true
+        type: string
+      interactive_environment:
+        description: "Interactive Environment"
+        default: "sub-AVL_DevopsPilot_Interactive"
+        required: true
+        type: string
+      runner_name:
+        description: "Runner to trigger Symphony"
+        default: "xmew1-dop-s-stamp-d-vm-003"
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  WORKFLOW_ARTIFACT_NAME: metamodel-output-${{ github.run_id }}
+  CONFIG_FILE_YAML: avl_sdv_template.yml
+
+jobs:
+  Generate_Campaign_from_Metamodel:
+    runs-on: ubuntu-latest
+    outputs:
+      is_interactive: ${{ steps.interactive-execution.outputs.EXECUTION_ENVIRONENT }}
+    environment:
+      name: ${{ github.event.inputs.non_interactive_environment }}
+
+    env:
+      TOOlCHAIN_ROOT_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain
+      TOOlCHAIN_CLI_PATH: ${{ github.workspace }}/sdv-tool-chain/platform/toolchain/src/toolchain_cli.py
+      METAMODEL_YAML: ${{ github.workspace }}/${{ github.event.inputs.metamodel_file_name }}
+      METAMODEL_OUTPUT_DIR: ${{ github.workspace }}/output/metamodel
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # TODO: Fix this once the ext repo is available for metamodel
+      # - name: Checkout Metamodel repository
+      #   shell: pwsh
+      #   run : |
+      #     $LocationUrl = "${{ github.event.inputs.metamodel_repo }}"
+      #     $repo_name = $LocationUrl -replace '\.git$', '' -split '/' | Select-Object -Last 1
+      #     Write-Host "Cloning $LocationURL"
+      #     git clone $LocationUrl.Replace('github.com', "${{ secrets.GITHUB_TOKEN }}@github.com")
+      #     Write-Host "Cloning $LocationURL completed"
+      #     ls -l
+      #     Copy-Item "${{ github.workspace }}/$($repo_name)/${{ github.event.inputs.metamodel_file_name }}" "${{ env.METAMODEL_YAML }}" -Force
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install yq # yq is used to parse yaml files
+          pip install -r ${{ env.TOOlCHAIN_ROOT_PATH }}/requirements.txt
+          pip install -r ${{ env.TOOlCHAIN_ROOT_PATH }}/requirements_test.txt
+
+      - name: Check if the execution is interactive
+        id: interactive-execution
+        shell: pwsh
+        run: |
+          $job_id = (yq '.config.workflow_run_config.oem_identifier.job_id' "${{ env.METAMODEL_YAML }}").Trim('"')
+          $build_id = (yq '.config.workflow_run_config.project_name.build_id' "${{ env.METAMODEL_YAML }}").Trim('"')
+          $interactive_execution = (yq '.config.workflow_run_config.interactive_execution' "${{ env.METAMODEL_YAML }}").Trim('"')
+          Write-Host "Interactive Execution: $interactive_execution"
+          if ($interactive_execution -eq "true") {
+            Write-Host "Setting Execution Environment to Interactive"
+            echo "EXECUTION_ENVIRONENT=${{ github.event.inputs.interactive_environment }}" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Host "Setting Execution Environment to Non-Interactive"
+            echo "EXECUTION_ENVIRONENT=${{ github.event.inputs.non_interactive_environment }}" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Validate Metamodel
+        run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel validate --from-file  ${{ env.METAMODEL_YAML }}
+
+      - name: Generate Campaign and Scripts for Metamodel
+        run: python ${{ env.TOOlCHAIN_CLI_PATH }} metamodel execute --from-file  ${{ env.METAMODEL_YAML }} --output-dir  ${{ env.METAMODEL_OUTPUT_DIR }}
+
+      - name: Zip Metamodel output
+        working-directory: ${{ env.METAMODEL_OUTPUT_DIR }}
+        run: |
+          cp ${{ env.METAMODEL_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.CONFIG_FILE_YAML }}
+          cp ${{ env.METAMODEL_YAML }} ${{ env.METAMODEL_OUTPUT_DIR }}/avl_devops_custom_powershell_script/${{ env.CONFIG_FILE_YAML }}
+          zip -r ${{ env.WORKFLOW_ARTIFACT_NAME }} *
+
+      - name: Publish Metamodel Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          path: ${{ env.METAMODEL_OUTPUT_DIR }}/${{ env.WORKFLOW_ARTIFACT_NAME }}.zip
+
+  Upload_Campaign_and_Scripts_to_File_Share:
+    needs: Generate_Campaign_from_Metamodel
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.inputs.non_interactive_environment }}
+
+    steps:
+      - name: Download output from previous job
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
+
+      - name: Unzip the output
+        shell: pwsh
+        run: |
+          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
+
+      - name: Az CLI login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Upload output files to file share
+        shell: pwsh
+        run: |
+          cd ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          $customer_OEM_suffix = (yq '.config.project_config.oem_identifier' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $project_name = (yq '.config.project_config.project_name' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $resource_name_primary_prefix = (yq '.config.resource_name_primary_prefix' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $resource_name_secondary_prefix = (yq '.config.resource_name_secondary_prefix' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $resource_name_shared_short = "s"
+          $environment_stage = (yq '.config.project_config.environment_stage' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+          $meta_model_outputs_file_share_name = (yq '.config.shared_stamp_config.meta_model_outputs_file_share_name' "${{ env.CONFIG_FILE_YAML }}").Trim('"')
+
+
+          $subscription_id = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          $ResourceGroup =  "$($resource_name_primary_prefix)-$($resource_name_secondary_prefix)-$($resource_name_shared_short)-stamp-$($environment_stage[0])-rg-001"
+          $storageAccount = "$($resource_name_primary_prefix)$($resource_name_secondary_prefix)$($resource_name_shared_short)$($environment_stage[0])st"
+          $destinationPath = "$($customer_OEM_suffix)/$($project_name)"
+
+          $storage_key = 
+          az storage account keys list `
+            --subscription "$subscriptionID" `
+            -g "$ResourceGroup" `
+            -n "$storageAccount" `
+            --query "[0].value" `
+            -o tsv `
+            --only-show-errors
+
+          az storage file upload-batch `
+            --account-name $storageAccount `
+            --account-key $storage_key `
+            --destination "$meta_model_outputs_file_share_name" `
+            --destination-path  "$destinationPath"`
+            --source "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}"
+
+          az storage file list `
+            --account-name $storageAccount `
+            --account-key $storage_key `
+            --share-name "$meta_model_outputs_file_share_name"
+
+  Create_and_Activate_Symphony_Campaign_Build:
+    needs: [
+        Generate_Campaign_from_Metamodel,
+        Upload_Campaign_and_Scripts_to_File_Share
+      ]
+    runs-on: ${{ github.event.inputs.runner_name }}
+    environment:
+      name: ${{ github.event.inputs.non_interactive_environment }}
+
+    steps:
+      - name: Download output from previous job
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
+
+      - name: Unzip the output
+        shell: pwsh
+        run: |
+          if (Test-Path ${{ env.WORKFLOW_ARTIFACT_NAME }}) {
+            Remove-Item ${{ env.WORKFLOW_ARTIFACT_NAME }} -Recurse -Force
+          }
+          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
+
+      - name: Create and Activate Symphony Campaign
+        run: |
+          cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build"
+          bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build//symphony_api_calls.sh"
+
+      - name: Wait Until Campaign Completion
+        run: |
+          cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build"
+          bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_build//symphony_check_completion.sh"
+
+  Create_and_Activate_Symphony_Campaign_Execute:
+    needs:
+      [
+        Generate_Campaign_from_Metamodel,
+        Upload_Campaign_and_Scripts_to_File_Share,
+        Create_and_Activate_Symphony_Campaign_Build
+      ]
+    runs-on: ${{ github.event.inputs.runner_name }}
+    environment:
+      name: ${{ needs.Generate_Campaign_from_Metamodel.outputs.is_interactive }}
+
+    steps:
+      - name: Download output from previous job
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
+
+      - name: Unzip the output
+        shell: pwsh
+        run: |
+          if (Test-Path ${{ env.WORKFLOW_ARTIFACT_NAME }}) {
+            Remove-Item ${{ env.WORKFLOW_ARTIFACT_NAME }} -Recurse -Force
+          }
+          mkdir ${{ env.WORKFLOW_ARTIFACT_NAME }}
+          Expand-Archive -Path ${{ env.WORKFLOW_ARTIFACT_NAME }}.zip -DestinationPath ${{ github.workspace }}/${{ env.WORKFLOW_ARTIFACT_NAME }} -Force
+
+      - name: Create and Activate Symphony Campaign
+        run: |
+          cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_execute"
+          bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_execute//symphony_api_calls.sh"
+
+      - name: Wait Until Campaign Completion
+        run: |
+          cd "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_execute"
+          bash "${{ github.workspace }}//${{ env.WORKFLOW_ARTIFACT_NAME }}//deploy_avl_symphony_campaign_execute//symphony_check_completion.sh"

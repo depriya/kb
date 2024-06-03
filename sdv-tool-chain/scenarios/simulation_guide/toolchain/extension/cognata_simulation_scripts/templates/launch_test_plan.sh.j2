@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Copyright (C) Microsoft Corporation.
+
+# Exit immediately if a command fails
+set -e
+
+# Fail if an unset variable is used
+set -u
+
+source $(dirname $0)/symphony_stage_script_provider.sh
+
+# Run Cognata launch test plan
+pyScriptLaunchPlan="python3 {{ parameters.toolchain_output_path }}/cognata_simulation_scripts/launch_test_plan.py"
+pyScriptLaunchPlan_output=""
+pyScriptLaunchPlan_status=0
+execute_command_with_status_code "$pyScriptLaunchPlan" pyScriptLaunchPlan_output pyScriptLaunchPlan_status
+
+# Write the updated key-value pairs to the output file
+echo_output_dictionary_to_output_file

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Copyright (C) Microsoft Corporation.
+
+# Exit immediately if a command fails
+set -e
+
+# Fail if an unset variable is used
+set -u
+
+source $(dirname $0)/symphony_stage_script_provider.sh
+
+virtualMachineResourceGroup=$(get_value_from_output_dictionary "virtualMachineResourceGroup")
+virtualMachineName=$(get_value_from_output_dictionary "virtualMachineName")
+
+# Get the Private IP Address of the VM
+commandVirtualMachinePrivateIP="az vm show -d -g $virtualMachineResourceGroup -n $virtualMachineName --query privateIps -o tsv"
+commandVirtualMachinePrivateIP_output=""
+commandVirtualMachinePrivateIP_status=0
+execute_command_with_status_code "$commandVirtualMachinePrivateIP" commandVirtualMachinePrivateIP_output commandVirtualMachinePrivateIP_status
+
+# Return status and stop script if an error occurs
+if [ $commandVirtualMachinePrivateIP_status -ne 0 ]; then
+   echo_output_dictionary_to_output_file
+   exit 0
+fi
+
+mkdir -p ~/.ssh/
+ssh-keyscan -H "$commandVirtualMachinePrivateIP_output" >> ~/.ssh/known_hosts
+
+# Execute bash command on the VM via ssh in the provided working dir
+commandSSH="sshpass -p '{{parameters.password|default("",true)}}' ssh {{parameters.username}}@$commandVirtualMachinePrivateIP_output \"cd {{parameters.working_dir}}; {{parameters.bash_command}}\""
+commandSSH_output=""
+commandSSH_status=0
+execute_command_with_status_code "$commandSSH" commandSSH_output commandSSH_status
+
+# Write the updated key-value pairs to the output file
+echo_output_dictionary_to_output_file

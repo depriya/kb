@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Copyright (C) Microsoft Corporation.
+
+# Exit immediately if a command fails
+set -e
+
+# Fail if an unset variable is used
+set -u
+
+# For reference:
+# https://learn.microsoft.com/en-us/cli/azure/communication/email?view=azure-cli-latest
+
+export AZURE_COMMUNICATION_CONNECTION_STRING=$( \
+    az keyvault secret show \
+        --name "{{parameters.keyvault_key}}" \
+        --vault-name "{{parameters.keyvault_name}}" \
+        --query "value" \
+        -o tsv \
+    )
+
+# Sends an email to the user
+# Arguments:
+#   subject: The subject of the email
+#   body_text: The body of the email
+function send_email() {
+    local subject="$1"
+    local body_text="$2"
+
+    # The connection string variable is implicitly used in the az communication email send command
+    az communication email send \
+        --sender "{{parameters.sender}}" \
+        --subject "{{parameters.subject}}: $subject" \
+        --to {{ parameters.recepients|map("tojson")|join(" ") }} \
+        --text "$body_text"
+}
+
+source $(dirname $0)/symphony_stage_script_provider.sh
+
+callerStageName=$(get_value_from_output_dictionary  "__previousStage")
+callerStatusCode=$(get_value_from_output_dictionary  "callerStatusCode")
+callerErrorMessage=$(get_value_from_output_dictionary  "callerErrorMessage")
+
+if [ "$callerStatusCode" != "$SUCCESS_SYMPHONY_CODE" ]; then
+  # Example of a failure message in an email:
+  # Failed at stage vecu_download_software with status code 500 due to fork/exec
+  # /home/<SOME_USERNAME>/output/scenarios/vecu_builder_guide/vecu_download_software/download_software_to_vecu.sh:
+  # no such file or directory.
+  fail_body_text="Failed at stage $callerStageName with status code $callerStatusCode due to $callerErrorMessage"
+
+  # Send email will fail if the service_principal_auth stage fails, so we will echo
+  # the failed message.
+  echo "$fail_body_text"
+
+  send_email "Failed!" "{{parameters.text.failure.replace("\n", "\\n")|e}}\n\n$fail_body_text"
+else
+  send_email "Succeeded!" "{{parameters.text.success.replace("\n", "\\n")|e}}"
+fi
+
+# Write the updated key-value pairs to the output file
+echo_output_dictionary_to_output_file

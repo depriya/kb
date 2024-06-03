@@ -1,0 +1,32 @@
+# Copyright (C) Microsoft Corporation.
+
+FROM ubuntu:22.04
+
+RUN apt-get update
+RUN apt-get install wget xz-utils -y
+
+# Install nodeJS
+RUN wget "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz" -O node-v20.10.0-linux-x64.tar.xz
+RUN tar -xf "node-v20.10.0-linux-x64.tar.xz"
+RUN mv node-v20.10.0-linux-x64 /opt/
+ENV PATH=/opt/node-v20.10.0-linux-x64/bin:$PATH
+RUN mkdir -p /opt/code/src
+
+# Install NPM dependencies
+COPY package.json /opt/code/
+WORKDIR /opt/code/
+RUN npm install
+
+# Copy Source
+COPY public/ /opt/code/public/
+COPY src/ /opt/code/src/
+COPY .env.qa /opt/code/
+COPY .env.dev /opt/code/
+
+# Build bundle
+WORKDIR /opt/code/
+RUN npm run build:dev
+
+# Exposes port 3000 for the Simulation Dashboard Frontend
+EXPOSE 3000
+CMD [ "/opt/node-v20.10.0-linux-x64/bin/npm", "start" ]

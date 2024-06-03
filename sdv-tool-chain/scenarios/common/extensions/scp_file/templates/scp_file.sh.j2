@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Copyright (C) Microsoft Corporation.
+
+# Exit immediately if a command fails
+set -e
+
+# Fail if an unset variable is used
+set -u
+
+source $(dirname $0)/symphony_stage_script_provider.sh
+
+virtualMachineResourceGroup=$(get_value_from_output_dictionary "virtualMachineResourceGroup")
+virtualMachineName=$(get_value_from_output_dictionary "virtualMachineName")
+
+# Get the Private IP Address of the VM
+commandVirtualMachinePrivateIP="az vm show -d -g $virtualMachineResourceGroup -n $virtualMachineName --query privateIps -o tsv"
+commandVirtualMachinePrivateIP_output=""
+commandVirtualMachinePrivateIP_status=0
+execute_command_with_status_code "$commandVirtualMachinePrivateIP" commandVirtualMachinePrivateIP_output commandVirtualMachinePrivateIP_status
+
+if [ $commandVirtualMachinePrivateIP_status -ne 0 ]; then
+    echo_output_dictionary_to_output_file
+    exit 0
+fi
+
+mkdir -p ~/.ssh/
+ssh-keyscan -H "$commandVirtualMachinePrivateIP_output" >> ~/.ssh/known_hosts
+
+commandSCP="sshpass -p '{{parameters.password|default("",true)}}' scp {{parameters.scp_args}} {{parameters.file_to_copy_src}} {{parameters.username}}@$commandVirtualMachinePrivateIP_output:{{parameters.file_to_copy_dst}}"
+commandSCP_output=""
+commandSCP_status=0
+execute_command_with_status_code "$commandSCP" commandSCP_output commandSCP_status
+
+# Write the updated key-value pairs to the output file
+echo_output_dictionary_to_output_file

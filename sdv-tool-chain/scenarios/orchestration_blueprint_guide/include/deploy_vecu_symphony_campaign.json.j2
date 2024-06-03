@@ -1,0 +1,104 @@
+{
+    "spec": {
+        "firstStage": "{{ parameters.campaign_start_stage or 'azure_login' }}",
+        "stages": {
+            "azure_login": {
+                "name": "azure_login",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "azure_login",
+                    "script": "azure_login.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/azure_login",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/azure_login"
+                },
+                "stageSelector": "azure_deployment_environment"
+            },
+            "azure_deployment_environment": {
+                "name": "azure_deployment_environment",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "azure devcenter environment create",
+                    "script": "azure_devcenter_environment_create.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/azure_deployment_environment",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/azure_deployment_environment"
+                },
+                "stageSelector":
+                {%- raw -%}
+                "${{$if($equal($output(azure_deployment_environment, __status), 200), copy_file_to_vecu, notification_email)}}"
+                {%- endraw %}
+            },
+            "copy_file_to_vecu": {
+                "name": "copy_file_to_vecu",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "copy_file_to_vecu",
+                    "script": "scp_file.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/copy_file_to_vecu",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/copy_file_to_vecu"
+                },
+                "inputs": {
+                    "virtualMachineResourceGroup":
+                    {%- raw -%}
+                    "${{$output(azure_deployment_environment, virtualMachineResourceGroup)}}",
+                    {%- endraw %}
+                    "virtualMachineName":
+                    {%- raw -%}
+                    "${{$output(azure_deployment_environment, virtualMachineName)}}"
+                    {%- endraw %}
+                },
+                "stageSelector":
+                {%- raw -%}
+                "${{$if($equal($output(copy_file_to_vecu, __status), 200), execute_command_on_vecu, notification_email)}}"
+                {%- endraw %}
+            },
+            "execute_command_on_vecu": {
+                "name": "execute_command_on_vecu",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute_command_on_vecu",
+                    "script": "ssh_cmd.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/execute_command_on_vecu",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/execute_command_on_vecu"
+                },
+                "inputs": {
+                    "virtualMachineResourceGroup":
+                    {%- raw -%}
+                    "${{$output(azure_deployment_environment, virtualMachineResourceGroup)}}",
+                    {%- endraw -%}
+                    "virtualMachineName":
+                    {%- raw -%}
+                    "${{$output(azure_deployment_environment, virtualMachineName)}}"
+                    {%- endraw -%}
+                },
+                "stageSelector": "notification_email"
+            },
+            "notification_email": {
+                "name": "notification_email",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "send email",
+                    "script": "azure_communication_email_send.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/notification_email",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/notification_email"
+                },
+                "inputs": {
+                    "callerStatusCode":
+                    {%- raw -%}
+                    "${{$output($input(__previousStage), __status)}}",
+                    {%- endraw %}
+                    "callerErrorMessage":
+                    {%- raw -%}
+                    "${{$if($equal($output($input(__previousStage), __status), 200), '', $output($input(__previousStage), __error))}}"
+                    {%- endraw %}
+                },
+                "handleErrors": true
+            }
+        },
+        "selfDriving": true
+    }
+}

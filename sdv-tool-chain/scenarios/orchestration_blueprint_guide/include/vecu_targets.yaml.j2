@@ -1,0 +1,151 @@
+# Copyright (C) Microsoft Corporation.
+
+azure_login:
+  description: Login to Azure using a VM's system-assigned managed identity
+  type: azure login
+
+azure_deployment_environment:
+  description: Azure Deployment Environment configuration
+  type: azure devcenter environment create
+  depends_on:
+    - azure_login
+  parameters:
+    # RG with this name will be created by the 'az devcenter environment create' command.
+    # See https://ms.portal.azure.com/{tenant}/resource/subscriptions/{subscription}/resourceGroups/{resource_group}/providers/Microsoft.DevCenter/projects/{project_name}/environments
+    azure_devcenter_environment_name: {{ config.vecu.name ~ "-" ~ config.vecu.version }}
+
+    # Environment type as configured at
+    # See https://ms.portal.azure.com/{tenant}/resource/subscriptions/{subscription}/resourceGroups/{resource_group}/providers/Microsoft.DevCenter/projects/{project_name}/project_environment_types
+    azure_devcenter_environment_type: test
+
+    # The name of the 'devcenter' Azure resource that will be used to create the environment.
+    azure_devcenter_name: {{ config.virtual_environment.devcenter_name }}
+
+    # The name of the 'project' Azure resource that will be used to create the environment. This is the 'project' associated with the 'devcenter'.
+    azure_devcenter_project_name: {{ config.virtual_environment.devcenter_project_name }}
+
+    # The 'catalog' of of the 'devcenter' that contains the definition of the environment, can be a GitHub repository.
+    azure_devcenter_catalog_name: {{ config.virtual_environment.devcenter_catalog_name }}
+
+    # The name of the ARM template to deploy which is specified in the manifest.yaml. The ARM template is located in the repository associated with the 'catalog'.
+    azure_devcenter_environment_definition_name: VirtualMachine
+
+    # The parameters file for the ARM template. The ARM template is located in the repository associated with the 'catalog'.
+    azuredeploy_parameters_file: ./include/vecu-azuredeploy.parameters.json.j2
+
+    azuredeploy_parameters_file_input:
+      use_existing_vnet: true
+      location: {{ config.virtual_environment.location }}
+      network_interface_name:  {{ config.vecu.name ~ "-nic" }}
+      network_interface_ip_configuration_name: ipconfig1
+      network_interface_ip_configuration_subnet_name: default
+      virtual_network_name: {{ config.virtual_environment.vnet_name }}
+      virtual_network_resource_group_name: {{ config.virtual_environment.vnet_resource_group }}
+      nic_delete_option: Delete
+      image_reference: /subscriptions/{{config.virtual_environment.subscription_id}}/resourceGroups/{{config.virtual_environment.compute_gallery_resource_group}}/providers/Microsoft.Compute/galleries/{{config.virtual_environment.compute_gallery_name}}/images/{{config.virtual_environment.image_definition_name}}/versions/{{config.virtual_environment.image_version_number}}
+      virtual_machine_name: {{ config.vecu.name }}
+      os_disk_type: StandardSSD_LRS
+      os_disk_delete_option: Delete
+      virtual_machine_size: Standard_D2ps_v5
+      virtual_machine_zone: 1
+
+notification_email:
+  description: Configuration of Azure Communication service for sending an email
+  type: azure communication email send
+  depends_on:
+    - azure_login
+  parameters:
+    keyvault_key: toolchain-email-connection-string
+    keyvault_name: {{ config.notification.email.keyvault_name }}
+    # The sender email address must be a verified email address in the Azure Communication service.
+    sender: {{ config.notification.email.sender }}
+    subject: vECU deployment status
+    recepients:
+      {{ config.notification.email.recepients }}
+    text:
+      success:
+        Successfully deployed a vECU VM [{{ config.vecu.name ~ "-" ~ config.vecu.version }}], copied install files from {{ config.software_stack.middleware.orchestration_blueprint.copy_files.src_dir }} for orchestrator {{ config.software_stack.middleware.orchestration_blueprint.orchestrator }} to the vECU VM, and installed the {{ config.software_stack.middleware.orchestration_blueprint.orchestrator }} container image.
+      failure:
+        Failed to deploy a vECU VM [{{ config.vecu.name ~ "-" ~ config.vecu.version }}], failed to copy install files from {{ config.software_stack.middleware.orchestration_blueprint.copy_files.src_dir }}, or failed to install the {{ config.software_stack.middleware.orchestration_blueprint.orchestrator }} container image. Please check the vECU's connectivity.
+
+copy_file_to_vecu:
+  description: Copies files to the vECU
+  type: scp file
+  depends_on:
+    - azure_deployment_environment
+  parameters:
+    username: root
+    password: {{ env.VECU_PASSWORD }}
+    file_to_copy_src: {{config.software_stack.middleware.orchestration_blueprint.copy_files.src_dir}}
+    file_to_copy_dst: {{config.software_stack.middleware.orchestration_blueprint.copy_files.dst_dir}}
+    recursive_copy: true
+
+execute_command_on_vecu:
+  description: Executes a command on the vECU
+  type: ssh cmd
+  depends_on:
+    - azure_deployment_environment
+    - copy_file_to_vecu
+  parameters:
+    username: root
+    password: {{ env.VECU_PASSWORD }}
+    bash_command: chmod +x {{ config.software_stack.middleware.orchestration_blueprint.install_script }}; ./{{ config.software_stack.middleware.orchestration_blueprint.install_script }}
+    working_dir: {{ config.software_stack.middleware.orchestration_blueprint.copy_files.dst_dir }}
+
+build_yocto:
+  description: Dispatches Github Workflow
+  type: github dispatch workflow
+  parameters:
+    repo_owner: {{ config.software_stack.os.build.repo_owner }}
+    repo_name: {{ config.software_stack.os.build.repo_name }}
+    workflow_id: {{ config.software_stack.os.build.workflow_id }}
+    ref: main
+    keyvault_name: {{ config.software_stack.os.build.keyvault_name }}
+    keyvault_key: toolchain-workflow-github-pat
+    inputs:
+      resource_group_name: {{ config.virtual_environment.compute_gallery_resource_group }}
+      subscription_id: {{ config.virtual_environment.subscription_id }}
+      storage_account_name: toolchaindemo
+      blob_container_name: os-images
+      blob_image_name: yocto-azure-vm-arm64.vhd
+      compute_gallery_name: {{config.virtual_environment.compute_gallery_name}}
+      image_definition_name: {{config.virtual_environment.image_definition_name}}
+      image_version_number: {{config.virtual_environment.image_version_number}}
+
+build_vecu_symphony_campaign:
+  description: The Symphony campaign to build a vECU
+  type: symphony campaign
+  depends_on:
+    - build_yocto
+  parameters:
+    campaign_name: build_vecu_symphony_campaign
+    campaign_activation_name: build_vecu_symphony_campaign_activation
+    campaign_start_stage_inputs:
+
+    symphony_campaign_parameters_file: ./include/build_vecu_symphony_campaign.json.j2
+    symphony_campaign_parameters_file_input:
+      # Empty stage will use the default stage as defined in symphony-campaign.json
+      campaign_start_stage:
+      toolchain_output_path: {{ config.symphony.toolchain_output_path }}
+    symphony_base_url: {{ config.symphony.base_url }}
+
+
+deploy_vecu_symphony_campaign:
+  description: The Symphony campaign to deploy and setup the vECU
+  type: symphony campaign
+  depends_on:
+    - azure_deployment_environment
+    - notification_email
+    - build_vecu_symphony_campaign
+
+  parameters:
+    campaign_name: deploy_vecu_symphony_campaign
+    campaign_activation_name: deploy_vecu_symphony_campaign_activation
+    campaign_start_stage_inputs:
+
+    symphony_campaign_parameters_file: ./include/deploy_vecu_symphony_campaign.json.j2
+    symphony_campaign_parameters_file_input:
+      # Empty stage will use the default stage as defined in symphony-campaign.json
+      campaign_start_stage:
+      toolchain_output_path: {{ config.symphony.toolchain_output_path }}
+    symphony_base_url: {{ config.symphony.base_url }}

@@ -1,0 +1,103 @@
+{
+    "spec": {
+        "firstStage": "azure_login",
+        "stages": {
+            "azure_login": {
+                "name": "azure_login",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "azure login",
+                    "script": "azure_login.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/azure_login",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/azure_login"
+                },
+                "stageSelector": "execute_avl_devops_artifacts_collection" 
+            },
+            "execute_avl_devops_ade_creation": {
+                "name": "execute_avl_devops_ade_creation",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute ade creation script",
+                    "script": "avl_devops_create_ade.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_script"
+                },
+                "stageSelector": "execute_avl_devops_devbox_creation"
+            },
+            "execute_avl_devops_devbox_creation": {
+                "name": "execute_avl_devops_devbox_creation",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute devbox creation script",
+                    "script": "avl_devops_create_devbox.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_script"
+                },
+                "stageSelector": "execute_avl_devops_artifacts_collection"
+            },
+            "execute_avl_devops_artifacts_collection": {
+                "name": "execute_avl_devops_artifacts_collection",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute artifacts collection script",
+                    "script": "run_pwsh_script_in_bash.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
+                },
+                 "inputs": {
+                    "ps_script_path":"{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script/avl_devops_collect_artifacts.ps1"
+                },
+                "stageSelector": "execute_avl_devops_copy_artifacts"
+            },
+            "execute_avl_devops_copy_artifacts": {
+                "name": "execute_avl_devops_copy_artifacts",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute copy artifacts script",
+                    "script": "run_pwsh_script_in_bash.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
+                },
+                 "inputs": {
+                    "ps_script_path":"{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script/avl_devops_copy_artifacts.ps1"
+                },
+                "stageSelector": "execute_avl_devops_local_installer"
+            },
+            "execute_avl_devops_local_installer": {
+                "name": "execute_avl_devops_local_installer",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute local installer script",
+                    "script": "run_pwsh_script_in_bash.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
+                },
+                 "inputs": {
+                    "ps_script_path":"{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script/avl_devops_run_local_scripts.ps1"
+                },
+                "stageSelector": "execute_avl_devops_build_project"
+            },
+            "execute_avl_devops_build_project": {
+                "name": "execute_avl_devops_build_project",
+                "provider": "providers.stage.script",
+                "config": {
+                    "name": "execute local installer script",
+                    "script": "run_pwsh_script_in_bash.sh",
+                    "scriptEngine": "bash",
+                    "scriptFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script",
+                    "stagingFolder": "{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script"
+                },
+                 "inputs": {
+                    "ps_script_path":"{{ parameters.toolchain_output_path }}/avl_devops_custom_powershell_script/avl_devops_run_simulation_build.ps1"
+                }
+            }
+        },
+        "selfDriving": true
+    }
+}

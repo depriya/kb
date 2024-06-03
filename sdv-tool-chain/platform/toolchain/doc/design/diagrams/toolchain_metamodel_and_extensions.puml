@@ -1,0 +1,36 @@
+' Copyright (C) Microsoft Corporation
+
+@startuml
+node "Toolchain App" {
+    component core
+    card "core extensions" as coreexts {
+        component "extension" as cext
+    }
+}
+
+frame "scenario" {
+
+    frame "metamodel" {
+        card "extensions" as mext {
+            component "config 1" as ldmext
+            component "config 2" as rdmext
+        }
+    }
+
+    folder "local" {
+        component "extension" as lext
+    }
+
+    cloud "remote" {
+        component "extension" as rext
+    }
+
+}
+
+ldmext .right.> lext : Reference
+rdmext .right.> rext : Reference
+lext -down-> core : Register
+rext -down-> core : Register
+cext -> core : Register
+
+@enduml

@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "userPrincipalId": {
+            "value": "<USER_PRINCIPAL_ID>"
+        },
+        "devCenterName": {
+            "value": "<DEV_CENTER_NAME>"
+        },
+        "keyVaultName": {
+            "value": "<KEY_VAULT_NAME>"
+        },
+        "catalogName": {
+            "value": "<CATALOG_NAME>"
+        },
+        "catalogGithubRepoUri": {
+            "value": "<CATALOG_GITHUB_REPO_URI>"
+        },
+        "catalogGithubRepoBranch": {
+            "value": "<CATALOG_GITHUB_REPO_BRANCH>"
+        },
+        "catalogGithubRepoDirPath": {
+            "value": "<CATALOG_GITHUB_REPO_DIR_PATH>"
+        },
+        "catalogGithubPATSecretName": {
+            "value": "<CATALOG_GITHUB_PAT_SECRET_NAME>"
+        },
+        "catalogGithubPATSecretValue": {
+            "value": "<CATALOG_GITHUB_PAT_SECRET_VALUE>"
+        },
+        "catalogGithubPatSecretExpiry": {
+            "value": "<CATALOG_GITHUB_PAT_SECRET_EXPIRY>"
+        }
+    }
+}

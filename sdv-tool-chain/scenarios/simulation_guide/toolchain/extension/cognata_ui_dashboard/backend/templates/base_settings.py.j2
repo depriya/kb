@@ -1,0 +1,18 @@
+# Copyright (C) Microsoft Corporation
+# Templated based settings Python file for different development environments
+
+import os
+
+class BaseSettings:
+    LISTENING_URL = "0.0.0.0"
+    LISTENING_PORT = "{{ parameters.port }}"
+    DATABASE = {
+        "COSMOS_PRIMARY_KEY": "{{ parameters.azure_cosmos_db_primary_key }}",
+        "COSMOS_URI": "{{ parameters.azure_cosmos_db_uri }}",
+        "DATABASE_ID": "{{ parameters.database_id }}",
+        "JOBS_CONTAINER": "{{ parameters.jobs_container }}",
+        "USERS_CONTAINER": "{{ parameters.users_container }}",
+        "PROJECTS_CONTAINER": "{{ parameters.projects_container }}"
+    }
+    USE_MSI = False
+    JWT_SECRET = "{{ parameters.jwt_secret }}"
