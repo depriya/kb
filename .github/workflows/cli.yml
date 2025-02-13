@@ -13,6 +13,9 @@ jobs:
         uses: azure/cli@v2
         with:
           azcliversion: 2.30.0
+          inlineScript: |
+            # Run an Azure CLI command and store its output in the tool cache directory.
+            az account show > "${{ runner.tool_cache }}/account.json"
 
       - name: Archive tool cache
         run: |
@@ -20,6 +23,6 @@ jobs:
           tar -czf tool_cache.tar.gz .
 
       - name: Upload tool cache artifact
-        uses: actions/upload-artifact@v4 
+        uses: actions/upload-artifact@v4
         with:
           path: ${{ runner.tool_cache }}/tool_cache.tar.gz
