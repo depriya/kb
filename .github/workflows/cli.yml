@@ -15,8 +15,7 @@ jobs:
           azcliversion: 2.30.0
           inlineScript: |
             # Run an Azure CLI command and store its output in the tool cache directory.
-            az account show > "${{ runner.tool_cache }}/account.json"
-
+            az account show
       - name: Archive tool cache
         run: |
           cd "${{ runner.tool_cache }}"
