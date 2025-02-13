@@ -10,12 +10,13 @@ jobs:
           mkdir -p "${{ runner.tool_cache }}"
       - name: Azure Login
         uses: azure/login@v2
-        
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Archive tool cache
         run: |
           cd "${{ runner.tool_cache }}"
           tar -czf tool_cache.tar.gz *
       - name: Upload tool cache artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           path: ${{ runner.tool_cache }}/tool_cache.tar.gz
