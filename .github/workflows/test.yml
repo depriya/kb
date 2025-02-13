@@ -12,6 +12,8 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: List tool cache directory
+        run: ls -la "${{ runner.tool_cache }}"
       - name: Archive tool cache
         run: |
           cd "${{ runner.tool_cache }}"
