@@ -1,0 +1,25 @@
+name: Azure CLI Tool Cache with Specific CLI Version
+on: push
+jobs:
+  azure_cli:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clear any existing tool cache
+        run: |
+          mv "${{ runner.tool_cache }}" "${{ runner.tool_cache }}.old" || true
+          mkdir -p "${{ runner.tool_cache }}"
+
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: 2.30.0
+
+      - name: Archive tool cache
+        run: |
+          cd "${{ runner.tool_cache }}"
+          tar -czf tool_cache.tar.gz .
+
+      - name: Upload tool cache artifact
+        uses: actions/upload-artifact@v4 
+        with:
+          path: ${{ runner.tool_cache }}/tool_cache.tar.gz
