@@ -14,28 +14,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Login to Azure using the azure/login action
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      # Archive Azure CLI token and action cache
       - name: Archive Azure Login tool cache
         run: |
-          # Correct directory for _actions
-          cd "/home/runner/work/_actions"
+          # Define the directory where GitHub Actions stores downloaded actions
+          ACTIONS_DIR="/home/runner/work/_actions"
 
-          # Check if Azure/login is cached
-          if [ -d "azure/login" ]; then
+          # Create a tar archive of the Azure login cache
+          if [ -d "$ACTIONS_DIR/azure/login" ]; then
             echo "Azure/login action found, creating archive."
-            tar -czf azure_login_cache.tar.gz azure/login
+            tar -czf azure_login_cache.tar.gz -C "$ACTIONS_DIR" azure/login
           else
-            echo "Azure/login action not found, exiting."
+            echo "Azure/login action not found, skipping archive."
             exit 1
           fi
 
+      # Upload the cache as an artifact for future use
       - name: Upload Azure Login cache as artifact
         uses: actions/upload-artifact@v4
         with:
           name: azure-login-cache
-          path: /home/runner/work/_actions/azure_login_cache.tar.gz
+          path: azure_login_cache.tar.gz
+          retention-days: 7  # Optional, set how long to keep the artifact
 
