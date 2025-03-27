@@ -1,5 +1,6 @@
 name: Upload Azure Login tool cache
-on: push
+on:
+  workflow_dispatch:
 jobs:
   upload_tool_cache:
     runs-on: ubuntu-22.04
