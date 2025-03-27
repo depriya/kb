@@ -1,5 +1,6 @@
-name: Upload Azure Login tool cache
-on: push
+name: Azure Login
+on:
+  workflow_dispatch:
 
 permissions:
   id-token: write
@@ -20,10 +21,10 @@ jobs:
 
       - name: Archive Azure Login tool cache
         run: |
-          # Navigate to the runner's tool cache directory
-          cd "${{ runner.tool_cache }}/_actions"
-          
-          # Verify if Azure/login has been cached correctly
+          # Correct directory for _actions
+          cd "/home/runner/work/_actions"
+
+          # Check if Azure/login is cached
           if [ -d "azure/login" ]; then
             echo "Azure/login action found, creating archive."
             tar -czf azure_login_cache.tar.gz azure/login
@@ -36,4 +37,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: azure-login-cache
-          path: ${{ runner.tool_cache }}/_actions/azure_login_cache.tar.gz
+          path: /home/runner/work/_actions/azure_login_cache.tar.gz
+
