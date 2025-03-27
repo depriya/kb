@@ -1,5 +1,6 @@
 name: Azure CLI Tool Cache with Specific CLI Version
-on: push
+on:
+  workflow_dispatch:
 jobs:
   azure_cli:
     runs-on: ubuntu-22.04
