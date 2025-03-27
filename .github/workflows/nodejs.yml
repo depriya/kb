@@ -1,5 +1,6 @@
 name: Upload Node.js 14 and 16 tool cache
-on: push
+on:
+  workflow_dispatch:
 jobs:
   upload_tool_cache:
     runs-on: ubuntu-22.04
